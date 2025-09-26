@@ -16,6 +16,7 @@ public class Ticket {
             System.out.println("Too many products");
             return -1;
         }
+
         else {
             // El producto puede introducirse
             ticket.add(product);
@@ -33,7 +34,7 @@ public class Ticket {
     public int updateProduct (Product product){
         return -1;
     }
-    public double getPrice() {s
+    public double getPrice() {
         return -1;
     }
     public String toString() {
