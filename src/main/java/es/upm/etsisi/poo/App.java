@@ -1,8 +1,13 @@
 package es.upm.etsisi.poo;
 
-public class App 
+import java.util.ArrayList;
+
+public class App
 {
-    public static void main( String[] args )
-    {
+    Ticket currentTicket;
+    ArrayList<Product> productList;
+    Config config;
+
+    public static void main( String[] args ) {
     }
 }
