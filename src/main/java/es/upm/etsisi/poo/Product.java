@@ -1,5 +1,8 @@
 package es.upm.etsisi.poo;
 
+/**
+ * This class is used to create objects with the characteristics we need for our products
+ */
 public class Product {
     private Category category;
     private int id;
@@ -17,9 +20,13 @@ public class Product {
 
     /**
      * Compares this product to another with the ID
-     * @param product (another)
+     * @param other (another)
      * @return whether the IDs match
      */
-    public boolean equals(Product product) { return this.id == product.id; }
+    public boolean equals(Product other) { return this.id == other.id; }
 
+    @Override
+    public String toString() {
+        return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category+", price:"+this.price+"}";
+    }
 }
