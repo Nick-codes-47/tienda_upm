@@ -10,4 +10,15 @@ public class App
 
     public static void main( String[] args ) {
     }
+
+    public void printTicket() {
+        System.out.println(currentTicket.toString());
+    }
+
+    public void printProdList() {
+        System.out.println("Catalog: ");
+        for (Product p : this.productList) {
+            System.out.println(" "+p.toString());
+        }
+    }
 }
