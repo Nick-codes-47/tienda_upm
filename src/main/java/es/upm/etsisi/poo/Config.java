@@ -10,14 +10,6 @@ import java.util.function.Consumer;
 import java.util.function.Supplier;
 
 public class Config {
-    private static final String CONFIG_DEFAULT_FILENAME = "config.txt";
-
-    private final String configFileName;
-
-    private Map<String, Double> categories;
-
-    private int maxProducts;
-    private int maxProductPerTicket;
 
     public Config()
     {
@@ -54,14 +46,14 @@ public class Config {
         return maxProducts;
     }
 
-    private void setMaxProducts(int value)
-    {
-        maxProducts = value;
-    }
-
     public int getMaxProductPerTicket()
     {
         return maxProductPerTicket;
+    }
+
+    private void setMaxProducts(int value)
+    {
+        maxProducts = value;
     }
 
     private void setMaxProductPerTicket(int value)
@@ -75,8 +67,9 @@ public class Config {
         {
             VariableLoader variableLoader = new VariableLoader(this);
 
-            System.err.printf("LOG::Config> Loading application variables...\n");
+            System.err.printf("LOG::Config> Loading application variables ...\n");
             variableLoader.loadVariables(scanner);
+            System.err.printf("LOG::Config> Application variables loading completed\n");
             System.err.printf("LOG::Config> Loading categories and its discounts ...\n");
 //            loadCategories(scanner);
         }
@@ -84,14 +77,16 @@ public class Config {
         {
             System.out.printf("Configuration load failure: missing %s file in %s\n", configFilePath);
         }
+        catch (RuntimeException exception)
+        {
+            System.out.printf("Configuration load failed\n", configFilePath);
+        }
 
     }
 
     private class VariableLoader {
-        private final Config config;
-        public Map<String, VariableEntry> variables = new HashMap<>();
 
-        VariableLoader(Config config)
+        public VariableLoader(Config config)
         {
             this.config = config;
             initVariableEntries();
@@ -100,17 +95,17 @@ public class Config {
         private void initVariableEntries()
         {
             variables.put(
-                    "MaxProducts",
+                    "MAX_PRODUCTS",
                     new VariableEntry(
-                            "MaxProducts",
+                            "MAX_PRODUCTS",
                             s -> config.setMaxProducts(Integer.parseInt(s)),
                             () -> String.valueOf(config.getMaxProducts())
                     )
             );
             variables.put(
-                    "MaxProductsPerTicket",
+                    "MAX_PRODUCTS_PER_TICKET",
                     new VariableEntry(
-                            "MaxProductsPerTicket",
+                            "MAX_PRODUCTS_PER_TICKET",
                             s -> config.setMaxProductPerTicket(Integer.parseInt(s)),
                             () -> String.valueOf(config.getMaxProductPerTicket())
                     )
@@ -144,6 +139,7 @@ public class Config {
             String value = getVariableValue(line);
             VariableEntry variable = variables.get(key);
             variable.setter.accept(value);
+            variable.loaded = true;
 
             System.err.printf("LOG::Config::VariableLoader> %s = %s", key, variable.getter.get());
         }
@@ -155,7 +151,7 @@ public class Config {
                 if (!variable.loaded)
                 {
                     throw new RuntimeException(
-                            String.format("Missing variable %s\n", variable.name.toUpperCase())
+                            String.format("Missing variable %s\n", variable.name)
                     );
                 }
             }
@@ -177,12 +173,24 @@ public class Config {
             public Supplier<String> getter;
             boolean loaded = false;
 
-            VariableEntry(String name, Consumer<String> setter, Supplier<String> getter)
+            public VariableEntry(String name, Consumer<String> setter, Supplier<String> getter)
             {
                 this.name = name;
                 this.setter = setter;
                 this.getter = getter;
             }
-        }
-    }
-}
+        } // class Variable Entry
+
+        private final Config config;
+        private Map<String, VariableEntry> variables = new HashMap<>();
+    } // class VariableLoader
+
+    private static final String CONFIG_DEFAULT_FILENAME = "config.txt";
+
+    private final String configFileName;
+
+    private Map<String, Double> categories;
+
+    private int maxProducts;
+    private int maxProductPerTicket;
+} // class Config
