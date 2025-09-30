@@ -4,7 +4,7 @@ package es.upm.etsisi.poo;
  * This class is used to create objects with the characteristics we need for our products
  */
 public class Product {
-    private Category category;
+    private String category;
     private int id;
     private String name;
     private int price;
