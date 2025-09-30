@@ -16,7 +16,7 @@ public class Product {
      * @param name The name of the product
      * @param price The price of the product
      */
-    public Product(Category category, int id, String name, int price) {
+    public Product(String category, int id, String name, int price) {
         this.category = category;
         this.id = id;
         this.name = name;
@@ -29,8 +29,8 @@ public class Product {
     public void setName(String name) { this.name = name; }
     public int getPrice() { return this.price; }
     public void setPrice(int price) { this.price = price; }
-    public Category getCategory() { return this.category; }
-    public void setCategory(Category category) { this.category = category; }
+    public String getCategory() { return this.category; }
+    public void setCategory(String category) { this.category = category; }
 
     /**
      * Compares this product to another with the ID
@@ -41,6 +41,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category+", price:"+this.price+"}";
+        return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category.toUpperCase()+
+                ", price:"+this.price+"}";
     }
 }
