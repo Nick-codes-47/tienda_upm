@@ -27,10 +27,11 @@ public class App
      * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog
      * @param id to search the product
      * @param field to know which field of the product needs to be changed
-     * @param value the vnew value of the field
+     * @param value the new value of the field
      * @return -1 if the product doesn't exist in the catalog.
-     *          1 if the product exists but the field doesn't
      *          0 if the field was changed correctly
+     *          1 if the product exists but the field doesn't
+     *          2 if we don't have permission to change the field (ID)
      */
     public int updateProduct(int id, String field, String value) {
         Product product = products.get(id);
@@ -39,12 +40,13 @@ public class App
             // We try to get the product's field to be modified
             try {
                 Field f = Product.class.getDeclaredField(field);
-                f.setAccessible(true);
+                // We don't give the option to change the id
+                if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
                 f.set(product, value);
             } catch (NoSuchFieldException e) {
                 return 1; // if field doesn't exist we return 1
             } catch (IllegalAccessException e) {
-                return 2; //
+                return 2; // if we try to modify the ID
             }
         }
     }
