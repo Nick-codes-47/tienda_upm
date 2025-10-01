@@ -10,4 +10,6 @@ public class Config {
     }
 
     public int getMaxProductsPerTicket() { return 200; }
+
+    public int getMaxProducts() { return 200; }
 }
