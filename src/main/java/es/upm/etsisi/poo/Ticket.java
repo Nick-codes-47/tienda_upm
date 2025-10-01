@@ -40,9 +40,30 @@ public class Ticket {
         }
     }
 
-    public int deleteProdouct (int id){
-        return -1;
+    /**
+     * Removes a product from the ticket by its id.
+     * @param id The id of the product to remove.
+     * @return
+     *      0 if the product was found and removed successfully,
+     *     -1 if no product with the given id exists in the ticket.
+     */
+    public int deleteProduct(int id) {
+        Product productToRemove = null;
+        for (Product p : ticket.keySet()) {
+            if (p.getId() == id) {
+                productToRemove = p;
+                break;
+            }
+        }
+
+        if (productToRemove != null) {
+            ticket.remove(productToRemove);
+            return 0; // found
+        }
+        return -1; // not found
     }
+
+
     public int updateProduct (Product product){
         return -1;
     }
