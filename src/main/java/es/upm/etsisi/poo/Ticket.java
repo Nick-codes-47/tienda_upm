@@ -63,7 +63,7 @@ public class Ticket {
         return -1; // not found
     }
 
-
+    // Dejar para el final, preguntar
     public int updateProduct (Product product){
         return -1;
     }
@@ -71,7 +71,24 @@ public class Ticket {
         return -1;
     }
 
+    /**
+     * Clears the current ticket and creates a new empty one.
+     */
+    public void resetTicket() {
+        this.ticket = new HashMap<>();
+        this.categories = new HashMap<>();
+    }
 
+
+    /**
+     * Builds a string representation of the ticket.
+     * <p>
+     * The string includes the list of products with their details,
+     * applied discounts by category when applicable,
+     * and a summary with total price, total discount, and final price.
+     *
+     * @return A formatted string representation of the ticket and its summary.
+     */
     public String toString() {
         String str = "";
         double totalPrice = 0;
