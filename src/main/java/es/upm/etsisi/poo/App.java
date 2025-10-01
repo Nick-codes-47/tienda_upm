@@ -56,7 +56,7 @@ public class App
     }
 
     /**
-     * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog
+     * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog and the ticket
      * @param id to search the product
      * @param field to know which field of the product needs to be changed
      * @param value the new value of the field
@@ -86,5 +86,15 @@ public class App
                 return 2; // Mainly if we try to modify the ID
             }
         }
+    }
+
+    /**
+     * Method to delete a product from the catalog and the ticket
+     * @param id to search the product
+     * @return  -1 if the product doesn't exist
+     *          0 if we could delete the product
+     */
+    public int deleteProduct(int id) {
+        return 0;
     }
 }
