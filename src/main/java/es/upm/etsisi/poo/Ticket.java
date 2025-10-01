@@ -7,35 +7,37 @@ import java.util.Map;
 public class Ticket {
     private HashMap<Product, Integer> ticket;
     private HashMap<String, Integer> categories;
+    private int numMaxElements;
 
     public Ticket (Config config) {
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-
+        numMaxElements = config.getNumMaxElementos();
     }
 
     /**
      * Method to add products to ticket
      * @param product
-     * @param amount
-     * @return -1 if product is not added, 0 if product is added
+     * @param quantity
+     * @return
+     *      Return -1 if the number of products in the ticket is already maximum products
+     *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
+     *      Return 0 if product can be added
      */
-    public int addProduct (Product product, int amount){
-        if (ticket.size() >= config.getNumMaxElementos()){
-            // Product cannot be added due to override
-            System.err.println("Too many products in ticket");
+    public int addProduct (Product product, int quantity){
+        if (ticket.size() >= numMaxElements){
+            // Product cannot be added due to maximum products already
             return -1;
         }
-
+        else if (ticket.size() + quantity > numMaxElements){
+            return -2;
+        }
         else {
             // Product can be added
-            ticket.put(product, amount);
+            ticket.put(product, quantity);
             System.out.println(ticket.toString());
-
-            System.out.println("Ticket add: ok");
-
+            return 0;
         }
-        return -1;
     }
 
     public int deleteProdouct (int id){
@@ -61,8 +63,8 @@ public class Ticket {
             str += producto.toString();
             totalPrice += producto.getPrice() * cantidad;
 
-            if (categories.get(producto.getCategory()) > 1) {
-                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory()));
+            if (categories.get(producto.getCategory().toString()) > 1) {
+                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory().toString()));
                 str += "**discount -" + discount;
                 totalDiscount += discount;
             }
