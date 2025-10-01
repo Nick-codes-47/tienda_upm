@@ -45,11 +45,13 @@ public class App
                 if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
                     f.set(product, Double.parseDouble(value));
                 } else { f.set(product, value); }
-                return 0;
+                // We update the product in the ticket also
+                currentTicket.updateProduct(product);
+                return 0; // if everything went well
             } catch (NoSuchFieldException e) {
                 return 1; // if field doesn't exist we return 1
             } catch (IllegalAccessException e) {
-                return 2; // if we try to modify the ID
+                return 2; // Mainly if we try to modify the ID
             }
         }
     }
