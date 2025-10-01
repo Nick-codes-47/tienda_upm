@@ -42,7 +42,10 @@ public class App
                 Field f = Product.class.getDeclaredField(field);
                 // We don't give the option to change the id
                 if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
-                f.set(product, value);
+                if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
+                    f.set(product, Double.parseDouble(value));
+                } else { f.set(product, value); }
+                return 0;
             } catch (NoSuchFieldException e) {
                 return 1; // if field doesn't exist we return 1
             } catch (IllegalAccessException e) {
