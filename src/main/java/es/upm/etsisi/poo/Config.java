@@ -62,6 +62,7 @@ public class Config {
     }
 
     private void loadConfigFile(String configFilePath)
+            throws RuntimeException // TODO ConfigException?
     {
         try (Scanner scanner = new Scanner(new File(configFilePath)))
         {
@@ -75,13 +76,8 @@ public class Config {
         }
         catch (FileNotFoundException exception)
         {
-            System.out.printf("Configuration load failure: missing %s file in %s\n", configFilePath);
+            throw new RuntimeException(String.format("Missing config file: %s\n", configFilePath));
         }
-        catch (RuntimeException exception)
-        {
-            System.out.printf("Configuration load failed\n", configFilePath);
-        }
-
     }
 
     private class VariableLoader {
@@ -113,6 +109,7 @@ public class Config {
         }
 
         public void loadVariables(Scanner scanner)
+                throws RuntimeException // TODO Config exception?
         {
             try
             {
@@ -127,13 +124,15 @@ public class Config {
             }
             catch (IndexOutOfBoundsException exception)
             {
-                System.err.printf("ERROR::Config::VariableLoader> Syntax error in config file: expecting '=' after variable name\n");
+                System.err.printf("ERROR::Config::VariableLoader> Syntax error in config file: expecting '=' " +
+                        "after variable name\n");
             }
 
             checkLoadedVariables(variables);
         }
 
         private void loadVariable(String line)
+                throws IndexOutOfBoundsException
         {
             String key = getVariableKey(line);
             String value = getVariableValue(line);
@@ -145,6 +144,7 @@ public class Config {
         }
 
         private void checkLoadedVariables(Map<String, VariableEntry> variables)
+                throws RuntimeException // TODO ConfigExtension?
         {
             for (VariableEntry variable : variables.values())
             {
@@ -158,11 +158,13 @@ public class Config {
         }
 
         private String getVariableKey(String line)
+                throws IndexOutOfBoundsException
         {
             return line.substring(0, line.indexOf('='));
         }
 
         private String getVariableValue(String line)
+                throws IndexOutOfBoundsException
         {
             return line.substring(line.indexOf('=') + 1);
         }

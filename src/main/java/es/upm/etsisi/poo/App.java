@@ -13,6 +13,11 @@ public class App
         loadConfig(args);
     }
 
+    public void init()
+    {
+        // TODO
+    }
+
     private void loadConfig(String[] args)
     {
         if (args.length > 1)
@@ -29,8 +34,15 @@ public class App
      * @param args
      *      args[1] - config file path
      */
-    public static void main(String[] args)
-    {
-        App app = new App(args);
+    public static void main(String[] args) {
+        try
+        {
+            App app = new App(args);
+            app.init();
+        }
+        catch (RuntimeException exception) // TODO create AppException?
+        {
+            System.err.printf("ERROR::main> " + exception);
+        }
     }
 }
