@@ -13,8 +13,8 @@ public class Ticket {
     public Ticket (Config config) {
         this.config = config;
         this.ticket = new HashMap<>();
-        this.categories = new HashMap<>();
-        //this.numMaxElements = config.getNumMaxElementos();
+        this.categories = config.getCategories();
+        this.numMaxElements = config.getNumMaxElementos();
     }
 
     /**
@@ -44,26 +44,19 @@ public class Ticket {
 
     /**
      * Removes a product from the ticket by its id.
-     * @param id The id of the product to remove.
+     * @param productToDelete The product to remove.
      * @return
      *      0 if the product was found and removed successfully,
-     *     -1 if no product with the given id exists in the ticket.
+     *     -1 if the product does not exist in the ticket.
      */
-    public int deleteProduct(int id) {
-        Product productToRemove = null;
-        for (Product p : ticket.keySet()) {
-            if (p.getId() == id) {
-                productToRemove = p;
-                break;
-            }
+    public int deleteProduct(Product productToDelete) {
+        if (ticket.containsKey(productToDelete)) {
+            ticket.remove(productToDelete);
+            return 0; // Product deleted
         }
-
-        if (productToRemove != null) {
-            ticket.remove(productToRemove);
-            return 0; // found
-        }
-        return -1; // not found
+        return -1; // Product not found
     }
+
 
     /**
      * Updates the details of a product in the ticket while keeping its existing quantity.
@@ -74,28 +67,14 @@ public class Ticket {
      *     -1 if the product does not exist in the ticket.
      */
     public int updateProduct(Product updatedProduct) {
-        Product existingProduct = null;
-
-        // Search product by its id
-        for (Product p : ticket.keySet()) {
-            if (p.getId() == updatedProduct.getId()) {
-                existingProduct = p;
-                break;
-            }
+        if (ticket.containsKey(updatedProduct)) {
+            int quantity = ticket.get(updatedProduct);
+            ticket.put(updatedProduct, quantity); // Override product keeping quantity
+            return 0;
         }
-
-        if (existingProduct != null) {
-            // Keep the quantity
-            int quantity = ticket.get(existingProduct);
-
-            // Remove the old product and add the new one with the same quantity of it
-            ticket.remove(existingProduct);
-            ticket.put(updatedProduct, quantity);
-            return 0; // updated successfully
-        }
-
-        return -1; // not found
+        return -1; // Product not found
     }
+
 
 
     /**
