@@ -24,6 +24,38 @@ public class App
     }
 
     /**
+     * Method to add a product to the catalog so it is available to buy it
+     * @param id to have an identification for the product
+     * @param name name of the product
+     * @param category category of the product
+     * @param price price of the product
+     * @return  -2 if we already reached the maxProducts
+     *          -1 if the id already exists
+     *          0 if the product was added to the catalog without problem
+     *          1 if the category doesn't exist
+     */
+    public int addProduct(int id, String name, String category, double price) {
+        // We check if we reached the maxProducts
+        if (products.size() >= config.getMaxProducts()) {
+            System.out.println("You reached the maximum number of products!");
+            return -2;
+        }
+        // We check if there already is a product with the same id
+        if (products.containsKey(id)) {
+            System.out.println("Product's id already exists");
+            return -1;
+        }
+        // If the id doesn't exist we check if the category is valid
+        if (!config.validCategory(category)) {
+            System.out.println("Invalid category!");
+            return 1;
+        }
+        // If everything went well we add the product
+        products.put(id, new Product(category, id, name, price));
+        return 0;
+    }
+
+    /**
      * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog
      * @param id to search the product
      * @param field to know which field of the product needs to be changed
