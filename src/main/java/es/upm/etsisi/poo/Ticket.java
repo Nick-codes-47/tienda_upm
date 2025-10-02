@@ -23,7 +23,7 @@ public class Ticket {
             System.out.println("{Class: Product, id: " + product.getId() +
                     ", name:'" + product.getName() +
                     "', category: " + product.getCategory() +
-                    ", price:" + product.getPrize() + "}");
+                    ", price:" + product.getPrice() + "}");
 
         }
         return -1;
@@ -43,5 +43,10 @@ public class Ticket {
             str += ticket.get(i).getName() + ": " + ticket.get(i).getPrize() + "€\n";
         }
         return str;
+    }
+
+    public void resetTicket() {
+        this.ticket =  new ArrayList<>();
+        this.numMaxElementos = 200;
     }
 }
