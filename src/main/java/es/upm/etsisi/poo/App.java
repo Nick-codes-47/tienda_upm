@@ -95,6 +95,10 @@ public class App
      *          0 if we could delete the product
      */
     public int deleteProduct(int id) {
+        if (!products.containsKey(id)) { return -1; }
+        // If the product exist in the catalog we delete it from it and from the ticket
+        products.remove(id);
+        currentTicket.deleteProduct(id);
         return 0;
     }
 }
