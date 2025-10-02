@@ -82,10 +82,14 @@ public class App
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
                 f.set(product, Double.parseDouble(value));
             } else { f.set(product, value); }
-            // We update the product in the ticket also
-            currentTicket.updateProduct(product);
             // We print the product with the new value for the field
             System.out.println(product);
+            // We update the product in the ticket also
+            if (currentTicket.updateProduct(product) == 0) {
+                // if there was a change in the ticket we show it
+                System.out.println("The ticket was also updated!");
+                this.printTicket();
+            }
             return 0; // if everything went well
         } catch (NoSuchFieldException e) {
             System.out.println("Field not valid!");
@@ -107,9 +111,43 @@ public class App
             System.out.println("Product with id " + id + " does not exist!");
             return -1;
         }
-        // If the product exist in the catalog we delete it from it and from the ticket
+        // If the product exist in the catalog we print it and delete it
+        System.out.println(products.get(id).toString());
         products.remove(id);
-        currentTicket.deleteProduct(id);
+        // If the product was in the ticket we also delete it from there and show the change
+        if  (currentTicket.deleteProduct(id) == 0) {
+            System.out.println("The ticket was also updated!");
+            this.printTicket();
+        }
         return 0;
+    }
+
+    /**
+     * Resets the ticket so it has 0 products
+     */
+    public void resetTicket() {
+        currentTicket = new Ticket(config);
+    }
+
+    /**
+     * This method prints all the commands with its parameters
+     */
+    public void help() {
+        System.out.println("Commands:\n" +
+                " prod add <id> \"<name>\" <category> <price>\n" +
+                " prod list\n" +
+                " prod update <id> NAME|CATEGORY|PRICE <value>\n" +
+                " prod remove <id>\n" +
+                " ticket new\n" +
+                " ticket add <prodId> <quantity>\n" +
+                " ticket remove <prodId>\n" +
+                " ticket print\n" +
+                " echo \"<texto>\"\n" +
+                " help\n" +
+                " exit");
+    }
+
+    public void exit() {
+        System.exit(0);
     }
 }
