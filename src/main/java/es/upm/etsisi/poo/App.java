@@ -12,10 +12,16 @@ public class App
     public static void main( String[] args ) {
     }
 
+    /**
+     * Method that prints the current Ticket with the products and price
+     */
     public void printTicket() {
         System.out.println(currentTicket.toString());
     }
 
+    /**
+     * Method that prints the catalog of products
+     */
     public void printProdList() {
         System.out.println("Catalog: ");
         for (Product product : products.values()) {
@@ -126,7 +132,7 @@ public class App
      * Resets the ticket so it has 0 products
      */
     public void resetTicket() {
-        currentTicket = new Ticket(config);
+        currentTicket.resetTicket();
     }
 
     /**
@@ -147,6 +153,9 @@ public class App
                 " exit");
     }
 
+    /**
+     * Method to exit the program's execution
+     */
     public void exit() {
         System.exit(0);
     }
