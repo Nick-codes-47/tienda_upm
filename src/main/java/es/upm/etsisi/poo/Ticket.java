@@ -28,7 +28,7 @@ public class Ticket {
         }
         return -1;
     }
-    public int deleteProdouct (int id){
+    public int deleteProduct(int id){
         return -1;
     }
     public int updateProduct (Product product){
