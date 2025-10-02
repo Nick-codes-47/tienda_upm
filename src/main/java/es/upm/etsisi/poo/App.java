@@ -51,7 +51,9 @@ public class App
             return 1;
         }
         // If everything went well we add the product
-        products.put(id, new Product(category, id, name, price));
+        Product newProduct = new Product(category, id, name, price);
+        products.put(id, newProduct);
+        System.out.println(newProduct);
         return 0;
     }
 
@@ -67,24 +69,30 @@ public class App
      */
     public int updateProduct(int id, String field, String value) {
         Product product = products.get(id);
-        if (product == null) { return -1; }
-        else {
-            // We try to get the product's field to be modified
-            try {
-                Field f = Product.class.getDeclaredField(field);
-                // We don't give the option to change the id
-                if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
-                if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
-                    f.set(product, Double.parseDouble(value));
-                } else { f.set(product, value); }
-                // We update the product in the ticket also
-                currentTicket.updateProduct(product);
-                return 0; // if everything went well
-            } catch (NoSuchFieldException e) {
-                return 1; // if field doesn't exist we return 1
-            } catch (IllegalAccessException e) {
-                return 2; // Mainly if we try to modify the ID
-            }
+        if (product == null) {
+            System.out.println("Product with id " + id + " does not exist!");
+            return -1;
+        }
+        // We try to get the product's field to be modified
+        try {
+            Field f = Product.class.getDeclaredField(field);
+            // We don't give the option to change the id
+            if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
+            // We check if we have to change the price to parse
+            if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
+                f.set(product, Double.parseDouble(value));
+            } else { f.set(product, value); }
+            // We update the product in the ticket also
+            currentTicket.updateProduct(product);
+            // We print the product with the new value for the field
+            System.out.println(product);
+            return 0; // if everything went well
+        } catch (NoSuchFieldException e) {
+            System.out.println("Field not valid!");
+            return 1; // if field doesn't exist we return 1
+        } catch (IllegalAccessException e) {
+            System.out.println("Illegal access! (You can't modify the id)");
+            return 2; // Mainly if we try to modify the ID
         }
     }
 
@@ -95,7 +103,10 @@ public class App
      *          0 if we could delete the product
      */
     public int deleteProduct(int id) {
-        if (!products.containsKey(id)) { return -1; }
+        if (!products.containsKey(id)) {
+            System.out.println("Product with id " + id + " does not exist!");
+            return -1;
+        }
         // If the product exist in the catalog we delete it from it and from the ticket
         products.remove(id);
         currentTicket.deleteProduct(id);
