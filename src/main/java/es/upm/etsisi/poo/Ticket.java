@@ -14,7 +14,7 @@ public class Ticket {
         this.config = config;
         this.ticket = new HashMap<>();
         this.categories = config.getCategories();
-        this.numMaxElements = config.getNumMaxElementos();
+        this.numMaxElements = config.getMaxProductPerTicket();
     }
 
     /**
