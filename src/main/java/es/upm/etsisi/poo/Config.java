@@ -16,12 +16,12 @@ public class Config {
         this(System.getProperty("user.dir") + CONFIG_DEFAULT_FILENAME);
     }
 
-    public Config(String configFileName)
+    public Config(String configFilePath)
     {
-        this.configFileName = configFileName;
+        this.configFilePath = configFilePath;
 
-        System.err.printf("LOG::Config> Loading config from file %s\n", configFileName);
-        loadConfigFile(configFileName);
+        System.err.printf("LOG::Config> Loading config from %s\n", configFilePath);
+        loadConfig();
     }
 
     public boolean validCategory(String category)
@@ -61,27 +61,49 @@ public class Config {
         maxProductPerTicket = value;
     }
 
-    private void loadConfigFile(String configFilePath)
+    private void loadConfig()
+            throws RuntimeException // TODO ConfigException?
     {
         try (Scanner scanner = new Scanner(new File(configFilePath)))
         {
             VariableLoader variableLoader = new VariableLoader(this);
 
-            System.err.printf("LOG::Config> Loading application variables ...\n");
+            System.err.print("LOG::Config> Loading application config variables ... ");
             variableLoader.loadVariables(scanner);
-            System.err.printf("LOG::Config> Application variables loading completed\n");
-            System.err.printf("LOG::Config> Loading categories and its discounts ...\n");
-//            loadCategories(scanner);
+            System.err.print("completed\n");
+            System.err.print("LOG::Config> Loading categories and its discounts ... ");
+            loadCategories(scanner);
+            System.err.print("completed\n");
         }
         catch (FileNotFoundException exception)
         {
-            System.out.printf("Configuration load failure: missing %s file in %s\n", configFilePath);
+            throw new RuntimeException(String.format("Missing config file: %s\n", configFilePath));
         }
-        catch (RuntimeException exception)
-        {
-            System.out.printf("Configuration load failed\n", configFilePath);
-        }
+    }
 
+    private void loadCategories(Scanner scanner)
+            throws RuntimeException // TODO ConfigException?
+    {
+        while (scanner.hasNext())
+        {
+            loadCategory(scanner.nextLine());
+        }
+    }
+
+    private void loadCategory(String line)
+            throws RuntimeException // TODO ConfigException?
+    {
+        try
+        {
+            int indexOfSeparator = line.indexOf('=');
+            String category = line.substring(0, indexOfSeparator);
+            Double discount = new Double(line.substring(indexOfSeparator + 1));
+            categories.put(category, discount);
+        }
+        catch (IndexOutOfBoundsException | NumberFormatException exception)
+        {
+            throw new RuntimeException("Incorrect syntax for category line, expected: CATEGORY_NAME=(double)\n");
+        }
     }
 
     private class VariableLoader {
@@ -113,6 +135,7 @@ public class Config {
         }
 
         public void loadVariables(Scanner scanner)
+                throws RuntimeException // TODO Config exception?
         {
             try
             {
@@ -123,28 +146,38 @@ public class Config {
             }
             catch (NoSuchElementException exception)
             {
-                System.err.printf("ERROR::Config::VariableLoader> Missing variables in config file\n");
+                System.err.print("ERROR::Config::VariableLoader> Missing variables in config file\n");
             }
             catch (IndexOutOfBoundsException exception)
             {
-                System.err.printf("ERROR::Config::VariableLoader> Syntax error in config file: expecting '=' after variable name\n");
+                System.err.print("ERROR::Config::VariableLoader> Syntax error in config file: expecting '=' " +
+                        "after variable name\n");
             }
 
             checkLoadedVariables(variables);
         }
 
         private void loadVariable(String line)
+                throws IndexOutOfBoundsException
         {
-            String key = getVariableKey(line);
-            String value = getVariableValue(line);
+            String key = line.substring(0, line.indexOf('='));
+            String value = line.substring(line.indexOf('=') + 1);
             VariableEntry variable = variables.get(key);
-            variable.setter.accept(value);
-            variable.loaded = true;
+            if (variable != null)
+            {
+                variable.setter.accept(value);
+                variable.loaded = true;
 
-            System.err.printf("LOG::Config::VariableLoader> %s = %s", key, variable.getter.get());
+                System.err.printf("LOG::Config::VariableLoader> %s = %s", key, variable.getter.get());
+            }
+            else
+            {
+                System.err.printf("WARNING::Config::VariableLoader> %s variable does not exist\n", key);
+            }
         }
 
         private void checkLoadedVariables(Map<String, VariableEntry> variables)
+                throws RuntimeException // TODO ConfigExtension?
         {
             for (VariableEntry variable : variables.values())
             {
@@ -155,16 +188,6 @@ public class Config {
                     );
                 }
             }
-        }
-
-        private String getVariableKey(String line)
-        {
-            return line.substring(0, line.indexOf('='));
-        }
-
-        private String getVariableValue(String line)
-        {
-            return line.substring(line.indexOf('=') + 1);
         }
 
         private class VariableEntry {
@@ -182,14 +205,14 @@ public class Config {
         } // class Variable Entry
 
         private final Config config;
-        private Map<String, VariableEntry> variables = new HashMap<>();
+        private final Map<String, VariableEntry> variables = new HashMap<>();
     } // class VariableLoader
 
     private static final String CONFIG_DEFAULT_FILENAME = "config.txt";
 
-    private final String configFileName;
+    private final String configFilePath;
 
-    private Map<String, Double> categories;
+    private final Map<String, Double> categories = new HashMap<>();
 
     private int maxProducts;
     private int maxProductPerTicket;
