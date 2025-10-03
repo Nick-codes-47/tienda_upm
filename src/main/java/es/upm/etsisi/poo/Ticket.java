@@ -1,47 +1,124 @@
 package es.upm.etsisi.poo;
 
 import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Map;
 
 public class Ticket {
-    ArrayList<Product> ticket;
-    int numMaxElementos;
+    private Config config;
+    private HashMap<Product, Integer> ticket;
+    private HashMap<String, Integer> categories;
+    private int numMaxElements;
 
-    Ticket (Config config) {
-        this.ticket = new ArrayList<>();
-        this.numMaxElementos = config.getNumMaxElementos();
+    public Ticket (Config config) {
+        this.config = config;
+        this.ticket = new HashMap<>();
+        this.categories = config.getCategories();
+        this.numMaxElements = config.getNumMaxElementos();
     }
 
-    public int addProduct (Product product, int amount){
-        if (ticket.size() >= 100){
-            System.out.println("Too many products");
+    /**
+     * Method to add products to ticket
+     * @param product
+     * @param quantity
+     * @return
+     *      Return -1 if the number of products in the ticket is already maximum products
+     *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
+     *      Return 0 if product can be added
+     */
+    public int addProduct (Product product, int quantity){
+        if (ticket.size() >= numMaxElements){
+            // Product cannot be added due to maximum products already
             return -1;
         }
-
-        else {
-            // El producto puede introducirse
-            ticket.add(product);
-            System.out.println("{Class: Product, id: " + product.getId() +
-                    ", name:'" + product.getName() +
-                    "', category: " + product.getCategory() +
-                    ", price:" + product.getPrize() + "}");
-
+        else if (ticket.size() + quantity > numMaxElements){
+            return -2;
         }
-        return -1;
+        else {
+            // Product can be added
+            ticket.put(product, quantity);
+            System.out.println(ticket);
+            return 0;
+        }
     }
-    public int deleteProdouct (int id){
-        return -1;
+
+    /**
+     * Removes a product from the ticket by its id.
+     * @param productToDelete The product to remove.
+     * @return
+     *      0 if the product was found and removed successfully,
+     *     -1 if the product does not exist in the ticket.
+     */
+    public int deleteProduct(Product productToDelete) {
+        if (ticket.containsKey(productToDelete)) {
+            ticket.remove(productToDelete);
+            return 0; // Product deleted
+        }
+        return -1; // Product not found
     }
-    public int updateProduct (Product product){
-        return -1;
+
+
+    /**
+     * Updates the details of a product in the ticket while keeping its existing quantity.
+     *
+     * @param updatedProduct The product with updated information.
+     * @return
+     *      0 if the product was found and updated successfully,
+     *     -1 if the product does not exist in the ticket.
+     */
+    public int updateProduct(Product updatedProduct) {
+        if (ticket.containsKey(updatedProduct)) {
+            int quantity = ticket.get(updatedProduct);
+            ticket.put(updatedProduct, quantity); // Override product keeping quantity
+            return 0;
+        }
+        return -1; // Product not found
     }
-    public double getPrice() {
-        return -1;
+
+
+
+    /**
+     * Clears the current ticket and creates a new empty one.
+     */
+    public void resetTicket() {
+        this.ticket = new HashMap<>();
+        this.categories = new HashMap<>();
     }
+
+
+    /**
+     * Builds a string representation of the ticket.
+     * <p>
+     * The string includes the list of products with their details,
+     * applied discounts by category when applicable,
+     * and a summary with total price, total discount, and final price.
+     *
+     * @return A formatted string representation of the ticket and its summary.
+     */
     public String toString() {
         String str = "";
-        for (int i = 0; i < ticket.size(); i++) {
-            str += ticket.get(i).getName() + ": " + ticket.get(i).getPrize() + "€\n";
+        double totalPrice = 0;
+        double totalDiscount = 0;
+
+        for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
+            Product producto = entry.getKey();
+            Integer cantidad = entry.getValue();
+
+            str += producto.toString();
+            totalPrice += producto.getPrice() * cantidad;
+
+            if (categories.get(producto.getCategory().toString()) > 1) {
+                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory().toString()));
+                str += "**discount -" + discount;
+                totalDiscount += discount;
+            }
+            str += "\n";
         }
+
+        str += "\nTotal price: " + totalPrice;
+        str += "\nTotal discount: " + totalDiscount;
+        str += "\nFinal price: " + (totalPrice - totalDiscount);
+
         return str;
     }
 }
