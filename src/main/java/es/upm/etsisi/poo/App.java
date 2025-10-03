@@ -105,7 +105,7 @@ public class App
         // We try to get the product's field to be modified
         try {
             Field f = Product.class.getDeclaredField(field);
-            // We don't give the option to change the id
+            // We only permit changes on other fields than the id
             if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
             // We check if we have to change the price to parse
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
@@ -136,15 +136,17 @@ public class App
      *          0 if we could delete the product
      */
     public int deleteProduct(int id) {
-        if (!products.containsKey(id)) {
+        Product  product = products.get(id);
+        if (product == null) {
             System.out.println("Product with id " + id + " does not exist!");
             return -1;
         }
         // If the product exist in the catalog we print it and delete it
-        System.out.println(products.get(id).toString());
+        System.out.println("Deleting the product:\n"
+                +products.get(id).toString());
         products.remove(id);
         // If the product was in the ticket we also delete it from there and show the change
-        if  (currentTicket.deleteProduct(id) == 0) {
+        if  (currentTicket.deleteProduct(product) == 0) {
             System.out.println("The ticket was also updated!");
             this.printTicket();
         }
@@ -180,6 +182,8 @@ public class App
      * Method to exit the program's execution
      */
     public void exit() {
+        System.out.println("Closing Application.\n" +
+                "Goodbye!");
         System.exit(0);
     }
 }
