@@ -86,8 +86,9 @@ public class Ticket {
      *
      * @return A formatted string representation of the ticket and its summary.
      */
+    @Override
     public String toString() {
-        String str = "";
+        StringBuilder sb = new StringBuilder();
         double totalPrice = 0;
         double totalDiscount = 0;
 
@@ -96,21 +97,22 @@ public class Ticket {
             Integer quantity = entry.getValue();
             String category = product.getCategory().toString();
 
-            str += product.toString();
+            sb.append(product);
             totalPrice += product.getPrice() * quantity;
 
             if (categories.get(category) > 1) {
                 double discount = product.getPrice() - (product.getPrice() * config.getDiscount(category));
-                str += "**discount -" + discount;
+                sb.append(" **discount -").append(discount);
                 totalDiscount += discount;
             }
-            str += "\n";
+            sb.append("\n");
         }
 
-        str += "\nTotal price: " + totalPrice;
-        str += "\nTotal discount: " + totalDiscount;
-        str += "\nFinal price: " + (totalPrice - totalDiscount);
+        sb.append("\nTotal price: ").append(totalPrice);
+        sb.append("\nTotal discount: ").append(totalDiscount);
+        sb.append("\nFinal price: ").append(totalPrice - totalDiscount);
 
-        return str;
+        return sb.toString();
     }
+
 }
