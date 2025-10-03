@@ -34,10 +34,22 @@ public class Product {
 
     /**
      * Compares this product to another with the ID
-     * @param other (another)
+     * @param obj (another)
      * @return whether the IDs match
      */
-    public boolean equals(Product other) { return this.id == other.id; }
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) return true;
+        if (obj == null || getClass() != obj.getClass()) return false;
+        Product other = (Product) obj;
+        return this.id == other.id;
+    }
+
+    @Override
+    public int hashCode() {
+        return Integer.hashCode(id);
+    }
+
 
     @Override
     public String toString() {
