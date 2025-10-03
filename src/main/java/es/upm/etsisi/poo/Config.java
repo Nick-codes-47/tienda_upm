@@ -41,6 +41,11 @@ public class Config {
         return discount;
     }
 
+    public String[] getCategories()
+    {
+        return categories.keySet().toArray(new String[0]);
+    }
+
     public int getMaxProducts()
     {
         return maxProducts;

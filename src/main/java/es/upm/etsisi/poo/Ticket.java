@@ -13,8 +13,13 @@ public class Ticket {
     public Ticket (Config config) {
         this.config = config;
         this.ticket = new HashMap<>();
-        this.categories = config.getCategories();
-        this.numMaxElements = config.getNumMaxElementos();
+        this.categories = new HashMap<>();
+        this.numMaxElements = config.getMaxProductPerTicket();
+
+        for (String category : config.getCategories())
+        {
+            categories.put(category, 0);
+        }
     }
 
     /**
