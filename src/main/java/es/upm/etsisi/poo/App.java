@@ -1,13 +1,12 @@
 package es.upm.etsisi.poo;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
+import java.util.Scanner;
 
 public class App
 {
-    Ticket ticket;
-    HashMap<Integer, Product> products;
-    Config config;
+    public Config config;
 
     App(String[] args)
     {
@@ -16,12 +15,13 @@ public class App
 
     public void init()
     {
-        CommandParser commandParser = new CommandParser();
+        Scanner input = new Scanner(System.in);
         boolean exit = false;
 
         while (!exit)
         {
-            Command command = commandParser.nextCommand();
+            System.out.print(PROMPT);
+            Command command = nextCommand(input);
             switch (command.family) // Change to command map
             {
                 case "prod":
@@ -53,63 +53,64 @@ public class App
         }
     }
 
+    private Command nextCommand(Scanner input)
+    {
+        return new Command(input.nextLine().split("\\s+")); // using spaces without living empty Strings
+    }
+
     private void handdleProductOrder(Command command)
     {
-        int result;
-        switch (command.order)
+        int result = 0;
+
+        if (command.order != null) {
+            switch (command.order) {
+                case "add": {
+                    if (command.args.length == 4) {
+                        result = addProduct(
+                                Integer.parseInt(command.args[0]),
+                                command.args[1],
+                                command.args[2],
+                                Double.parseDouble(command.args[3])
+                        );
+                    } else {
+                        result = 1;
+                    }
+                    break;
+                }
+                case "update": {
+                    if (command.args.length == 3) {
+                        result = updateProduct(
+                                Integer.parseInt(command.args[0]),
+                                command.args[1],
+                                command.args[2]
+                        );
+                    } else {
+                        result = 1;
+                    }
+                    break;
+                }
+                case "remove": {
+                    if (command.args.length == 1) {
+                        result = deleteProduct(Integer.parseInt(command.args[0]));
+                    } else {
+                        result = 1;
+                    }
+                    break;
+                }
+                case "list": {
+                    printProdList();
+                    break;
+                }
+            }
+        }
+        else
         {
-            case "add":
-            {
-                if (command.args.length == 4) {
-                    result = addProduct(
-                            Integer.parseInt(command.args[0]),
-                            command.args[1],
-                            command.args[2],
-                            Double.parseDouble(command.args[3])
-                    );
-                }
-                else
-                {
-                    result = 1; // TODO print correct use
-                }
-                break;
-            }
-            case "update":
-            {
-                if (command.args.length == 3) {
-                    result = updateProduct(
-                            Integer.parseInt(command.args[0]),
-                            command.args[1],
-                            command.args[2]
-                    );
-                }
-                else
-                {
-                    result = 1; // TODO print correct use
-                }
-                break;
-            }
-            case "remove":
-            {
-                if (command.args.length == 1)
-                {
-                    result = deleteProduct(Integer.parseInt(command.args[0]));
-                }
-                else
-                {
-                    result = 1; // TODO print correct use
-                }
-                break;
-            }
-            case "list":
-            {
-                printProdList();
-                break;
-            }
-            default:
-            {
-                // TODO print options for prod command
-            }
+            result = 1;
+        }
+
+        if (result == 1)
+        {
+            // TODO print correct use
         }
     }
 
@@ -210,4 +211,27 @@ public class App
             System.err.printf("ERROR::main> " + exception);
         }
     }
-}
+
+    private class Command
+    {
+        public String family;
+        public String order;
+        public String[] args;
+
+        public Command(String[] tokens)
+        {
+            family = tokens[0];
+            if (tokens.length > 1)
+            {
+                order = tokens[1];
+                args = Arrays.copyOfRange(tokens, 2, tokens.length);
+            }
+
+            System.err.printf("LOG::Command> command line received: %s %s %s\n", family, order, Arrays.toString(args));
+        }
+    }
+
+    private Ticket ticket;
+    private HashMap<Integer, Product> products;
+    private static final String PROMPT = "tUPM> ";
+} // class App

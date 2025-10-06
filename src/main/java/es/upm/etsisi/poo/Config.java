@@ -13,7 +13,7 @@ public class Config {
 
     public Config()
     {
-        this(System.getProperty("user.dir") + CONFIG_DEFAULT_FILENAME);
+        this(System.getProperty("user.dir") + "/" + CONFIG_DEFAULT_FILENAME);
     }
 
     public Config(String configFilePath)
@@ -73,12 +73,12 @@ public class Config {
         {
             VariableLoader variableLoader = new VariableLoader(this);
 
-            System.err.print("LOG::Config> Loading application config variables ... ");
+            System.err.print("LOG::Config> Loading application config variables ... \n");
             variableLoader.loadVariables(scanner);
-            System.err.print("completed\n");
-            System.err.print("LOG::Config> Loading categories and its discounts ... ");
+            System.err.print("LOG::Config> Loading application config variables completed\n");
+            System.err.print("LOG::Config> Loading categories and its discounts ... \n");
             loadCategories(scanner);
-            System.err.print("completed\n");
+            System.err.print("LOG::Config> Loading categories and its discounts completed\n");
         }
         catch (FileNotFoundException exception)
         {
@@ -89,9 +89,12 @@ public class Config {
     private void loadCategories(Scanner scanner)
             throws RuntimeException // TODO ConfigException?
     {
-        while (scanner.hasNext())
-        {
-            loadCategory(scanner.nextLine());
+        while (scanner.hasNext()) {
+            String line = scanner.nextLine();
+            if (!line.isEmpty())
+            {
+                loadCategory(line);
+            }
         }
     }
 
@@ -173,7 +176,7 @@ public class Config {
                 variable.setter.accept(value);
                 variable.loaded = true;
 
-                System.err.printf("LOG::Config::VariableLoader> %s = %s", key, variable.getter.get());
+                System.err.printf("LOG::Config::VariableLoader> %s = %s\n", key, variable.getter.get());
             }
             else
             {
