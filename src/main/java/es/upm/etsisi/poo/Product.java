@@ -4,10 +4,10 @@ package es.upm.etsisi.poo;
  * This class is used to create objects with the characteristics we need for our products
  */
 public class Product {
-    private Category category;
+    private String category;
     private int id;
     private String name;
-    private int price;
+    private double price;
 
     /**
      * This constructor is done to introduce all the attributes the user wants for the product
@@ -16,7 +16,7 @@ public class Product {
      * @param name The name of the product
      * @param price The price of the product
      */
-    public Product(Category category, int id, String name, int price) {
+    public Product(String category, int id, String name, double price) {
         this.category = category;
         this.id = id;
         this.name = name;
@@ -27,10 +27,10 @@ public class Product {
     public void setId(int id) { this.id = id; }
     public String getName() { return this.name; }
     public void setName(String name) { this.name = name; }
-    public int getPrice() { return this.price; }
-    public void setPrice(int price) { this.price = price; }
-    public Category getCategory() { return this.category; }
-    public void setCategory(Category category) { this.category = category; }
+    public double getPrice() { return this.price; }
+    public void setPrice(double price) { this.price = price; }
+    public String getCategory() { return this.category; }
+    public void setCategory(String category) { this.category = category; }
 
     /**
      * Compares this product to another with the ID
@@ -53,6 +53,7 @@ public class Product {
 
     @Override
     public String toString() {
-        return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category+", price:"+this.price+"}";
+        return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category.toUpperCase()+
+                ", price:"+this.price+"}";
     }
 }
