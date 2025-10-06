@@ -3,13 +3,10 @@ package es.upm.etsisi.poo;
 import java.lang.reflect.Field;
 import java.util.HashMap;
 import java.util.Arrays;
-import java.util.HashMap;
 import java.util.Scanner;
 
 public class App
 {
-    Ticket currentTicket;
-    HashMap<Integer, Product> products;
     public Config config;
 
     App(String[] args)
@@ -30,12 +27,12 @@ public class App
             {
                 case "prod":
                 {
-                    handdleProductOrder(command); // TODO class ProductModule?
+                    handleProductOrder(command); // TODO class ProductModule?
                     break;
                 }
                 case "ticket":
                 {
-                    handdleTicketOrder(command); // TODO class TicketModule?
+                    handleTicketOrder(command); // TODO class TicketModule?
                     break;
                 }
                 case "help":
@@ -57,12 +54,28 @@ public class App
         }
     }
 
+    /**
+     * @param args
+     *      args[1] - config file path
+     */
+    public static void main(String[] args) {
+        try
+        {
+            App app = new App(args);
+            app.init();
+        }
+        catch (RuntimeException exception) // TODO create AppException?
+        {
+            System.err.printf("ERROR::main> " + exception);
+        }
+    }
+
     private Command nextCommand(Scanner input)
     {
         return new Command(input.nextLine().split("\\s+")); // using spaces without living empty Strings
     }
 
-    private void handdleProductOrder(Command command)
+    private void handleProductOrder(Command command)
     {
         int result = 0;
 
@@ -118,27 +131,7 @@ public class App
         }
     }
 
-    private int addProduct(int id, String name, String category, double price)
-    {
-        return 0;
-    }
-
-    private int updateProduct(int id, String field, String value)
-    {
-        return 0;
-    }
-
-    private int deleteProduct(int id)
-    {
-        return 0;
-    }
-
-    private void printProdList()
-    {
-
-    }
-
-    private void handdleTicketOrder(Command command)
+    private void handleTicketOrder(Command command)
     {
         switch (command.order)
         {
@@ -168,26 +161,6 @@ public class App
         }
     }
 
-    private void printTicket()
-    {
-
-    }
-
-    private void resetTicket()
-    {
-
-    }
-
-    private void help()
-    {
-
-    }
-
-    private void exit()
-    {
-
-    }
-
     private void loadConfig(String[] args)
     {
         if (args.length > 1)
@@ -201,32 +174,16 @@ public class App
     }
 
     /**
-     * @param args
-     *      args[1] - config file path
-     */
-    public static void main(String[] args) {
-        try
-        {
-            App app = new App(args);
-            app.init();
-        }
-        catch (RuntimeException exception) // TODO create AppException?
-        {
-            System.err.printf("ERROR::main> " + exception);
-        }
-    }
-
-    /**
      * Method that prints the current Ticket with the products and price
      */
-    public void printTicket() {
-        System.out.println(currentTicket.toString());
+    private void printTicket() {
+        System.out.println(ticket.toString());
     }
 
     /**
      * Method that prints the catalog of products
      */
-    public void printProdList() {
+    private void printProdList() {
         System.out.println("Catalog: ");
         for (Product product : products.values()) {
             System.out.println(" "+product.toString());
@@ -244,7 +201,7 @@ public class App
      *          0 if the product was added to the catalog without problem
      *          1 if the category doesn't exist
      */
-    public int addProduct(int id, String name, String category, double price) {
+    private int addProduct(int id, String name, String category, double price) {
         // We check if we reached the maxProducts
         if (products.size() >= config.getMaxProducts()) {
             System.out.println("You reached the maximum number of products!");
@@ -277,7 +234,7 @@ public class App
      *          1 if the product exists but the field doesn't
      *          2 if we don't have permission to change the field (ID)
      */
-    public int updateProduct(int id, String field, String value) {
+    private int updateProduct(int id, String field, String value) {
         Product product = products.get(id);
         if (product == null) {
             System.out.println("Product with id " + id + " does not exist!");
@@ -295,7 +252,7 @@ public class App
             // We print the product with the new value for the field
             System.out.println(product);
             // We update the product in the ticket also
-            if (currentTicket.updateProduct(product) == 0) {
+            if (ticket.updateProduct(product) == 0) {
                 // if there was a change in the ticket we show it
                 System.out.println("The ticket was also updated!");
                 this.printTicket();
@@ -316,7 +273,7 @@ public class App
      * @return  -1 if the product doesn't exist
      *          0 if we could delete the product
      */
-    public int deleteProduct(int id) {
+    private int deleteProduct(int id) {
         Product  product = products.get(id);
         if (product == null) {
             System.out.println("Product with id " + id + " does not exist!");
@@ -327,7 +284,7 @@ public class App
                 +products.get(id).toString());
         products.remove(id);
         // If the product was in the ticket we also delete it from there and show the change
-        if  (currentTicket.deleteProduct(product) == 0) {
+        if  (ticket.deleteProduct(product) == 0) {
             System.out.println("The ticket was also updated!");
             this.printTicket();
         }
@@ -337,8 +294,8 @@ public class App
     /**
      * Resets the ticket so it has 0 products
      */
-    public void resetTicket() {
-        currentTicket.resetTicket();
+    private void resetTicket() {
+        ticket.resetTicket();
     }
 
     /**
@@ -367,7 +324,6 @@ public class App
                 "Goodbye!");
         System.exit(0);
     }
-}
 
     private class Command
     {
