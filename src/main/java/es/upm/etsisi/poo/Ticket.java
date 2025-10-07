@@ -5,7 +5,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
-    private Config config;
+    private final Config config;
     private HashMap<Product, Integer> ticket;
     private HashMap<String, Integer> categories;
     private int numMaxElements;
@@ -82,7 +82,7 @@ public class Ticket {
      * <p>
      * The string includes the list of products with their details,
      * applied discounts by category when applicable,
-     * and a summary with total price, total discount, and final price.
+     * and a summary with total price, total discount and final price.
      *
      * @return A formatted string representation of the ticket and its summary.
      */
