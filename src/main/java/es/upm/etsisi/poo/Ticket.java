@@ -101,7 +101,7 @@ public class Ticket {
      * @return A formatted string representation of the ticket and its summary.
      */
     public String toString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         double totalPrice = 0;
         double totalDiscount = 0;
 
@@ -109,21 +109,21 @@ public class Ticket {
             Product producto = entry.getKey();
             Integer cantidad = entry.getValue();
 
-            str += producto.toString();
+            str.append(producto.toString());
             totalPrice += producto.getPrice() * cantidad;
 
-            if (categories.get(producto.getCategory().toString()) > 1) {
-                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory().toString()));
-                str += "**discount -" + discount;
+            if (categories.get(producto.getCategory()) > 1) {
+                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory()));
+                str.append("**discount -").append(discount);
                 totalDiscount += discount;
             }
-            str += "\n";
+            str.append("\n");
         }
 
-        str += "\nTotal price: " + totalPrice;
-        str += "\nTotal discount: " + totalDiscount;
-        str += "\nFinal price: " + (totalPrice - totalDiscount);
+        str.append("\nTotal price: ").append(totalPrice);
+        str.append("\nTotal discount: ").append(totalDiscount);
+        str.append("\nFinal price: ").append(totalPrice - totalDiscount);
 
-        return str;
+        return str.toString();
     }
 }
