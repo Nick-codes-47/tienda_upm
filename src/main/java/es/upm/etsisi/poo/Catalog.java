@@ -4,9 +4,9 @@ import java.lang.reflect.Field;
 import java.util.HashMap;
 
 public class Catalog {
-    private App app;
+    private final App app;
     private HashMap<Integer, Product> products;
-    private int maxProducts;
+    private final int maxProducts;
 
     public Catalog(App app) {
         this.app = app;
@@ -53,8 +53,8 @@ public class Catalog {
             System.out.println("Product's id already exists");
             return -1;
         }
-        // If the id doesn't exist we check if the category is valid
-        if (!config.validCategory(category)) {
+        // If the id does exist we check if the category is valid
+        if (!app.config.validCategory(category)) {
             System.out.println("Invalid category!");
             return 1;
         }
@@ -76,7 +76,7 @@ public class Catalog {
      *          2 if we don't have permission to change the field (ID)
      */
     private int updateProduct(int id, String field, String value) {
-        Product product = products.get(id);
+        Product product = this.getProduct(id);
         if (product == null) {
             System.out.println("Product with id " + id + " does not exist!");
             return -1;
@@ -84,7 +84,7 @@ public class Catalog {
         // We try to get the product's field to be modified
         try {
             Field f = Product.class.getDeclaredField(field);
-            // We only permit changes on other fields than the id
+            // We only permit changes on other fields different from the id
             if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
             // We check if we have to change the price to parse
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
@@ -92,12 +92,6 @@ public class Catalog {
             } else { f.set(product, value); }
             // We print the product with the new value for the field
             System.out.println(product);
-            // We update the product in the ticket also
-            if (ticket.updateProduct(product) == 0) {
-                // if there was a change in the ticket we show it
-                System.out.println("The ticket was also updated!");
-                this.printTicket();
-            }
             return 0; // if everything went well
         } catch (NoSuchFieldException e) {
             System.out.println("Field not valid!");
@@ -115,20 +109,15 @@ public class Catalog {
      *          0 if we could delete the product
      */
     private int deleteProduct(int id) {
-        Product  product = products.get(id);
+        Product product = this.getProduct(id);
         if (product == null) {
             System.out.println("Product with id " + id + " does not exist!");
             return -1;
         }
         // If the product exist in the catalog we print it and delete it
         System.out.println("Deleting the product:\n"
-                +products.get(id).toString());
+                +" "+product);
         products.remove(id);
-        // If the product was in the ticket we also delete it from there and show the change
-        if  (ticket.deleteProduct(product) == 0) {
-            System.out.println("The ticket was also updated!");
-            this.printTicket();
-        }
         return 0;
     }
 }
