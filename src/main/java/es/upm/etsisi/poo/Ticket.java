@@ -5,18 +5,19 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
-    private Config config;
+    private App app;
     private HashMap<Product, Integer> ticket;
     private HashMap<String, Integer> categories;
-    private final int numMaxElements;
+    private int numMaxElements;
 
-    public Ticket(Config config) {
-        this.config = config;
+    public Ticket (App app) {
+        this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.numMaxElements = config.getMaxProductPerTicket();
+        this.numMaxElements = app.config.getMaxProductPerTicket();
 
-        for (String category : config.getCategories()) {
+        for (String category : app.config.getCategories())
+        {
             categories.put(category, 0);
         }
     }
@@ -169,7 +170,7 @@ public class Ticket {
             totalPrice += producto.getPrice() * cantidad;
 
             if (categories.get(producto.getCategory()) > 1) {
-                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory()));
+                double discount = producto.getPrice() - (producto.getPrice() * app.config.getDiscount(producto.getCategory()));
                 str.append("**discount -").append(discount);
                 totalDiscount += discount;
             }
