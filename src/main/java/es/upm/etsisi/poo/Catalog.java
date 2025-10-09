@@ -21,61 +21,74 @@ public class Catalog {
     /**
      * Method to handle requests from the users that involve products and the catalog
      * @param request object request to know which method needs to be executed
-     * @return  -3 if an argument is invalid.
-     *          -2 if the command is invalid.
-     *          -1 if the number of arguments is invalid.
-     *          0 if all went well
      */
-    public int handleRequest (Request request) {
+    public void handleRequest(Request request) {
         String command = request.command;
         ArrayList<String> args = request.args;
+
         switch (command) {
             case "add": {
                 if (args.size() != 4) {
                     System.out.println("Not the required number of arguments");
-                    return -1; } // we need the exact attributes to create the product
+                    break;
+                }
                 try {
-                    return this.addProduct(Integer.parseInt(args.get(0)), args.get(1),
-                            args.get(2), Double.parseDouble(args.get(3))); // id, name, category, price
+                    this.addProduct(
+                            Integer.parseInt(args.get(0)), // id
+                            args.get(1),                   // name
+                            args.get(2),                   // category
+                            Double.parseDouble(args.get(3)) // price
+                    );
                 } catch (NumberFormatException e) {
                     System.out.println("id and/or price are not valid");
-                    return -3;
                 }
+                break;
             }
+
             case "list": {
                 this.printProdList();
-                return 0;
+                break;
             }
+
             case "update": {
                 if (args.size() != 3) {
                     System.out.println("Not the required number of arguments");
-                    return -1; } // we need the exact attributes to change the product
+                    break;
+                }
                 try {
-                    return this.updateProduct(Integer.parseInt(args.get(0)), args.get(1), args.get(2));
+                    this.updateProduct(
+                            Integer.parseInt(args.get(0)), // id
+                            args.get(1),                   // field
+                            args.get(2)                    // new value
+                    );
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
-                    return -3;
                 }
+                break;
             }
+
             case "remove": {
-                if  (args.size() != 1) {
+                if (args.size() != 1) {
                     System.out.println("Not the required number of arguments");
-                    return -1; } // we just need the id
+                    break;
+                }
                 try {
-                    // We also try to remove the product from the ticket
+                    this.deleteProduct(Integer.parseInt(args.get(0)));
+                    // We also delete it from the ticket
                     app.ticket.handleRequest(request);
-                    return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
-                    return -3;
                 }
+                break;
             }
+
             default: {
                 System.out.println("Invalid command");
-                return -2;
+                break;
             }
         }
     }
+
 
     /**
      * Method to search a product in the catalog
