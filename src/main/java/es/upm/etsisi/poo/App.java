@@ -39,6 +39,11 @@ public class App
         }
     }
 
+    public Product getProduct(int id)
+    {
+        return catalog.getProduct(id);
+    }
+
     /**
      * @param args
      *      args[1] - input file path
