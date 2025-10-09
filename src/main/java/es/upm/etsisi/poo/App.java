@@ -118,7 +118,7 @@ public class App
     }
 
     private Catalog catalog;
-    private Ticket ticket;
+    public Ticket ticket;
 
     private HashMap<String, Runnable> builtinCommands;
     private HashMap<String, Consumer<Request>> moduleHandlers;
