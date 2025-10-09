@@ -1,22 +1,88 @@
 package es.upm.etsisi.poo;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.HashMap;
 
+/**
+ * Class that implements a HashMap to store all the products available in the store
+ */
 public class Catalog {
     private final App app;
-    private HashMap<Integer, Product> products;
+    private final HashMap<Integer, Product> products;
     private final int maxProducts;
 
     public Catalog(App app) {
         this.app = app;
         this.maxProducts = app.config.getMaxProducts();
+        products = new HashMap<>();
     }
 
+    /**
+     * Method to handle requests from the users that involve products and the catalog
+     * @param request object request to know which method needs to be executed
+     * @return  -3 if an argument is invalid.
+     *          -2 if the command is invalid.
+     *          -1 if the number of arguments is invalid.
+     *          0 if all went well
+     */
     public int handleRequest (Request request) {
-        return 0;
+        String command = request.command;
+        ArrayList<String> args = request.args;
+        switch (command) {
+            case "add": {
+                if (args.size() != 4) {
+                    System.out.println("Not the required number of arguments");
+                    return -1; } // we need the exact attributes to create the product
+                try {
+                    return this.addProduct(Integer.parseInt(args.get(0)), args.get(1),
+                            args.get(2), Double.parseDouble(args.get(3))); // id, name, category, price
+                } catch (NumberFormatException e) {
+                    System.out.println("id and/or price are not valid");
+                    return -3;
+                }
+            }
+            case "list": {
+                this.printProdList();
+                return 0;
+            }
+            case "update": {
+                if (args.size() != 3) {
+                    System.out.println("Not the required number of arguments");
+                    return -1; } // we need the exact attributes to change the product
+                try {
+                    return this.updateProduct(Integer.parseInt(args.get(0)), args.get(1), args.get(2));
+                } catch (NumberFormatException e) {
+                    System.out.println("id is invalid");
+                    return -3;
+                }
+            }
+            case "remove": {
+                if  (args.size() != 1) {
+                    System.out.println("Not the required number of arguments");
+                    return -1; } // we just need the id
+                try {
+                    // We also try to remove the product from the ticket
+                    app.ticket.handleRequest(request);
+                    return this.deleteProduct(Integer.parseInt(args.get(0)));
+                } catch (NumberFormatException e) {
+                    System.out.println("id is invalid");
+                    return -3;
+                }
+            }
+            default: {
+                System.out.println("Invalid command");
+                return -2;
+            }
+        }
     }
 
+    /**
+     * Method to search a product in the catalog
+     * @param id id of the product to search it
+     * @return null if the id is not correct.
+     *         the product with the id if it's correct
+     */
     public Product getProduct(int id) {
         return products.get(id);
     }
@@ -25,9 +91,13 @@ public class Catalog {
      * Method that prints the catalog of products
      */
     private void printProdList() {
-        System.out.println("Catalog: ");
-        for (Product product : products.values()) {
-            System.out.println(" "+product.toString());
+        if (products.isEmpty()) {
+            System.out.println("There are no products in the catalog yet!");
+        } else {
+            System.out.println("Catalog: ");
+            for (Product product : products.values()) {
+                System.out.println(" " + product.toString());
+            }
         }
     }
 
