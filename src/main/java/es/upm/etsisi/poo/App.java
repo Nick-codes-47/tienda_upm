@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo;
 
 import java.util.HashMap;
+import java.util.Objects;
 import java.util.function.Consumer;
 
 public class App
@@ -32,7 +33,7 @@ public class App
                 moduleHandlers.get(request.family).accept(request);
             }
 
-            if (request.family == "exit")
+            if (Objects.equals(request.family, "exit"))
            {
                exit = true;
            }
