@@ -5,41 +5,92 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
-    private Config config;
+    private App app;
     private HashMap<Product, Integer> ticket;
     private HashMap<String, Integer> categories;
     private int numMaxElements;
 
-    public Ticket (Config config) {
-        this.config = config;
+    public Ticket (App app) {
+        this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.numMaxElements = config.getMaxProductPerTicket();
+        this.numMaxElements = app.config.getMaxProductPerTicket();
 
-        for (String category : config.getCategories())
+        for (String category : app.config.getCategories())
         {
             categories.put(category, 0);
         }
     }
 
     /**
+     * Handles a user request directed to the Ticket module.
+     * This method interprets the command and arguments contained in the given
+     * Request object and performs the corresponding action on the ticket.
+     * Supported commands:
+     *  - "new": resets the current ticket.
+     *  - "add": adds a product to the ticket (requires product ID and quantity).
+     *  - "remove": removes a product from the ticket (requires product ID).
+     *  - "print": prints the current ticket contents.
+     *
+     * @param request the request containing the command and its arguments.
+     * @return an integer status code:
+     *          0  -> operation completed successfully
+     *         -1  -> invalid command or missing arguments
+     *         other negative values -> specific errors returned by sub-methods
+     */
+
+    public int handleRequest(Request request) {
+        String command = request.command;
+        ArrayList<String> args = request.args;
+
+        switch (command) {
+            case "new":
+                resetTicket();
+                return 0;
+
+            case "add":
+                if (args.size() < 2) return -1; // necesita id y cantidad
+                int id = Integer.parseInt(args.get(0));
+                int quantity = Integer.parseInt(args.get(1));
+                Product product = app.getProduct(id);
+                return addProduct(product, quantity);
+
+            case "remove":
+                if (args.isEmpty()) return -1;
+                int removeId = Integer.parseInt(args.get(0));
+                Product productToRemove = app.getProduct(removeId);
+                return deleteProduct(productToRemove);
+
+            case "print":
+                printTicket();
+                return 0;
+
+            default:
+                System.out.println("Command not found: " + command);
+                return -1;
+        }
+    }
+
+    private void printTicket() {
+        System.out.println(ticket);
+    }
+
+    /**
      * Method to add products to ticket
+     *
      * @param product
      * @param quantity
-     * @return
-     *      Return -1 if the number of products in the ticket is already maximum products
-     *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
-     *      Return 0 if product can be added
+     * @return Return -1 if the number of products in the ticket is already maximum products
+     * Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
+     * Return 0 if product can be added
      */
-    public int addProduct (Product product, int quantity){
-        if (ticket.size() >= numMaxElements){
+    private int addProduct(Product product, int quantity) {
+        if (ticket.size() >= numMaxElements) {
             // Product cannot be added due to maximum products already
             return -1;
-        }
-        else if (ticket.size() + quantity > numMaxElements){
+        } else if (ticket.size() + quantity > numMaxElements) {
             return -2;
-        }
-        else {
+        } else {
             // Product can be added
             ticket.put(product, quantity);
             System.out.println(ticket);
@@ -49,12 +100,12 @@ public class Ticket {
 
     /**
      * Removes a product from the ticket by its id.
+     *
      * @param productToDelete The product to remove.
-     * @return
-     *      0 if the product was found and removed successfully,
-     *     -1 if the product does not exist in the ticket.
+     * @return 0 if the product was found and removed successfully,
+     * -1 if the product does not exist in the ticket.
      */
-    public int deleteProduct(Product productToDelete) {
+    private int deleteProduct(Product productToDelete) {
         if (ticket.containsKey(productToDelete)) {
             ticket.remove(productToDelete);
             return 0; // Product deleted
@@ -67,11 +118,10 @@ public class Ticket {
      * Updates the details of a product in the ticket while keeping its existing quantity.
      *
      * @param updatedProduct The product with updated information.
-     * @return
-     *      0 if the product was found and updated successfully,
-     *     -1 if the product does not exist in the ticket.
+     * @return 0 if the product was found and updated successfully,
+     * -1 if the product does not exist in the ticket.
      */
-    public int updateProduct(Product updatedProduct) {
+    private int updateProduct(Product updatedProduct) {
         if (ticket.containsKey(updatedProduct)) {
             int quantity = ticket.get(updatedProduct);
             ticket.put(updatedProduct, quantity); // Override product keeping quantity
@@ -81,13 +131,20 @@ public class Ticket {
     }
 
 
-
     /**
      * Clears the current ticket and creates a new empty one.
      */
-    public void resetTicket() {
-        this.ticket = new HashMap<>();
-        this.categories = new HashMap<>();
+    private void resetTicket() {
+        if (this.ticket != null) {
+            this.ticket = new HashMap<>();
+            this.categories = new HashMap<>();
+        } else {
+            System.out.println("Ticket is empty");
+        }
+    }
+
+    private void print() {
+        System.out.println(this);
     }
 
 
@@ -101,7 +158,7 @@ public class Ticket {
      * @return A formatted string representation of the ticket and its summary.
      */
     public String toString() {
-        String str = "";
+        StringBuilder str = new StringBuilder();
         double totalPrice = 0;
         double totalDiscount = 0;
 
@@ -109,21 +166,21 @@ public class Ticket {
             Product producto = entry.getKey();
             Integer cantidad = entry.getValue();
 
-            str += producto.toString();
+            str.append(producto.toString());
             totalPrice += producto.getPrice() * cantidad;
 
-            if (categories.get(producto.getCategory().toString()) > 1) {
-                double discount = producto.getPrice() - (producto.getPrice() * config.getDiscount(producto.getCategory().toString()));
-                str += "**discount -" + discount;
+            if (categories.get(producto.getCategory()) > 1) {
+                double discount = producto.getPrice() - (producto.getPrice() * app.config.getDiscount(producto.getCategory()));
+                str.append("**discount -").append(discount);
                 totalDiscount += discount;
             }
-            str += "\n";
+            str.append("\n");
         }
 
-        str += "\nTotal price: " + totalPrice;
-        str += "\nTotal discount: " + totalDiscount;
-        str += "\nFinal price: " + (totalPrice - totalDiscount);
+        str.append("\nTotal price: ").append(totalPrice);
+        str.append("\nTotal discount: ").append(totalDiscount);
+        str.append("\nFinal price: ").append(totalPrice - totalDiscount);
 
-        return str;
+        return str.toString();
     }
 }

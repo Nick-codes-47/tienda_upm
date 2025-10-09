@@ -1,9 +1,7 @@
 package es.upm.etsisi.poo;
 
-import java.lang.reflect.Field;
 import java.util.HashMap;
-import java.util.Arrays;
-import java.util.Scanner;
+import java.util.function.Consumer;
 
 public class App
 {
@@ -12,51 +10,43 @@ public class App
     App(String[] args)
     {
         loadConfig(args);
+        initCommandMaps();
+        catalog = new Catalog(this);
+        ticket = new Ticket(this);
     }
 
     public void init()
     {
-        Scanner input = new Scanner(System.in);
+        InputDriver input = new InputDriver();
         boolean exit = false;
 
         while (!exit)
         {
-            System.out.print(PROMPT);
-            Command command = nextCommand(input);
-            switch (command.family) // Change to command map
+            Request request = input.nextRequest();
+            if (builtinCommands.containsKey(request.family))
             {
-                case "prod":
-                {
-                    handleProductOrder(command); // TODO class ProductModule?
-                    break;
-                }
-                case "ticket":
-                {
-                    handleTicketOrder(command); // TODO class TicketModule?
-                    break;
-                }
-                case "help":
-                {
-                    help();
-                    break;
-                }
-                case "exit":
-                {
-                    exit();
-                    exit = true;
-                    break;
-                }
-                default:
-                {
-
-                }
+                builtinCommands.get(request.command).run();
             }
+            else if (moduleHandlers.containsKey(request.family))
+            {
+                moduleHandlers.get(request.family).accept(request);
+            }
+
+            if (request.family == "exit")
+           {
+               exit = true;
+           }
         }
+    }
+
+    public Product getProduct(int id)
+    {
+        return catalog.getProduct(id);
     }
 
     /**
      * @param args
-     *      args[1] - config file path
+     *      args[1] - input file path
      */
     public static void main(String[] args) {
         try
@@ -70,121 +60,16 @@ public class App
         }
     }
 
-    private Command nextCommand(Scanner input)
-    {
-        return new Command(input.nextLine().split("\\s+")); // using spaces without living empty Strings
-    }
-
-    private void handleProductOrder(Command command)
-    {
-        int result = 0;
-
-        if (command.order != null) {
-            switch (command.order) {
-                case "add": {
-                    if (command.args.length == 4) {
-                        result = addProduct(
-                                Integer.parseInt(command.args[0]),
-                                command.args[1],
-                                command.args[2],
-                                Double.parseDouble(command.args[3])
-                        );
-                    } else {
-                        result = 1;
-                    }
-                    break;
-                }
-                case "update": {
-                    if (command.args.length == 3) {
-                        result = updateProduct(
-                                Integer.parseInt(command.args[0]),
-                                command.args[1],
-                                command.args[2]
-                        );
-                    } else {
-                        result = 1;
-                    }
-                    break;
-                }
-                case "remove": {
-                    if (command.args.length == 1) {
-                        result = deleteProduct(Integer.parseInt(command.args[0]));
-                    } else {
-                        result = 1;
-                    }
-                    break;
-                }
-                case "list": {
-                    printProdList();
-                    break;
-                }
-            }
-        }
-        else
-        {
-            result = 1;
-        }
-
-        if (result == 1)
-        {
-            // TODO print correct use
-        }
-    }
-
-    private void handleTicketOrder(Command command)
-    {
-        switch (command.order)
-        {
-            case "new":
-            {
-                resetTicket();
-                break;
-            }
-            case "add":
-            {
-                ticket.addProduct(
-                        products.get(Integer.parseInt(command.args[0])),
-                        Integer.parseInt(command.args[1])
-                );
-                break;
-            }
-            case "remove":
-            {
-                ticket.deleteProduct(products.get(Integer.parseInt(command.args[0])));
-                break;
-            }
-            case "print":
-            {
-                printTicket();
-                break;
-            }
-        }
-    }
-
     private void loadConfig(String[] args)
     {
-        if (args.length > 1)
+        if (args.length > 2)
         {
-            config = new Config(args[1]);
+            config = new Config(args[2]);
         }
         else
         {
             config = new Config();
         }
-    }
-
-    /**
-     * Method that prints the current Ticket with the products and price
-     */
-    private void printTicket() {
-        System.out.println(ticket.toString());
-    }
-
-    /**
-     * Resets the ticket so it has 0 products
-     */
-    private void resetTicket() {
-        ticket.resetTicket();
     }
 
     /**
@@ -214,26 +99,27 @@ public class App
         System.exit(0);
     }
 
-    private class Command
+    private void initCommandMaps()
     {
-        public String family;
-        public String order;
-        public String[] args;
-
-        public Command(String[] tokens)
-        {
-            family = tokens[0];
-            if (tokens.length > 1)
-            {
-                order = tokens[1];
-                args = Arrays.copyOfRange(tokens, 2, tokens.length);
-            }
-
-            System.err.printf("LOG::Command> command line received: %s %s %s\n", family, order, Arrays.toString(args));
-        }
+        initBuiltinCommandMap();
+        initModuleCommandMap();
     }
 
+    private void initBuiltinCommandMap()
+    {
+        builtinCommands.put("exit", this::exit);
+        builtinCommands.put("help", this::help);
+    }
+
+    private void initModuleCommandMap()
+    {
+        moduleHandlers.put("prod", (request) -> catalog.handleRequest(request));
+        moduleHandlers.put("ticket", (request) -> ticket.handleRequest(request));
+    }
+
+    private Catalog catalog;
     private Ticket ticket;
-    private HashMap<Integer, Product> products;
-    private static final String PROMPT = "tUPM> ";
+
+    private HashMap<String, Runnable> builtinCommands;
+    private HashMap<String, Consumer<Request>> moduleHandlers;
 } // class App
