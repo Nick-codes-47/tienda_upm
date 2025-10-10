@@ -19,25 +19,8 @@ public class App
     public void init()
     {
         InputDriver input = new InputDriver();
-        boolean exit = false;
 
-        while (!exit)
-        {
-            Request request = input.nextRequest();
-            if (builtinCommands.containsKey(request.family))
-            {
-                builtinCommands.get(request.command).run();
-            }
-            else if (moduleHandlers.containsKey(request.family))
-            {
-                moduleHandlers.get(request.family).accept(request);
-            }
-
-            if (Objects.equals(request.family, "exit"))
-           {
-               exit = true;
-           }
-        }
+        while (handleRequest(input.nextRequest()) == 0);
     }
 
     public Product getProduct(int id)
@@ -71,6 +54,25 @@ public class App
         {
             config = new Config();
         }
+    }
+
+    private int handleRequest(Request request)
+    {
+        if (Objects.equals(request.family, BUILTIN_CMD_EXIT))
+        {
+            return 1;
+        }
+
+        if (builtinCommands.containsKey(request.family))
+        {
+            builtinCommands.get(request.command).run();
+        }
+        else if (moduleHandlers.containsKey(request.family))
+        {
+            moduleHandlers.get(request.family).accept(request);
+        }
+
+        return 0;
     }
 
     /**
@@ -108,19 +110,22 @@ public class App
 
     private void initBuiltinCommandMap()
     {
-        builtinCommands.put("exit", this::exit);
-        builtinCommands.put("help", this::help);
+        builtinCommands.put(BUILTIN_CMD_EXIT, this::exit);
+        builtinCommands.put(BUILTIN_CMD_HELP, this::help);
     }
 
     private void initModuleCommandMap()
     {
-        moduleHandlers.put("prod", (request) -> catalog.handleRequest(request));
+        moduleHandlers.put("prod", (request) -> catalog.handleRequest(request)); // change magic literals to an attr from each module
         moduleHandlers.put("ticket", (request) -> ticket.handleRequest(request));
     }
 
-    private Catalog catalog;
-    private Ticket ticket;
+    private final Catalog catalog;
+    private final Ticket ticket;
 
-    private HashMap<String, Runnable> builtinCommands;
-    private HashMap<String, Consumer<Request>> moduleHandlers;
+    private final HashMap<String, Runnable> builtinCommands = new HashMap<>();
+    private final HashMap<String, Consumer<Request>> moduleHandlers = new HashMap<>();
+
+    private final String BUILTIN_CMD_EXIT = "exit";
+    private final String BUILTIN_CMD_HELP = "help";
 } // class App
