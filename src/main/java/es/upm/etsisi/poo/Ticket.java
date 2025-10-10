@@ -144,13 +144,19 @@ public class Ticket {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
 
-            categories.put(productToDelete.getCategory(),
-                    categories.get(productToDelete.getCategory()) - quantity);
+            // 🔹 Usar categoría en mayúsculas (coherente con el resto del código)
+            String categoryKey = productToDelete.getCategory().toUpperCase();
+            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
+
+            // 🔹 Asegurar que nunca quede negativa
+            int newCount = Math.max(0, currentCategoryCount - quantity);
+            categories.put(categoryKey, newCount);
 
             return 0;
         }
         return -1;
     }
+
 
 
     /**
