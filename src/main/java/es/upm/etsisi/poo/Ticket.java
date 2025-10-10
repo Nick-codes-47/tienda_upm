@@ -10,14 +10,13 @@ public class Ticket {
     private HashMap<String, Integer> categories;
     private int numMaxElements;
 
-    public Ticket (App app) {
+    public Ticket(App app) {
         this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
         this.numMaxElements = app.config.getMaxProductPerTicket();
 
-        for (String category : app.config.getCategories())
-        {
+        for (String category : app.config.getCategories()) {
             categories.put(category, 0);
         }
     }
@@ -67,7 +66,6 @@ public class Ticket {
 
                 Product product = app.getProduct(id);
                 addProduct(product, quantity);
-                printTicket();
                 return;
 
             case "remove":
@@ -98,15 +96,14 @@ public class Ticket {
     }
 
 
-
     private void printTicket() {
-        System.out.println(ticket);
+        System.out.println(this);
     }
 
     /**
      * Method to add products to ticket
      *
-     * @param product Product to be added to the ticket
+     * @param product  Product to be added to the ticket
      * @param quantity Quantity of products wanted to add
      * @return Return -1 if the number of products in the ticket is already maximum products
      * Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
@@ -114,17 +111,26 @@ public class Ticket {
      */
     private int addProduct(Product product, int quantity) {
         if (ticket.size() >= numMaxElements) {
-            // Product cannot be added due to maximum products already
             return -1;
         } else if (ticket.size() + quantity > numMaxElements) {
             return -2;
         } else {
-            // Product can be added
-            ticket.put(product, quantity);
-            System.out.println(ticket);
+            String categoryKey = product.getCategory().toUpperCase();
+
+            int currentQuantity = ticket.getOrDefault(product, 0);
+            ticket.put(product, currentQuantity + quantity);
+
+            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
+            categories.put(categoryKey, currentCategoryCount + quantity);
+
+            System.out.println(this);
+
             return 0;
         }
     }
+
+
+
 
     /**
      * Removes a product from the ticket by its id.
@@ -135,10 +141,15 @@ public class Ticket {
      */
     private int deleteProduct(Product productToDelete) {
         if (ticket.containsKey(productToDelete)) {
+            int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
-            return 0; // Product deleted
+
+            categories.put(productToDelete.getCategory(),
+                    categories.get(productToDelete.getCategory()) - quantity);
+
+            return 0;
         }
-        return -1; // Product not found
+        return -1;
     }
 
 
@@ -180,29 +191,45 @@ public class Ticket {
      *
      * @return A formatted string representation of the ticket and its summary.
      */
+    @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         double totalPrice = 0;
         double totalDiscount = 0;
 
+        Map<String, Integer> categoryCounts = new HashMap<>();
         for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
-            Product producto = entry.getKey();
-            Integer cantidad = entry.getValue();
-
-            str.append(producto.toString());
-            totalPrice += producto.getPrice() * cantidad;
-
-            if (categories.get(producto.getCategory()) > 1) {
-                double discount = producto.getPrice() - (producto.getPrice() * app.config.getDiscount(producto.getCategory()));
-                str.append("**discount -").append(discount);
-                totalDiscount += discount;
-            }
-            str.append("\n");
+            String category = entry.getKey().getCategory().toUpperCase();
+            int cantidad = entry.getValue();
+            categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
         }
 
-        str.append("\nTotal price: ").append(totalPrice);
-        str.append("\nTotal discount: ").append(totalDiscount);
-        str.append("\nFinal price: ").append(totalPrice - totalDiscount);
+        for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
+            Product producto = entry.getKey();
+            int cantidad = entry.getValue();
+            String category = producto.getCategory().toUpperCase();
+
+            Double discountRate = app.config.getDiscount(category);
+
+            for (int i = 0; i < cantidad; i++) {
+                str.append(producto);
+
+                if (discountRate != null && categoryCounts.get(category) >= 2) {
+                    double discount = producto.getPrice() * discountRate;
+                    totalDiscount += discount;
+
+                    str.append(" **discount -")
+                            .append(String.format("%.2f", discount));
+                }
+
+                str.append("\n");
+                totalPrice += producto.getPrice();
+            }
+        }
+
+        str.append("\nTotal price: ").append(String.format("%.2f", totalPrice));
+        str.append("\nTotal discount: ").append(String.format("%.2f", totalDiscount));
+        str.append("\nFinal price: ").append(String.format("%.2f", totalPrice - totalDiscount));
 
         return str.toString();
     }

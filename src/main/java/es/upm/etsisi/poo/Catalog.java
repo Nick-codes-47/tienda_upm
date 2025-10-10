@@ -73,9 +73,10 @@ public class Catalog {
                     break;
                 }
                 try {
-                    this.deleteProduct(Integer.parseInt(args.get(0)));
                     // We also delete it from the ticket
                     app.ticket.handleRequest(request);
+                    this.deleteProduct(Integer.parseInt(args.get(0)));
+
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
                 }
@@ -137,7 +138,7 @@ public class Catalog {
             return -1;
         }
         // If the id does exist we check if the category is valid
-        if (!app.config.validCategory(category)) {
+        if (!app.config.validCategory(category.toUpperCase())) {
             System.out.println("Invalid category!");
             return 1;
         }
