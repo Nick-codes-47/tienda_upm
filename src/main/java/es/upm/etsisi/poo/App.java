@@ -18,9 +18,18 @@ public class App
         initCommandMaps();
     }
 
-    public void init()
+    public void init(String inputFile)
     {
-        InputDriver input = new InputDriver();
+        InputDriver input;
+
+        if (inputFile != null)
+        {
+            input = new InputDriver(inputFile);
+        }
+        else
+        {
+            input = new InputDriver();
+        }
 
         while (handleRequest(input.nextRequest()) == 0);
     }
@@ -38,7 +47,15 @@ public class App
         try
         {
             App app = new App(args);
-            app.init();
+
+            if (args.length > 0)
+            {
+                app.init(args[0]);
+            }
+            else
+            {
+                app.init(null);
+            }
         }
         catch (RuntimeException exception) // TODO create AppException?
         {

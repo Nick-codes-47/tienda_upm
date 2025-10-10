@@ -13,6 +13,8 @@ public class InputDriver {
     public InputDriver(String inputFile)
             throws RuntimeException // TODO custom exceptions
     {
+        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
+
         try
         {
             input = new Scanner(new File(inputFile));
