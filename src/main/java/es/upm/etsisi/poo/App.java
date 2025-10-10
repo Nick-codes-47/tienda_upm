@@ -25,7 +25,7 @@ public class App
             Request request = input.nextRequest();
             if (builtinCommands.containsKey(request.family))
             {
-                builtinCommands.get(request.command).run();
+                builtinCommands.get(request.family).run();
             }
             else if (moduleHandlers.containsKey(request.family))
             {
@@ -76,7 +76,7 @@ public class App
      * This method prints all the commands with its parameters
      */
     public void help() {
-        System.out.println("Commands:\n" +
+        String commands = "Commands:\n" +
                 " prod add <id> \"<name>\" <category> <price>\n" +
                 " prod list\n" +
                 " prod update <id> NAME|CATEGORY|PRICE <value>\n" +
@@ -87,7 +87,22 @@ public class App
                 " ticket print\n" +
                 " echo \"<texto>\"\n" +
                 " help\n" +
-                " exit");
+                " exit\n\n";
+        StringBuilder categories = new StringBuilder("Categories: ");
+        for (String category : config.getCategories()) {
+            categories.append(category.toUpperCase()).append(", ");
+        }
+        // We delete the last coma
+        categories.deleteCharAt(categories.length() - 2);
+        // We build a string for the discounts
+        StringBuilder catDiscounts = new StringBuilder("Discounts if there are ≥2 units in the category: ");
+        for (String category : config.getCategories()) {
+            catDiscounts.append(category.toUpperCase()).append(" ")
+                    .append(String.format("%.0f",config.getDiscount(category) * 100)).append("%").append(", ");
+        }
+        catDiscounts.deleteCharAt(catDiscounts.length() - 2);
+        catDiscounts.append(".");
+        System.out.println(commands+categories+"\n"+catDiscounts+"\n");
     }
 
     /**
@@ -120,6 +135,6 @@ public class App
     private Catalog catalog;
     public Ticket ticket;
 
-    private HashMap<String, Runnable> builtinCommands;
-    private HashMap<String, Consumer<Request>> moduleHandlers;
+    private HashMap<String, Runnable> builtinCommands = new HashMap<>();
+    private HashMap<String, Consumer<Request>> moduleHandlers = new HashMap<>();
 } // class App
