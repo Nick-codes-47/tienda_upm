@@ -6,19 +6,21 @@ import java.util.function.Consumer;
 public class App
 {
     public Config config;
+    public final Ticket ticket;
 
     App(String[] args)
     {
         loadConfig(args);
-        initCommandMaps();
+
         catalog = new Catalog(this);
         ticket = new Ticket(this);
+
+        initCommandMaps();
     }
 
     public void init()
     {
         InputDriver input = new InputDriver();
-        boolean exit = false;
 
         while (handleRequest(input.nextRequest()) == 0);
     }
@@ -58,18 +60,18 @@ public class App
 
     private int handleRequest(Request request)
     {
-        if (Objects.equals(request.family, BUILTIN_CMD_EXIT))
+        if (request.family.equals(BUILTIN_CMD_EXIT))
         {
             return 1;
         }
 
-        if (builtinCommands.containsKey(request.family))
+        if (commands.containsKey(request.family))
         {
-            builtinCommands.get(request.command).run();
+            commands.get(request.family).accept(request);
         }
-        else if (moduleHandlers.containsKey(request.family))
+        else
         {
-            moduleHandlers.get(request.family).accept(request);
+            System.err.printf("Invalid command %s", request.family);
         }
 
         return 0;
@@ -78,7 +80,7 @@ public class App
     /**
      * This method prints all the commands with its parameters
      */
-    public void help() {
+    private void help() {
         String commands = "Commands:\n" +
                 " prod add <id> \"<name>\" <category> <price>\n" +
                 " prod list\n" +
@@ -111,36 +113,31 @@ public class App
     /**
      * Method to exit the program's execution
      */
-    public void exit() {
+    private void exit() {
         System.out.println("Closing Application.\n" +
                 "Goodbye!");
         System.exit(0);
     }
 
+    private void echo(Request request)
+    {
+        System.out.println(request.family + " " + request.command);
+    }
+
     private void initCommandMaps()
     {
-        initBuiltinCommandMap();
-        initModuleCommandMap();
-    }
-
-    private void initBuiltinCommandMap()
-    {
-        builtinCommands.put(BUILTIN_CMD_EXIT, this::exit);
-        builtinCommands.put(BUILTIN_CMD_HELP, this::help);
-    }
-
-    private void initModuleCommandMap()
-    {
-        moduleHandlers.put("prod", (request) -> catalog.handleRequest(request)); // change magic literals to an attr from each module
-        moduleHandlers.put("ticket", (request) -> ticket.handleRequest(request));
+        commands.put(Catalog.COMMAND_PREFIX, catalog::handleRequest);
+        commands.put(Ticket.COMMAND_PREFIX, ticket::handleRequest);
+        commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
+        commands.put(BUILTIN_CMD_HELP, (request) -> help());
+        commands.put(BUILTIN_CMD_ECHO, this::echo);
     }
 
     private final Catalog catalog;
-    private final Ticket ticket;
 
-    private final HashMap<String, Runnable> builtinCommands = new HashMap<>();
-    private final HashMap<String, Consumer<Request>> moduleHandlers = new HashMap<>();
+    private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
 
     private final String BUILTIN_CMD_EXIT = "exit";
     private final String BUILTIN_CMD_HELP = "help";
+    private final String BUILTIN_CMD_ECHO = "echo";
 } // class App

@@ -5,10 +5,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
-    private App app;
+    private final App app;
     private HashMap<Product, Integer> ticket;
     private HashMap<String, Integer> categories;
-    private int numMaxElements;
+    private final int numMaxElements;
+    public static final String COMMAND_PREFIX = "ticket";
 
     public Ticket(App app) {
         this.app = app;

@@ -11,6 +11,7 @@ public class Catalog {
     private final App app;
     private final HashMap<Integer, Product> products;
     private final int maxProducts;
+    public static final String COMMAND_PREFIX = "prod";
 
     public Catalog(App app) {
         this.app = app;

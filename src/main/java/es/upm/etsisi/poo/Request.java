@@ -2,6 +2,8 @@ package es.upm.etsisi.poo;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class Request {
     public String family;
@@ -10,19 +12,34 @@ public class Request {
 
     public Request(String line)
     {
-        String[] tokens = line.split("\\s+"); // using spaces without living empty Strings
-        family = tokens[0];
-        if (tokens.length > 1)
+        ArrayList<String> tokens = tokenize(line);
+
+        family = tokens.get(0);
+        if (tokens.size() > 1)
         {
-            command = tokens[1];
-            args = extractArgs(tokens);
+            command = tokens.get(1);
+            if (tokens.size() > 2)
+            {
+                args = new ArrayList<>(tokens.subList(2, tokens.size()));
+            }
         }
 
         System.err.printf("LOG::Command> command line received: %s %s %s\n", family, command, args);
     }
 
-    private ArrayList<String> extractArgs(String[] tokens)
+    private static ArrayList<String> tokenize(String line)
     {
-        return new ArrayList<String>(Arrays.asList(Arrays.copyOfRange(tokens, 2, tokens.length)));
+        ArrayList<String> tokens = new ArrayList<>();
+        Matcher m = Pattern.compile("\"([^\"]*)\"|(\\S+)").matcher(line); // get Strings between spaces to group 1 OR Strings between quotes to group 2
+
+        // Fuses both groups of words
+        while (m.find()) {
+            if (m.group(1) != null)
+                tokens.add(m.group(1)); // quoted part
+            else
+                tokens.add(m.group(2)); // normal part
+        }
+
+        return tokens;
     }
 }
