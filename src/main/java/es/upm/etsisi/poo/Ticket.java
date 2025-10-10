@@ -158,7 +158,6 @@ public class Ticket {
     }
 
 
-
     /**
      * Updates the details of a product in the ticket while keeping its existing quantity.
      *
