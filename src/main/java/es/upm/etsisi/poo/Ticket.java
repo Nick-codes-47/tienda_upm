@@ -27,49 +27,77 @@ public class Ticket {
      * This method interprets the command and arguments contained in the given
      * Request object and performs the corresponding action on the ticket.
      * Supported commands:
-     *  - "new": resets the current ticket.
-     *  - "add": adds a product to the ticket (requires product ID and quantity).
-     *  - "remove": removes a product from the ticket (requires product ID).
-     *  - "print": prints the current ticket contents.
+     * - "new": resets the current ticket.
+     * - "add": adds a product to the ticket (requires product ID and quantity).
+     * - "remove": removes a product from the ticket (requires product ID).
+     * - "print": prints the current ticket contents.
      *
      * @param request the request containing the command and its arguments.
-     * @return an integer status code:
-     *          0  -> operation completed successfully
-     *         -1  -> invalid command or missing arguments
-     *         other negative values -> specific errors returned by sub-methods
      */
-
-    public int handleRequest(Request request) {
+    public void handleRequest(Request request) {
         String command = request.command;
         ArrayList<String> args = request.args;
 
         switch (command) {
             case "new":
                 resetTicket();
-                return 0;
+                System.out.println("Ticket has been resetted successfully");
+                return;
 
             case "add":
-                if (args.size() < 2) return -1; // necesita id y cantidad
-                int id = Integer.parseInt(args.get(0));
-                int quantity = Integer.parseInt(args.get(1));
+                if (args.size() < 2) {
+                    System.err.println("Error: two arguments are required: id and quantity.");
+                    return;
+                }
+
+                int id, quantity;
+                try {
+                    id = Integer.parseInt(args.get(0));
+                } catch (NumberFormatException e) {
+                    System.err.println("Error: the product ID must be an integer.");
+                    return;
+                }
+
+                try {
+                    quantity = Integer.parseInt(args.get(1));
+                } catch (NumberFormatException e) {
+                    System.err.println("Error: the quantity must be an integer.");
+                    return;
+                }
+
                 Product product = app.getProduct(id);
-                return addProduct(product, quantity);
+                addProduct(product, quantity);
+                printTicket();
+                return;
 
             case "remove":
-                if (args.isEmpty()) return -1;
-                int removeId = Integer.parseInt(args.get(0));
-                Product productToRemove = app.getProduct(removeId);
-                return deleteProduct(productToRemove);
+                if (args.isEmpty()) {
+                    System.err.println("Error: one argument is required: product ID.");
+                    return;
+                }
+
+                try {
+                    int removeId = Integer.parseInt(args.get(0));
+                    Product productToRemove = app.getProduct(removeId);
+                    deleteProduct(productToRemove);
+                    printTicket();
+                    return;
+                } catch (NumberFormatException e) {
+                    System.err.println("Error: the product ID must be an integer.");
+                    return;
+                }
 
             case "print":
                 printTicket();
-                return 0;
+                break;
 
             default:
-                System.out.println("Command not found: " + command);
-                return -1;
+                System.err.println("Error: command not found: " + command);
+                break;
         }
     }
+
+
 
     private void printTicket() {
         System.out.println(ticket);
@@ -78,8 +106,8 @@ public class Ticket {
     /**
      * Method to add products to ticket
      *
-     * @param product
-     * @param quantity
+     * @param product Product to be added to the ticket
+     * @param quantity Quantity of products wanted to add
      * @return Return -1 if the number of products in the ticket is already maximum products
      * Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
      * Return 0 if product can be added
@@ -142,11 +170,6 @@ public class Ticket {
             System.out.println("Ticket is empty");
         }
     }
-
-    private void print() {
-        System.out.println(this);
-    }
-
 
     /**
      * Builds a string representation of the ticket.
