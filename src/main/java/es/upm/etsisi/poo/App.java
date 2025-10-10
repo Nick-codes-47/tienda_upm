@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo;
 
 import java.util.HashMap;
-import java.util.Objects;
 import java.util.function.Consumer;
 
 public class App
@@ -19,6 +18,7 @@ public class App
     public void init()
     {
         InputDriver input = new InputDriver();
+        boolean exit = false;
 
         while (handleRequest(input.nextRequest()) == 0);
     }
@@ -79,7 +79,7 @@ public class App
      * This method prints all the commands with its parameters
      */
     public void help() {
-        System.out.println("Commands:\n" +
+        String commands = "Commands:\n" +
                 " prod add <id> \"<name>\" <category> <price>\n" +
                 " prod list\n" +
                 " prod update <id> NAME|CATEGORY|PRICE <value>\n" +
@@ -90,7 +90,22 @@ public class App
                 " ticket print\n" +
                 " echo \"<texto>\"\n" +
                 " help\n" +
-                " exit");
+                " exit\n\n";
+        StringBuilder categories = new StringBuilder("Categories: ");
+        for (String category : config.getCategories()) {
+            categories.append(category.toUpperCase()).append(", ");
+        }
+        // We delete the last coma
+        categories.deleteCharAt(categories.length() - 2);
+        // We build a string for the discounts
+        StringBuilder catDiscounts = new StringBuilder("Discounts if there are ≥2 units in the category: ");
+        for (String category : config.getCategories()) {
+            catDiscounts.append(category.toUpperCase()).append(" ")
+                    .append(String.format("%.0f",config.getDiscount(category) * 100)).append("%").append(", ");
+        }
+        catDiscounts.deleteCharAt(catDiscounts.length() - 2);
+        catDiscounts.append(".");
+        System.out.println(commands+categories+"\n"+catDiscounts+"\n");
     }
 
     /**
