@@ -158,8 +158,8 @@ public class Catalog {
             return -3;
         }
         // Price must be positive
-        if (price < 0) {
-            System.err.println("ERROR: Product price must be positive");
+        if (price <= 0) {
+            System.err.println("ERROR: Product price must be positive and higher than 0");
             return -3;
         }
         // If everything went well we add the product
