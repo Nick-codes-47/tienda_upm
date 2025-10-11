@@ -34,20 +34,18 @@ public class Ticket {
      *
      * @param request the request containing the command and its arguments.
      */
-    public void handleRequest(Request request) {
+    public int handleRequest(Request request) {
         String command = request.command;
         ArrayList<String> args = request.args;
 
         switch (command) {
             case "new":
-                resetTicket();
-//                System.out.println("Ticket has been resetted successfully");
-                return;
+                return resetTicket();
 
             case "add":
                 if (args.size() < 2) {
                     System.err.println("Error: two arguments are required: id and quantity.");
-                    return;
+                    return -1;
                 }
 
                 int id, quantity;
@@ -55,43 +53,42 @@ public class Ticket {
                     id = Integer.parseInt(args.get(0));
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the product ID must be an integer.");
-                    return;
+                    return -1;
                 }
 
                 try {
                     quantity = Integer.parseInt(args.get(1));
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the quantity must be an integer.");
-                    return;
+                    return -1;
                 }
-
                 Product product = app.getProduct(id);
-                addProduct(product, quantity);
-                return;
+
+                return addProduct(product, quantity);
 
             case "remove":
                 if (args.isEmpty()) {
                     System.err.println("Error: one argument is required: product ID.");
-                    return;
+                    return -1;
                 }
 
                 try {
                     int removeId = Integer.parseInt(args.get(0));
                     Product productToRemove = app.getProduct(removeId);
-                    deleteProduct(productToRemove);
-                    return;
+
+                    return deleteProduct(productToRemove);
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the product ID must be an integer.");
-                    return;
+                    return -1;
                 }
 
             case "print":
                 printTicket();
-                break;
+                return -1;
 
             default:
                 System.err.println("Error: command not found: " + command);
-                break;
+                return -1;
         }
     }
 
@@ -179,12 +176,13 @@ public class Ticket {
     /**
      * Clears the current ticket and creates a new empty one.
      */
-    private void resetTicket() {
+    private int resetTicket() {
         if (this.ticket != null) {
             this.ticket = new HashMap<>();
             this.categories = new HashMap<>();
+            return 0;
         } else {
-            System.out.println("Ticket is empty");
+            return -1;
         }
     }
 
@@ -224,8 +222,10 @@ public class Ticket {
                     double discount = producto.getPrice() * discountRate;
                     totalDiscount += discount;
 
-                    str.append(" **discount -")
-                            .append(String.format("%.1f", discount));
+                    if (discount > 0){
+                        str.append(" **discount -")
+                                .append(String.format("%.1f", discount));
+                    }
                 }
 
                 str.append("\n");
