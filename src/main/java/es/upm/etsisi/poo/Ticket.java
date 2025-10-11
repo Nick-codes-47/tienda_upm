@@ -107,7 +107,6 @@ public class Ticket {
      * Return 0 if product can be added
      */
     private int addProduct(Product product, int quantity) {
-        System.out.println(numMaxElements);
 
         int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 
