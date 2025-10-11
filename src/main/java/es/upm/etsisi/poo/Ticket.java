@@ -76,7 +76,9 @@ public class Ticket {
                     int removeId = Integer.parseInt(args.get(0));
                     Product productToRemove = app.getProduct(removeId);
 
-                    return deleteProduct(productToRemove);
+                    if (request.family.equalsIgnoreCase("prod"))  {
+                        return deleteProduct(productToRemove, true);
+                    } else return deleteProduct(productToRemove, false);
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the product ID must be an integer.");
                     return -1;
@@ -139,7 +141,7 @@ public class Ticket {
      * @return 0 if the product was found and removed successfully,
      * -1 if the product does not exist in the ticket.
      */
-    private int deleteProduct(Product productToDelete) {
+    private int deleteProduct(Product productToDelete, boolean silent) {
         if (ticket.containsKey(productToDelete)) {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
@@ -152,7 +154,7 @@ public class Ticket {
             int newCount = Math.max(0, currentCategoryCount - quantity);
             categories.put(categoryKey, newCount);
 
-            printTicket();
+            if (!silent) printTicket();
             return 0;
         }
         return -1;

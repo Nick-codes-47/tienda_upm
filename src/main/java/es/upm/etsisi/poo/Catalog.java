@@ -23,8 +23,11 @@ public class Catalog {
      * Method to handle requests from the users that involve products and the catalog
      *
      * @param request object request to know which method needs to be executed
+     * @return Returns 0 if the execution went as expected;
+     *          1 if the arguments are not the necessary;
+     *          2 if the arguments are valid
      */
-    public void handleRequest(Request request) {
+    public int handleRequest(Request request) {
         String command = request.command;
         ArrayList<String> args = request.args;
 
@@ -32,10 +35,10 @@ public class Catalog {
             case "add": {
                 if (args.size() != 4) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    this.addProduct(
+                    return this.addProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // name
                             args.get(2),                   // category
@@ -43,51 +46,51 @@ public class Catalog {
                     );
                 } catch (NumberFormatException e) {
                     System.out.println("id and/or price are not valid");
+                    return 2;
                 }
-                break;
             }
 
             case "list": {
                 this.printProdList();
-                break;
+                return 0;
             }
 
             case "update": {
                 if (args.size() != 3) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    this.updateProduct(
+                    return this.updateProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // field
                             args.get(2)                    // new value
                     );
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
+                    return 2;
                 }
-                break;
             }
 
             case "remove": {
                 if (args.size() != 1) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    // We also delete it from the ticket
-                    this.deleteProduct(Integer.parseInt(args.get(0)));
+                    // We delete it from the ticket
                     app.ticket.handleRequest(request);
-
+                    // We delete from the catalog
+                    return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
+                    return 2;
                 }
-                break;
             }
 
             default: {
-                System.out.println("Invalid command");
-                break;
+                System.err.println("ERROR: Invalid command");
+                return 3;
             }
         }
     }
@@ -125,49 +128,39 @@ public class Catalog {
      * @param name     name of the product
      * @param category category of the product
      * @param price    price of the product
-     * @return -3 if id or price are negative or 0
-     * -2 if we already reached the maxProducts
-     * -1 if the id already exists
-     * 0 if the product was added to the catalog without problem
-     * 1 if the category doesn't exist
+     * @return -4 if we already reached the maxProducts;
+     * -3 if the id already exists;
+     * -2 if the category doesn't exist;
+     * -1 if product couldn't be created;
+     * 0 if the product was added to the catalog without problem;
      */
     private int addProduct(int id, String name, String category, double price) {
-        // ID must be positive and higher than 0
-        if (id <= 0) {
-            System.err.println("ERROR: Product ID must be positive and higher than 0");
-            return -3;
-        }
-        // Price must be positive and higher than 0
-        if (price <= 0) {
-            System.err.println("ERROR: Product price must be positive and higher than 0");
-            return -3;
-        }
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
             System.err.println("ERROR: You reached the maximum number of products!");
-            return -2;
+            return -4;
         }
         // We check if there already is a product with the same id
         if (products.containsKey(id)) {
             System.err.println("ERROR: Product's id already exists");
-            return -1;
+            return -3;
         }
         // If the id does exist we check if the category is valid
         if (!app.config.validCategory(category)) {
             System.err.println("ERROR: Invalid category!");
-            return 1;
-        }
-        // If the name is longer than 100 chars its invalid
-        if (name.length() > 100) {
-            System.err.println("ERROR: Product name is too long. Max 100 characters");
-            return 1;
+            return -2;
         }
 
         // If everything went well we add the product
-        Product newProduct = new Product(category, id, name, price);
-        products.put(id, newProduct);
-        System.out.println(newProduct);
-        return 0;
+        try {
+            Product newProduct = new Product(category, id, name, price);
+            products.put(id, newProduct);
+            System.out.println(newProduct);
+            return 0;
+        } catch (Product.InvalidProductException e) {
+            System.err.println(e.getMessage());
+            return -1;
+        }
     }
 
     /**
