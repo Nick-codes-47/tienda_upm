@@ -16,7 +16,19 @@ public class Product {
      * @param name The name of the product
      * @param price The price of the product
      */
-    public Product(String category, int id, String name, double price) {
+    public Product(String category, int id, String name, double price) throws InvalidProductException {
+        // id and price must be positive numbers
+        if (id <= 0 || price <= 0) {
+            StringBuilder msg = new StringBuilder("ERROR: Product ");
+            if (id <= 0) msg.append("ID");
+            if (id <= 0 && price <= 0) msg.append(" and ");
+            if (price <= 0) msg.append("price");
+            msg.append(" must be positive and higher than 0");
+            throw new InvalidProductException(msg.toString());
+        }
+        if (name == null || name.isEmpty() || name.length() > 100) {
+            throw new InvalidProductException("ERROR: Product's name is invalid (must have less than 100 characters)");
+        }
         this.category = category;
         this.id = id;
         this.name = name;
@@ -55,5 +67,11 @@ public class Product {
     public String toString() {
         return "{class:Product, id:"+this.id+", name:'"+this.name+"', category:"+this.category.toUpperCase()+
                 ", price:"+this.price+"}";
+    }
+
+    public static class InvalidProductException extends Exception {
+        public InvalidProductException(String message) {
+            super(message);
+        }
     }
 }
