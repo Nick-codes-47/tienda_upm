@@ -14,6 +14,7 @@ public class InputDriver {
             throws RuntimeException // TODO custom exceptions
     {
 //        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
+        this.inputFile = inputFile;
 
         try
         {
@@ -29,10 +30,14 @@ public class InputDriver {
     {
         System.out.print(PROMPT);
         String line = input.nextLine();
-        System.out.println(line);
+        if (inputFile != null)
+        {
+            System.out.println(line);
+        }
         return new Request(line);
     }
 
     private final Scanner input;
+    private String inputFile = null;
     private static final String PROMPT = "tUPM> ";
 }
