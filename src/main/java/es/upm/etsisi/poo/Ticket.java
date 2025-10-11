@@ -102,9 +102,10 @@ public class Ticket {
      *
      * @param product  Product to be added to the ticket
      * @param quantity Quantity of products wanted to add
-     * @return Return -1 if the number of products in the ticket is already maximum products
-     * Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
-     * Return 0 if product can be added
+     * @return
+     *      Return -1 if the number of products in the ticket is already maximum products
+     *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
+     *      Return 0 if product can be added
      */
     private int addProduct(Product product, int quantity) {
 
@@ -190,7 +191,6 @@ public class Ticket {
 
     /**
      * Builds a string representation of the ticket.
-     * <p>
      * The string includes the list of products with their details,
      * applied discounts by category when applicable,
      * and a summary with total price, total discount, and final price.
