@@ -26,7 +26,7 @@ public class Config {
 
     public boolean validCategory(String category)
     {
-        return categories.containsKey(category);
+        return categories.containsKey(category.toUpperCase());
     }
 
     public Double getDiscount(String category)
@@ -106,7 +106,7 @@ public class Config {
             int indexOfSeparator = line.indexOf('=');
             String category = line.substring(0, indexOfSeparator);
             Double discount = new Double(line.substring(indexOfSeparator + 1));
-            categories.put(category, discount);
+            categories.put(category.toUpperCase(), discount);
         }
         catch (IndexOutOfBoundsException | NumberFormatException exception)
         {

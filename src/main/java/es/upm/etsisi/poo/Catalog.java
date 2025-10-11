@@ -139,7 +139,7 @@ public class Catalog {
             return -1;
         }
         // If the id does exist we check if the category is valid
-        if (!app.config.validCategory(category.toUpperCase())) {
+        if (!app.config.validCategory(category)) {
             System.out.println("Invalid category!");
             return 1;
         }
