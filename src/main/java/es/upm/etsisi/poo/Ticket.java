@@ -79,7 +79,6 @@ public class Ticket {
                     int removeId = Integer.parseInt(args.get(0));
                     Product productToRemove = app.getProduct(removeId);
                     deleteProduct(productToRemove);
-                    printTicket();
                     return;
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the product ID must be an integer.");
@@ -153,6 +152,7 @@ public class Ticket {
             int newCount = Math.max(0, currentCategoryCount - quantity);
             categories.put(categoryKey, newCount);
 
+            printTicket();
             return 0;
         }
         return -1;

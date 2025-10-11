@@ -75,8 +75,8 @@ public class Catalog {
                 }
                 try {
                     // We also delete it from the ticket
-                    app.ticket.handleRequest(request);
                     this.deleteProduct(Integer.parseInt(args.get(0)));
+                    app.ticket.handleRequest(request);
 
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
@@ -168,7 +168,7 @@ public class Catalog {
         }
         // We try to get the product's field to be modified
         try {
-            Field f = Product.class.getDeclaredField(field);
+            Field f = Product.class.getDeclaredField(field.toLowerCase()); // TODO be careful if Products variable are written in camelCase
             // We only permit changes on other fields different from the id
             if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
             // We check if we have to change the price to parse
@@ -200,8 +200,7 @@ public class Catalog {
             return -1;
         }
         // If the product exist in the catalog we print it and delete it
-        System.out.println("Deleting the product:\n"
-                +" "+product);
+        System.out.println(product);
         products.remove(id);
         return 0;
     }
