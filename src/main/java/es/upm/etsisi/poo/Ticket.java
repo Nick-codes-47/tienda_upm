@@ -41,7 +41,7 @@ public class Ticket {
         switch (command) {
             case "new":
                 resetTicket();
-                System.out.println("Ticket has been resetted successfully");
+//                System.out.println("Ticket has been resetted successfully");
                 return;
 
             case "add":
@@ -225,7 +225,7 @@ public class Ticket {
                     totalDiscount += discount;
 
                     str.append(" **discount -")
-                            .append(String.format("%.2f", discount));
+                            .append(String.format("%.1f", discount));
                 }
 
                 str.append("\n");
@@ -233,9 +233,9 @@ public class Ticket {
             }
         }
 
-        str.append("\nTotal price: ").append(String.format("%.2f", totalPrice));
-        str.append("\nTotal discount: ").append(String.format("%.2f", totalDiscount));
-        str.append("\nFinal price: ").append(String.format("%.2f", totalPrice - totalDiscount));
+        str.append("\nTotal price: ").append(String.format("%.1f", totalPrice));
+        str.append("\nTotal discount: ").append(String.format("%.1f", totalDiscount));
+        str.append("\nFinal price: ").append(String.format("%.1f", totalPrice - totalDiscount));
 
         return str.toString();
     }
