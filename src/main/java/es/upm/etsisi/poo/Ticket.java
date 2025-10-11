@@ -107,9 +107,15 @@ public class Ticket {
      * Return 0 if product can be added
      */
     private int addProduct(Product product, int quantity) {
-        if (ticket.size() >= numMaxElements) {
+        System.out.println(numMaxElements);
+
+        int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
+
+        if (totalUnits >= numMaxElements) {
+            System.err.println("Error: maximum number of products reached.");
             return -1;
-        } else if (ticket.size() + quantity > numMaxElements) {
+        } else if ((totalUnits + quantity) > numMaxElements) {
+            System.err.println("Error: maximum number of products reached.");
             return -2;
         } else {
             String categoryKey = product.getCategory().toUpperCase();
@@ -125,9 +131,6 @@ public class Ticket {
             return 0;
         }
     }
-
-
-
 
     /**
      * Removes a product from the ticket by its id.
