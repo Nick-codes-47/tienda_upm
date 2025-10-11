@@ -93,11 +93,6 @@ public class App
 
     private int handleRequest(Request request)
     {
-        if (request.family.equals(BUILTIN_CMD_EXIT))
-        {
-            return 1;
-        }
-
         if (commands.containsKey(request.family))
         {
             commands.get(request.family).accept(request);
@@ -105,6 +100,11 @@ public class App
         else
         {
             System.err.printf("ERROR> Invalid command %s\n", request.family);
+        }
+
+        if (request.family.equals(BUILTIN_CMD_EXIT))
+        {
+            return 1;
         }
 
         return 0;
