@@ -13,7 +13,7 @@ public class InputDriver {
     public InputDriver(String inputFile)
             throws RuntimeException // TODO custom exceptions
     {
-        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
+//        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
 
         try
         {
@@ -21,17 +21,18 @@ public class InputDriver {
         }
         catch (FileNotFoundException exception)
         {
-            throw new RuntimeException(String.format("Missing config file: %s\n", inputFile));
+            throw new RuntimeException(String.format("Missing input file: %s\n", inputFile));
         }
     }
 
     public Request nextRequest()
     {
         System.out.print(PROMPT);
-        return new Request(input.nextLine());
+        String line = input.nextLine();
+        System.out.println(line);
+        return new Request(line);
     }
 
     private final Scanner input;
-
     private static final String PROMPT = "tUPM> ";
 }

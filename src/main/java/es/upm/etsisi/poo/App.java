@@ -20,18 +20,16 @@ public class App
 
     public void init(String inputFile)
     {
-        InputDriver input;
+        int exit = 0;
 
-        if (inputFile != null)
-        {
-            input = new InputDriver(inputFile);
-        }
-        else
-        {
-            input = new InputDriver();
-        }
+        initInput(inputFile);
+        hello();
 
-        while (handleRequest(input.nextRequest()) == 0);
+        while (exit == 0)
+        {
+            exit = handleRequest(input.nextRequest());
+            System.out.println();
+        }
     }
 
     public Product getProduct(int id)
@@ -63,6 +61,12 @@ public class App
         }
     }
 
+    private void hello()
+    {
+        System.out.println("Welcome to the ticket module App.\n" +
+                "Ticket module. Type 'help' to see commands.");
+    }
+
     private void loadConfig(String[] args)
     {
         if (args.length > 2)
@@ -72,6 +76,18 @@ public class App
         else
         {
             config = new Config();
+        }
+    }
+
+    private void initInput(String inputFile)
+    {
+        if (inputFile != null)
+        {
+            input = new InputDriver(inputFile);
+        }
+        else
+        {
+            input = new InputDriver();
         }
     }
 
@@ -88,7 +104,7 @@ public class App
         }
         else
         {
-            System.err.printf("Invalid command %s", request.family);
+            System.err.printf("ERROR> Invalid command %s\n", request.family);
         }
 
         return 0;
@@ -151,6 +167,7 @@ public class App
     }
 
     private final Catalog catalog;
+    private InputDriver input;
 
     private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
 

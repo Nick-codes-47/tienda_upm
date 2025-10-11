@@ -20,7 +20,7 @@ public class Config {
     {
         this.configFilePath = configFilePath;
 
-        System.err.printf("LOG::Config> Loading config from %s\n", configFilePath);
+//        System.err.printf("LOG::Config> Loading config from %s\n", configFilePath);
         loadConfig();
     }
 
@@ -73,12 +73,12 @@ public class Config {
         {
             VariableLoader variableLoader = new VariableLoader(this);
 
-            System.err.print("LOG::Config> Loading application config variables ... \n");
+//            System.err.print("LOG::Config> Loading application config variables ... \n");
             variableLoader.loadVariables(scanner);
-            System.err.print("LOG::Config> Loading application config variables completed\n");
-            System.err.print("LOG::Config> Loading categories and its discounts ... \n");
+//            System.err.print("LOG::Config> Loading application config variables completed\n");
+//            System.err.print("LOG::Config> Loading categories and its discounts ... \n");
             loadCategories(scanner);
-            System.err.print("LOG::Config> Loading categories and its discounts completed\n");
+//            System.err.print("LOG::Config> Loading categories and its discounts completed\n");
         }
         catch (FileNotFoundException exception)
         {
@@ -176,7 +176,7 @@ public class Config {
                 variable.setter.accept(value);
                 variable.loaded = true;
 
-                System.err.printf("LOG::Config::VariableLoader> %s = %s\n", key, variable.getter.get());
+//                System.err.printf("LOG::Config::VariableLoader> %s = %s\n", key, variable.getter.get());
             }
             else
             {
