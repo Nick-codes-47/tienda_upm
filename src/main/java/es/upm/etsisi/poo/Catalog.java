@@ -125,13 +125,23 @@ public class Catalog {
      * @param name     name of the product
      * @param category category of the product
      * @param price    price of the product
-     * @return -3 if id or price are negative
+     * @return -3 if id or price are negative or 0
      * -2 if we already reached the maxProducts
      * -1 if the id already exists
      * 0 if the product was added to the catalog without problem
      * 1 if the category doesn't exist
      */
     private int addProduct(int id, String name, String category, double price) {
+        // ID must be positive and higher than 0
+        if (id <= 0) {
+            System.err.println("ERROR: Product ID must be positive and higher than 0");
+            return -3;
+        }
+        // Price must be positive and higher than 0
+        if (price <= 0) {
+            System.err.println("ERROR: Product price must be positive and higher than 0");
+            return -3;
+        }
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
             System.err.println("ERROR: You reached the maximum number of products!");
@@ -152,16 +162,7 @@ public class Catalog {
             System.err.println("ERROR: Product name is too long. Max 100 characters");
             return 1;
         }
-        // ID must be positive
-        if (id < 0) {
-            System.err.println("ERROR: Product ID must be positive");
-            return -3;
-        }
-        // Price must be positive
-        if (price <= 0) {
-            System.err.println("ERROR: Product price must be positive and higher than 0");
-            return -3;
-        }
+
         // If everything went well we add the product
         Product newProduct = new Product(category, id, name, price);
         products.put(id, newProduct);
