@@ -143,6 +143,12 @@ public class Catalog {
             System.out.println("Invalid category!");
             return 1;
         }
+        // If the name is longer than 100 chars its invalid
+        if (name.length() > 100)
+        {
+            System.out.println("Product name is too long. Max 100 characters");
+            return 1;
+        }
         // If everything went well we add the product
         Product newProduct = new Product(category, id, name, price);
         products.put(id, newProduct);
