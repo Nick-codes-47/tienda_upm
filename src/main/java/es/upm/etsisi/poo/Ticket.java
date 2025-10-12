@@ -87,36 +87,25 @@ public class Ticket {
                     System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
                 }
-            case "update":
-                if (args.isEmpty()) {
-                    System.err.println("ERROR: one argument is required: product ID.");
-                    return -1;
-                }
-
-                try {
-                    int updatedId = Integer.parseInt(args.get(0));
-                    Product updatedProduct = app.getProduct(updatedId);
-                    if (ticket.containsKey(updatedProduct))
-                    {
-                        System.out.println(this);
-                    }
-                    return 0;
-
-                } catch (NumberFormatException e) {
-                    System.err.println("ERROR: the product ID must be an integer.");
-                    return -1;
-                }
 
             case "print":
                 printTicket();
                 return 0;
 
             default:
-                System.err.println("ERROR: command not found: " + command);
+                System.err.println("ERROR: Invalid command");
                 return -1;
         }
     }
 
+    public void updateProduct(int id)
+    {
+        Product updatedProduct = app.getProduct(id);
+        if (ticket.containsKey(updatedProduct))
+        {
+            System.out.println(this);
+        }
+    }
 
     private void printTicket() {
         System.out.println(this);

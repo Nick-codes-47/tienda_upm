@@ -68,7 +68,7 @@ public class Catalog {
                      );
                      // We also have to show the actual ticket with the updated product
                     System.out.println();
-                     app.ticket.handleRequest(request);
+                     app.updateProduct(Integer.parseInt(args.get(0)));
                      return result;
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: id is invalid");

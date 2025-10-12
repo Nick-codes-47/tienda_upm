@@ -28,7 +28,7 @@ public class App
         while (exit == 0)
         {
             Request request = input.nextRequest();
-            if (request.family != null)
+            if (!request.family.isEmpty())
             {
                 exit = handleRequest(request);
                 System.out.println();
@@ -39,6 +39,11 @@ public class App
     public Product getProduct(int id)
     {
         return catalog.getProduct(id);
+    }
+
+    public void updateProduct(int id)
+    {
+        ticket.updateProduct(id);
     }
 
     public void printTicket()
@@ -108,7 +113,7 @@ public class App
         }
         else
         {
-            System.err.printf("ERROR> Invalid command %s\n", request.family);
+            System.err.printf("ERROR: Invalid command %s\n", request.family);
         }
 
         if (request.family.equals(BUILTIN_CMD_EXIT))

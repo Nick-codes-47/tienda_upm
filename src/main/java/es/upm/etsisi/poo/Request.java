@@ -5,9 +5,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Request {
-    public String family = null;
-    public String command = null;
-    public ArrayList<String> args = null;
+    public String family = "";
+    public String command = "";
+    public ArrayList<String> args = new ArrayList<>();
 
     public Request(String line)
     {
