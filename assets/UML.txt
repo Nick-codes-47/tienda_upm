@@ -2,10 +2,17 @@
 class App {
 - Ticket ticket
 - Catalog catalog
+- InputDriver input
 + Config config
 + App()
 + void init()
 + Product getProduct(int Id)
++ void deleteProduct(int Id)
++ void updateProduct(int Id)
++ void printTicket()
++ {static} void main(String[] args)
+- int handleRequest(Request request)
+- void echo(Request request)
 - void help()
 - void exit()
 }
@@ -23,13 +30,15 @@ class Catalog {
 }
 class Ticket {
 - App app
-- HashMap<String category, ArrayList<Products> products> products
+- HashMap<Product, Integer> ticket;
+- HashMap<String, Integer> categories;
 + Ticket(App app)
 + int handleRequest(Request request)
 - int addProduct(Product product, int quantity)
-- int deleteProduct(Product product)
++ int updateProduct(Product product)
++ int deleteProduct(Product product)
 - void resetTicket()
-- void printTicket()
++ void printTicket()
 }
 class Request {
 + String family
@@ -45,6 +54,11 @@ class Config {
 + int getMaxProducts()
 + int getMaxProductsPerTicket()
 + boolean validCategory(String category)
++ String[] getCategories()
+}
+class InputDriver {
+- Scanner input
++ Request next()
 }
 class Product {
 - int Id
@@ -60,9 +74,11 @@ class Product {
 App *-- Catalog
 App *-- Ticket
 App *-- Config
+App *-- InputDriver
 Catalog o-- Product
 Ticket o-- Product
 App -- Request : uses >
 App -- Catalog : sends Request >
 App -- Ticket : sends Request >
+InputDriver -- App : creates Request >
 @enduml
