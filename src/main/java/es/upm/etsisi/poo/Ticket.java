@@ -44,7 +44,7 @@ public class Ticket {
 
             case "add":
                 if (args.size() < 2) {
-                    System.err.println("Error: two arguments are required: id and quantity.");
+                    System.err.println("ERROR: two arguments are required: id and quantity.");
                     return -1;
                 }
 
@@ -52,23 +52,29 @@ public class Ticket {
                 try {
                     id = Integer.parseInt(args.get(0));
                 } catch (NumberFormatException e) {
-                    System.err.println("Error: the product ID must be an integer.");
+                    System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
                 }
 
                 try {
                     quantity = Integer.parseInt(args.get(1));
                 } catch (NumberFormatException e) {
-                    System.err.println("Error: the quantity must be an integer.");
+                    System.err.println("ERROR: the quantity must be an integer.");
                     return -1;
                 }
+
                 Product product = app.getProduct(id);
+
+                if (product == null) {
+                    System.err.println("ERROR: the product with id " + id + " does not exist.");
+                    return -1;
+                }
 
                 return addProduct(product, quantity);
 
             case "remove":
                 if (args.isEmpty()) {
-                    System.err.println("Error: one argument is required: product ID.");
+                    System.err.println("ERROR: one argument is required: product ID.");
                     return -1;
                 }
 
@@ -78,12 +84,12 @@ public class Ticket {
 
                     return deleteProduct(productToRemove);
                 } catch (NumberFormatException e) {
-                    System.err.println("Error: the product ID must be an integer.");
+                    System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
                 }
             case "update":
                 if (args.isEmpty()) {
-                    System.err.println("Error: one argument is required: product ID.");
+                    System.err.println("ERROR: one argument is required: product ID.");
                     return -1;
                 }
 
@@ -97,7 +103,7 @@ public class Ticket {
                     return 0;
 
                 } catch (NumberFormatException e) {
-                    System.err.println("Error: the product ID must be an integer.");
+                    System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
                 }
 
@@ -106,7 +112,7 @@ public class Ticket {
                 return 0;
 
             default:
-                System.err.println("Error: command not found: " + command);
+                System.err.println("ERROR: command not found: " + command);
                 return -1;
         }
     }
@@ -131,10 +137,10 @@ public class Ticket {
         int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 
         if (totalUnits >= numMaxElements) {
-            System.err.println("Error: maximum number of products reached.");
+            System.err.println("ERROR: maximum number of products reached.");
             return -1;
         } else if ((totalUnits + quantity) > numMaxElements) {
-            System.err.println("Error: maximum number of products reached.");
+            System.err.println("ERROR: maximum number of products reached.");
             return -2;
         } else {
             String categoryKey = product.getCategory().toUpperCase();
@@ -163,17 +169,18 @@ public class Ticket {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
 
-            // 🔹 Usar categoría en mayúsculas (coherente con el resto del código)
+            // Usar categoría en mayúsculas (coherente con el resto del código)
             String categoryKey = productToDelete.getCategory().toUpperCase();
             int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
 
-            // 🔹 Asegurar que nunca quede negativa
+            // Asegurar que nunca quede negativa
             int newCount = Math.max(0, currentCategoryCount - quantity);
             categories.put(categoryKey, newCount);
 
             System.out.println(this);
             return 0;
         }
+        System.err.println("ERROR: Product dosn't exist.");
         return -1;
     }
 
