@@ -192,7 +192,7 @@ public class Catalog {
                 f.set(product, value);
             }
             // We print the product with the new value for the field
-            System.out.println(product);
+            System.out.println(product+"\n");
             // We tell ticket that a product was updated
             app.updateProduct(product);
             return 0; // if everything went well
