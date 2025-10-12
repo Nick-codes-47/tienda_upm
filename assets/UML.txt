@@ -1,0 +1,68 @@
+@startuml
+class App {
+- Ticket ticket
+- Catalog catalog
++ Config config
++ App()
++ void init()
++ Product getProduct(int Id)
+- void help()
+- void exit()
+}
+class Catalog {
+- App app
+- HashMap<int id, Product product> products
++ Catalog(App app)
++ int handleRequest(Request request)
++ Product getProduct(int id)
+- void printProductList()
+- int addProduct(int Id, String name, String category, double price)
+- int updateProduct(int Id, String field, String value)
+- int deleteProduct(int Id)
+
+}
+class Ticket {
+- App app
+- HashMap<String category, ArrayList<Products> products> products
++ Ticket(App app)
++ int handleRequest(Request request)
+- int addProduct(Product product, int quantity)
+- int deleteProduct(Product product)
+- void resetTicket()
+- void printTicket()
+}
+class Request {
++ String family
++ String command
++ ArrayList<String> args
++ Request()
+}
+class Config {
+- HashMap<String category, Double discount> categories
++ Config()
++ Config(String filePath)
++ Double getDiscount(String category)
++ int getMaxProducts()
++ int getMaxProductsPerTicket()
++ boolean validCategory(String category)
+}
+class Product {
+- int Id
+- String caetgory
+- String name
+- Double price
++ Product(String category, int id, String name, Double Price)
++ String getCategory()
++ Double getPrice()
++ String getName()
++ int getId()
+}
+App *-- Catalog
+App *-- Ticket
+App *-- Config
+Catalog o-- Product
+Ticket o-- Product
+App -- Request : uses >
+App -- Catalog : sends Request >
+App -- Ticket : sends Request >
+@enduml
