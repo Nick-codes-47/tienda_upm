@@ -103,7 +103,7 @@ public class Ticket {
 
             case "print":
                 printTicket();
-                return -1;
+                return 0;
 
             default:
                 System.err.println("Error: command not found: " + command);
