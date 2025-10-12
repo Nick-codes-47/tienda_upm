@@ -2,3 +2,6 @@ La estructura del proyecto se basa en una clase principal App, a partir de la cu
 comandos que el usuario pase (lista de comandos con "help"). Una vez leído el comando se crea un objeto de la clase Request. En función de uno de los atributos de esta petición (la familia), el comando se lleva a 
 cabo en la propia app o se manda la petición a una de las dos clases Catalog o Ticket, las cuales, a su vez, usan objetos del tipo Product, que sirven para tener un registro de los productos que interesan al usuario 
 y poder realizar operaciones con ellos. Una vez gestionado el Request, la clase correspondiente devuelve un resultado a la App, principalmente para determinar si la ejecución fue correcta o no.
+
+
+![Alt text](https://raw.githubusercontent.com/Nick-codes-47/tienda_upm/master/assets/UML.png)
