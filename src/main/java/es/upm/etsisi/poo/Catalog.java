@@ -67,7 +67,7 @@ public class Catalog {
                             args.get(2)                    // new value
                      );
                      // We also have to show the actual ticket with the updated product
-                    System.out.println("Actual Ticket:");
+                    System.out.println();
                      app.ticket.handleRequest(request);
                      return result;
                 } catch (NumberFormatException e) {
@@ -83,10 +83,9 @@ public class Catalog {
                 }
                 try {
                     // We delete it from the ticket
-                    System.out.print("Actual ticket:\n");
                     app.ticket.handleRequest(request);
+                    System.out.println();
                     // We delete from the catalog
-                    System.out.print("\nProduct removed:\n");
                     return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: id is invalid");
