@@ -23,7 +23,7 @@ public class App
         int exit = 0;
 
         initInput(inputFile);
-        hello();
+        printWelcome();
 
         while (exit == 0)
         {
@@ -61,7 +61,7 @@ public class App
         }
     }
 
-    private void hello()
+    private void printWelcome()
     {
         System.out.println("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.");
