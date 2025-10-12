@@ -87,7 +87,7 @@ public class Catalog {
             }
 
             default: {
-                System.err.println("ERROR: Invalid command");
+                System.err.println("ERROR: Invalid command "+command);
                 return 3;
             }
         }
