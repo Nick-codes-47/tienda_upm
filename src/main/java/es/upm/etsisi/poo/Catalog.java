@@ -34,7 +34,7 @@ public class Catalog {
         switch (command) {
             case "add": {
                 if (args.size() != 4) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
@@ -45,7 +45,7 @@ public class Catalog {
                             Double.parseDouble(args.get(3)) // price
                     );
                 } catch (NumberFormatException e) {
-                    System.out.println("id and/or price are not valid");
+                    System.err.println("ERROR: id and/or price are not valid");
                     return 2;
                 }
             }
@@ -57,7 +57,7 @@ public class Catalog {
 
             case "update": {
                 if (args.size() != 3) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
@@ -66,26 +66,29 @@ public class Catalog {
                             args.get(1),                   // field
                             args.get(2)                    // new value
                      );
+                     // We also have to show the actual ticket with the updated product
+                    System.out.println();
                      app.ticket.handleRequest(request);
                      return result;
                 } catch (NumberFormatException e) {
-                    System.out.println("id is invalid");
+                    System.err.println("ERROR: id is invalid");
                     return 2;
                 }
             }
 
             case "remove": {
                 if (args.size() != 1) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
                     // We delete it from the ticket
                     app.ticket.handleRequest(request);
+                    System.out.println();
                     // We delete from the catalog
                     return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
-                    System.out.println("id is invalid");
+                    System.err.println("ERROR: id is invalid");
                     return 2;
                 }
             }
@@ -179,7 +182,7 @@ public class Catalog {
     private int updateProduct(int id, String field, String value) {
         Product product = this.getProduct(id);
         if (product == null) {
-            System.out.println("Product with id " + id + " does not exist!");
+            System.err.println("ERROR: Product with id " + id + " does not exist!");
             return -1;
         }
         // We try to get the product's field to be modified
@@ -199,10 +202,10 @@ public class Catalog {
             System.out.println(product);
             return 0; // if everything went well
         } catch (NoSuchFieldException e) {
-            System.out.println("Field not valid!");
+            System.err.println("ERROR: Field not valid!");
             return 1; // if field doesn't exist we return 1
         } catch (IllegalAccessException e) {
-            System.out.println("Illegal access! (You can't modify the id)");
+            System.err.println("ERROR: Illegal access! (You can't modify the id)");
             return 2; // Mainly if we try to modify the ID
         }
     }
@@ -217,7 +220,7 @@ public class Catalog {
     private int deleteProduct(int id) {
         Product product = this.getProduct(id);
         if (product == null) {
-            System.out.println("Product with id " + id + " does not exist!");
+            System.err.println("ERROR: Product with id " + id + " does not exist!");
             return -1;
         }
         // If the product exist in the catalog we print it and delete it

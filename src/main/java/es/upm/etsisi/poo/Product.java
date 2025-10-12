@@ -4,10 +4,6 @@ package es.upm.etsisi.poo;
  * This class is used to create objects with the characteristics we need for our products
  */
 public class Product {
-    private String category;
-    private int id;
-    private String name;
-    private double price;
 
     /**
      * This constructor is done to introduce all the attributes the user wants for the product
@@ -26,7 +22,7 @@ public class Product {
             msg.append(" must be positive and higher than 0");
             throw new InvalidProductException(msg.toString());
         }
-        if (name == null || name.isEmpty() || name.length() > 100) {
+        if (name == null || name.isEmpty() || name.length() >= 100) {
             throw new InvalidProductException("ERROR: Product's name is invalid (must have less than 100 characters)");
         }
         this.category = category;
@@ -74,4 +70,9 @@ public class Product {
             super(message);
         }
     }
+
+    private String category;
+    private int id;
+    private String name;
+    private double price;
 }
