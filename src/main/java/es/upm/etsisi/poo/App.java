@@ -176,7 +176,7 @@ public class App
         System.out.println(request.family + " " + request.command);
     }
 
-    private void printOk(int result, Request request)
+    private void acknowledgeResult(int result, Request request)
     {
         if (result == 0)
         {
@@ -186,8 +186,8 @@ public class App
 
     private void initCommandMaps()
     {
-        commands.put(Catalog.COMMAND_PREFIX, (request) -> printOk(catalog.handleRequest(request), request));
-        commands.put(Ticket.COMMAND_PREFIX, (request) -> printOk(ticket.handleRequest(request), request));
+        commands.put(Catalog.COMMAND_PREFIX, (request) -> acknowledgeResult(catalog.handleRequest(request), request));
+        commands.put(Ticket.COMMAND_PREFIX, (request) -> acknowledgeResult(ticket.handleRequest(request), request));
         commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
         commands.put(BUILTIN_CMD_HELP, (request) -> help());
         commands.put(BUILTIN_CMD_ECHO, this::echo);
