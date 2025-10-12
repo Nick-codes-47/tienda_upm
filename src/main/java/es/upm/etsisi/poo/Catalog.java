@@ -21,9 +21,13 @@ public class Catalog {
 
     /**
      * Method to handle requests from the users that involve products and the catalog
+     *
      * @param request object request to know which method needs to be executed
+     * @return Returns 0 if the execution went as expected;
+     *          1 if the arguments are not the necessary;
+     *          2 if the arguments are valid
      */
-    public void handleRequest(Request request) {
+    public int handleRequest(Request request) {
         String command = request.command;
         ArrayList<String> args = request.args;
 
@@ -31,10 +35,10 @@ public class Catalog {
             case "add": {
                 if (args.size() != 4) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    this.addProduct(
+                    return this.addProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // name
                             args.get(2),                   // category
@@ -42,51 +46,51 @@ public class Catalog {
                     );
                 } catch (NumberFormatException e) {
                     System.out.println("id and/or price are not valid");
+                    return 2;
                 }
-                break;
             }
 
             case "list": {
                 this.printProdList();
-                break;
+                return 0;
             }
 
             case "update": {
                 if (args.size() != 3) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    this.updateProduct(
+                    return this.updateProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // field
                             args.get(2)                    // new value
                     );
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
+                    return 2;
                 }
-                break;
             }
 
             case "remove": {
                 if (args.size() != 1) {
                     System.out.println("Not the required number of arguments");
-                    break;
+                    return 1;
                 }
                 try {
-                    // We also delete it from the ticket
-                    this.deleteProduct(Integer.parseInt(args.get(0)));
+                    // We delete it from the ticket
                     app.ticket.handleRequest(request);
-
+                    // We delete from the catalog
+                    return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
                     System.out.println("id is invalid");
+                    return 2;
                 }
-                break;
             }
 
             default: {
-                System.out.println("Invalid command");
-                break;
+                System.err.println("ERROR: Invalid command");
+                return 3;
             }
         }
     }
@@ -94,9 +98,10 @@ public class Catalog {
 
     /**
      * Method to search a product in the catalog
+     *
      * @param id id of the product to search it
      * @return null if the id is not correct.
-     *         the product with the id if it's correct
+     * the product with the id if it's correct
      */
     public Product getProduct(int id) {
         return products.get(id);
@@ -118,53 +123,56 @@ public class Catalog {
 
     /**
      * Method to add a product to the catalog so it is available to buy it
-     * @param id to have an identification for the product
-     * @param name name of the product
+     *
+     * @param id       to have an identification for the product
+     * @param name     name of the product
      * @param category category of the product
-     * @param price price of the product
-     * @return  -2 if we already reached the maxProducts
-     *          -1 if the id already exists
-     *          0 if the product was added to the catalog without problem
-     *          1 if the category doesn't exist
+     * @param price    price of the product
+     * @return -4 if we already reached the maxProducts;
+     * -3 if the id already exists;
+     * -2 if the category doesn't exist;
+     * -1 if product couldn't be created;
+     * 0 if the product was added to the catalog without problem;
      */
     private int addProduct(int id, String name, String category, double price) {
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
-            System.out.println("You reached the maximum number of products!");
-            return -2;
+            System.err.println("ERROR: You reached the maximum number of products!");
+            return -4;
         }
         // We check if there already is a product with the same id
         if (products.containsKey(id)) {
-            System.out.println("Product's id already exists");
-            return -1;
+            System.err.println("ERROR: Product's id already exists");
+            return -3;
         }
         // If the id does exist we check if the category is valid
         if (!app.config.validCategory(category)) {
-            System.out.println("Invalid category!");
-            return 1;
+            System.err.println("ERROR: Invalid category!");
+            return -2;
         }
-        // If the name is longer than 100 chars its invalid
-        if (name.length() > 100)
-        {
-            System.out.println("Product name is too long. Max 100 characters");
-            return 1;
-        }
+
         // If everything went well we add the product
-        Product newProduct = new Product(category, id, name, price);
-        products.put(id, newProduct);
-        System.out.println(newProduct);
-        return 0;
+        try {
+            Product newProduct = new Product(category, id, name, price);
+            products.put(id, newProduct);
+            System.out.println(newProduct);
+            return 0;
+        } catch (Product.InvalidProductException e) {
+            System.err.println(e.getMessage());
+            return -1;
+        }
     }
 
     /**
      * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog and the ticket
-     * @param id to search the product
+     *
+     * @param id    to search the product
      * @param field to know which field of the product needs to be changed
      * @param value the new value of the field
      * @return -1 if the product doesn't exist in the catalog.
-     *          0 if the field was changed correctly
-     *          1 if the product exists but the field doesn't
-     *          2 if we don't have permission to change the field (ID)
+     * 0 if the field was changed correctly
+     * 1 if the product exists but the field doesn't
+     * 2 if we don't have permission to change the field (ID)
      */
     private int updateProduct(int id, String field, String value) {
         Product product = this.getProduct(id);
@@ -176,11 +184,15 @@ public class Catalog {
         try {
             Field f = Product.class.getDeclaredField(field.toLowerCase()); // TODO be careful if Products variable are written in camelCase
             // We only permit changes on other fields different from the id
-            if (!field.equalsIgnoreCase("id")) { f.setAccessible(true); }
+            if (!field.equalsIgnoreCase("id")) {
+                f.setAccessible(true);
+            }
             // We check if we have to change the price to parse
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
                 f.set(product, Double.parseDouble(value));
-            } else { f.set(product, value); }
+            } else {
+                f.set(product, value);
+            }
             // We print the product with the new value for the field
             System.out.println(product);
             return 0; // if everything went well
@@ -195,9 +207,10 @@ public class Catalog {
 
     /**
      * Method to delete a product from the catalog and the ticket
+     *
      * @param id to search the product
-     * @return  -1 if the product doesn't exist
-     *          0 if we could delete the product
+     * @return -1 if the product doesn't exist
+     * 0 if we could delete the product
      */
     private int deleteProduct(int id) {
         Product product = this.getProduct(id);

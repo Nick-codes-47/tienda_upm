@@ -140,7 +140,7 @@ public class App
         }
         catDiscounts.deleteCharAt(catDiscounts.length() - 2);
         catDiscounts.append(".");
-        System.out.println(commands+categories+"\n"+catDiscounts+"\n");
+        System.out.print(commands+categories+"\n"+catDiscounts+"\n");
     }
 
     /**
