@@ -179,7 +179,7 @@ public class Catalog {
     private int updateProduct(int id, String field, String value) {
         Product product = this.getProduct(id);
         if (product == null) {
-            System.out.println("Product with id " + id + " does not exist!");
+            System.err.println("ERROR: Product with id " + id + " does not exist!");
             return -1;
         }
         // We try to get the product's field to be modified
@@ -199,10 +199,10 @@ public class Catalog {
             System.out.println(product);
             return 0; // if everything went well
         } catch (NoSuchFieldException e) {
-            System.out.println("Field not valid!");
+            System.err.println("ERROR: Field not valid!");
             return 1; // if field doesn't exist we return 1
         } catch (IllegalAccessException e) {
-            System.out.println("Illegal access! (You can't modify the id)");
+            System.err.println("ERROR: Illegal access! (You can't modify the id)");
             return 2; // Mainly if we try to modify the ID
         }
     }
@@ -217,7 +217,7 @@ public class Catalog {
     private int deleteProduct(int id) {
         Product product = this.getProduct(id);
         if (product == null) {
-            System.out.println("Product with id " + id + " does not exist!");
+            System.err.println("ERROR: Product with id " + id + " does not exist!");
             return -1;
         }
         // If the product exist in the catalog we print it and delete it
