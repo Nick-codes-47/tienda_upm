@@ -103,12 +103,14 @@ public class Ticket {
         }
     }
 
-    public void updateProduct(Product product)
+    public int updateProduct(Product product)
     {
         if (ticket.containsKey(product))
         {
             System.out.println(this);
+            return 0;
         }
+        return 1;
     }
 
     public void printTicket() {
@@ -125,7 +127,7 @@ public class Ticket {
      *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
      *      Return 0 if product can be added
      */
-    public int addProduct(Product product, int quantity) {
+    private int addProduct(Product product, int quantity) {
 
         int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 

@@ -11,7 +11,7 @@ public class InputDriver {
     }
 
     public InputDriver(String inputFile)
-            throws RuntimeException // TODO custom exceptions
+            throws RuntimeException
     {
 //        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
         this.inputFile = inputFile;
@@ -26,7 +26,7 @@ public class InputDriver {
         }
     }
 
-    public Request nextRequest()
+    public Request next()
     {
         System.out.print(PROMPT);
         String line = input.nextLine();

@@ -6,7 +6,6 @@ import java.util.function.Consumer;
 public class App
 {
     public Config config;
-    public final Ticket ticket;
 
     App(String[] args)
     {
@@ -27,7 +26,7 @@ public class App
 
         while (exit == 0)
         {
-            Request request = input.nextRequest();
+            Request request = input.next();
             if (!request.family.isEmpty())
             {
                 exit = handleRequest(request);
@@ -194,6 +193,8 @@ public class App
     }
 
     private final Catalog catalog;
+    private final Ticket ticket;
+
     private InputDriver input;
 
     private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
