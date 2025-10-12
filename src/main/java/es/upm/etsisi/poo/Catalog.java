@@ -34,7 +34,7 @@ public class Catalog {
         switch (command) {
             case "add": {
                 if (args.size() != 4) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
@@ -45,7 +45,7 @@ public class Catalog {
                             Double.parseDouble(args.get(3)) // price
                     );
                 } catch (NumberFormatException e) {
-                    System.out.println("id and/or price are not valid");
+                    System.err.println("ERROR: id and/or price are not valid");
                     return 2;
                 }
             }
@@ -57,7 +57,7 @@ public class Catalog {
 
             case "update": {
                 if (args.size() != 3) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
@@ -67,14 +67,14 @@ public class Catalog {
                             args.get(2)                    // new value
                     );
                 } catch (NumberFormatException e) {
-                    System.out.println("id is invalid");
+                    System.err.println("ERROR: id is invalid");
                     return 2;
                 }
             }
 
             case "remove": {
                 if (args.size() != 1) {
-                    System.out.println("Not the required number of arguments");
+                    System.err.println("ERROR: Not the required number of arguments");
                     return 1;
                 }
                 try {
@@ -83,7 +83,7 @@ public class Catalog {
                     // We delete from the catalog
                     return this.deleteProduct(Integer.parseInt(args.get(0)));
                 } catch (NumberFormatException e) {
-                    System.out.println("id is invalid");
+                    System.err.println("ERROR: id is invalid");
                     return 2;
                 }
             }
