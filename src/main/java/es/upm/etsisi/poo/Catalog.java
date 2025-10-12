@@ -61,11 +61,13 @@ public class Catalog {
                     return 1;
                 }
                 try {
-                    return this.updateProduct(
+                     int result = this.updateProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // field
                             args.get(2)                    // new value
-                    );
+                     );
+                     app.ticket.handleRequest(request);
+                     return result;
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: id is invalid");
                     return 2;

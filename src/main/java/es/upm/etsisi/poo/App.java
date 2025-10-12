@@ -23,7 +23,7 @@ public class App
         int exit = 0;
 
         initInput(inputFile);
-        hello();
+        printWelcome();
 
         while (exit == 0)
         {
@@ -35,6 +35,11 @@ public class App
     public Product getProduct(int id)
     {
         return catalog.getProduct(id);
+    }
+
+    public void printTicket()
+    {
+        System.out.println(ticket);
     }
 
     /**
@@ -61,7 +66,7 @@ public class App
         }
     }
 
-    private void hello()
+    private void printWelcome()
     {
         System.out.println("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.");
@@ -157,10 +162,18 @@ public class App
         System.out.println(request.family + " " + request.command);
     }
 
+    private void printOk(int result, Request request)
+    {
+        if (result == 0)
+        {
+            System.out.println(request.family + " " + request.command + ": ok");
+        }
+    }
+
     private void initCommandMaps()
     {
-        commands.put(Catalog.COMMAND_PREFIX, catalog::handleRequest);
-        commands.put(Ticket.COMMAND_PREFIX, ticket::handleRequest);
+        commands.put(Catalog.COMMAND_PREFIX, (request) -> printOk(catalog.handleRequest(request), request));
+        commands.put(Ticket.COMMAND_PREFIX, (request) -> printOk(ticket.handleRequest(request), request));
         commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
         commands.put(BUILTIN_CMD_HELP, (request) -> help());
         commands.put(BUILTIN_CMD_ECHO, this::echo);
