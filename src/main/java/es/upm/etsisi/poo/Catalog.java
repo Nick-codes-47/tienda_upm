@@ -219,7 +219,7 @@ public class Catalog {
             return -1;
         }
         // If the product exist in the catalog we print it and delete it
-        System.out.println(product);
+        System.out.println(product+"\n");
         products.remove(id);
         //We tell the ticket the removed product
         app.deleteProduct(product);
