@@ -27,8 +27,12 @@ public class App
 
         while (exit == 0)
         {
-            exit = handleRequest(input.nextRequest());
-            System.out.println();
+            Request request = input.nextRequest();
+            if (request.family != null)
+            {
+                exit = handleRequest(request);
+                System.out.println();
+            }
         }
     }
 

@@ -5,21 +5,21 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Request {
-    public String family;
-    public String command;
-    public ArrayList<String> args;
+    public String family = null;
+    public String command = null;
+    public ArrayList<String> args = null;
 
     public Request(String line)
     {
         ArrayList<String> tokens = tokenize(line);
 
-        family = tokens.get(0);
-        if (tokens.size() > 1)
-        {
-            command = tokens.get(1);
-            if (tokens.size() > 2)
-            {
-                args = new ArrayList<>(tokens.subList(2, tokens.size()));
+        if (!tokens.isEmpty()) {
+            family = tokens.get(0);
+            if (tokens.size() > 1) {
+                command = tokens.get(1);
+                if (tokens.size() > 2) {
+                    args = new ArrayList<>(tokens.subList(2, tokens.size()));
+                }
             }
         }
 
