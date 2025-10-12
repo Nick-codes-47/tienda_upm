@@ -61,15 +61,11 @@ public class Catalog {
                     return 1;
                 }
                 try {
-                     int result = this.updateProduct(
+                    return this.updateProduct(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // field
                             args.get(2)                    // new value
-                     );
-                     // We also have to show the actual ticket with the updated product
-                    System.out.println();
-                     app.updateProduct(Integer.parseInt(args.get(0)));
-                     return result;
+                    );
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: id is invalid");
                     return 2;
@@ -82,11 +78,8 @@ public class Catalog {
                     return 1;
                 }
                 try {
-                    // We delete it from the ticket
-                    app.ticket.handleRequest(request);
-                    System.out.println();
-                    // We delete from the catalog
                     return this.deleteProduct(Integer.parseInt(args.get(0)));
+
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: id is invalid");
                     return 2;
@@ -200,6 +193,8 @@ public class Catalog {
             }
             // We print the product with the new value for the field
             System.out.println(product);
+            // We tell ticket that a product was updated
+            app.updateProduct(product);
             return 0; // if everything went well
         } catch (NoSuchFieldException e) {
             System.err.println("ERROR: Field not valid!");
@@ -226,6 +221,8 @@ public class Catalog {
         // If the product exist in the catalog we print it and delete it
         System.out.println(product);
         products.remove(id);
+        //We tell the ticket the removed product
+        app.deleteProduct(product);
         return 0;
     }
 }

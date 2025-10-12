@@ -82,7 +82,12 @@ public class Ticket {
                     int removeId = Integer.parseInt(args.get(0));
                     Product productToRemove = app.getProduct(removeId);
 
-                    return deleteProduct(productToRemove);
+                    int result = deleteProduct(productToRemove);
+                    if (result != 0)
+                    {
+                        System.err.println("ERROR: Product doesn't exist.");
+                    }
+                    return result;
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
@@ -98,16 +103,15 @@ public class Ticket {
         }
     }
 
-    public void updateProduct(int id)
+    public void updateProduct(Product product)
     {
-        Product updatedProduct = app.getProduct(id);
-        if (ticket.containsKey(updatedProduct))
+        if (ticket.containsKey(product))
         {
             System.out.println(this);
         }
     }
 
-    private void printTicket() {
+    public void printTicket() {
         System.out.println(this);
     }
 
@@ -121,7 +125,7 @@ public class Ticket {
      *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
      *      Return 0 if product can be added
      */
-    private int addProduct(Product product, int quantity) {
+    public int addProduct(Product product, int quantity) {
 
         int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 
@@ -153,7 +157,7 @@ public class Ticket {
      * @return 0 if the product was found and removed successfully,
      * -1 if the product does not exist in the ticket.
      */
-    private int deleteProduct(Product productToDelete) {
+    public int deleteProduct(Product productToDelete) {
         if (ticket.containsKey(productToDelete)) {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
@@ -169,7 +173,6 @@ public class Ticket {
             System.out.println(this);
             return 0;
         }
-        System.err.println("ERROR: Product dosn't exist.");
         return -1;
     }
 
@@ -234,7 +237,7 @@ public class Ticket {
             }
         }
 
-        str.append("\nTotal price: ").append(String.format("%.1f", totalPrice));
+        str.append("Total price: ").append(String.format("%.1f", totalPrice));
         str.append("\nTotal discount: ").append(String.format("%.1f", totalDiscount));
         str.append("\nFinal price: ").append(String.format("%.1f", totalPrice - totalDiscount));
 

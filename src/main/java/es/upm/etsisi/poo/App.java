@@ -41,9 +41,14 @@ public class App
         return catalog.getProduct(id);
     }
 
-    public void updateProduct(int id)
+    public void updateProduct(Product product)
     {
-        ticket.updateProduct(id);
+        ticket.updateProduct(product);
+    }
+
+    public void deleteProduct(Product product)
+    {
+        ticket.deleteProduct(product);
     }
 
     public void printTicket()
