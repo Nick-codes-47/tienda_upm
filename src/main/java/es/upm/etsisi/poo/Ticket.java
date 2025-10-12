@@ -191,7 +191,7 @@ public class Ticket {
     }
 
     /**
-     * Builds a string representation of the ticket.
+     * Builds a string representation of the ticket sorted by name.
      * The string includes the list of products with their details,
      * applied discounts by category when applicable,
      * and a summary with total price, total discount, and final price.
@@ -204,6 +204,7 @@ public class Ticket {
         double totalPrice = 0;
         double totalDiscount = 0;
 
+        // Counting amount of products per category
         Map<String, Integer> categoryCounts = new HashMap<>();
         for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
             String category = entry.getKey().getCategory().toUpperCase();
@@ -211,11 +212,14 @@ public class Ticket {
             categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
         }
 
-        for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
+        // Sorting products by name
+        ArrayList<Map.Entry<Product, Integer>> entries = new ArrayList<>(ticket.entrySet());
+        entries.sort((e1, e2) -> e1.getKey().getName().compareToIgnoreCase(e2.getKey().getName()));
+
+        for (Map.Entry<Product, Integer> entry : entries) {
             Product producto = entry.getKey();
             int cantidad = entry.getValue();
             String category = producto.getCategory().toUpperCase();
-
             Double discountRate = app.config.getDiscount(category);
 
             for (int i = 0; i < cantidad; i++) {
@@ -223,11 +227,9 @@ public class Ticket {
 
                 if (discountRate != null && categoryCounts.get(category) >= 2) {
                     double discount = producto.getPrice() * discountRate;
-                    totalDiscount += discount;
-
-                    if (discount > 0){
-                        str.append(" **discount -")
-                                .append(String.format("%.1f", discount));
+                    if (discount > 0) {
+                        str.append(" **discount -").append(String.format("%.1f", discount));
+                        totalDiscount += discount;
                     }
                 }
 
@@ -242,4 +244,5 @@ public class Ticket {
 
         return str.toString();
     }
+
 }
