@@ -6,7 +6,7 @@ import java.util.Map;
 
 public class Ticket {
     private final App app;
-    private HashMap<Product, Integer> ticket;
+    private HashMap<Product, Integer> ticket; // TODO is not better to use Prods id?
     private HashMap<String, Integer> categories;
     private final int numMaxElements;
     public static final String COMMAND_PREFIX = "ticket";
@@ -76,9 +76,26 @@ public class Ticket {
                     int removeId = Integer.parseInt(args.get(0));
                     Product productToRemove = app.getProduct(removeId);
 
-                    if (request.family.equalsIgnoreCase("prod"))  {
-                        return deleteProduct(productToRemove, true);
-                    } else return deleteProduct(productToRemove, false);
+                    return deleteProduct(productToRemove);
+                } catch (NumberFormatException e) {
+                    System.err.println("Error: the product ID must be an integer.");
+                    return -1;
+                }
+            case "update":
+                if (args.isEmpty()) {
+                    System.err.println("Error: one argument is required: product ID.");
+                    return -1;
+                }
+
+                try {
+                    int updatedId = Integer.parseInt(args.get(0));
+                    Product updatedProduct = app.getProduct(updatedId);
+                    if (ticket.containsKey(updatedProduct))
+                    {
+                        System.out.println(this);
+                    }
+                    return 0;
+
                 } catch (NumberFormatException e) {
                     System.err.println("Error: the product ID must be an integer.");
                     return -1;
@@ -141,7 +158,7 @@ public class Ticket {
      * @return 0 if the product was found and removed successfully,
      * -1 if the product does not exist in the ticket.
      */
-    private int deleteProduct(Product productToDelete, boolean silent) {
+    private int deleteProduct(Product productToDelete) {
         if (ticket.containsKey(productToDelete)) {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
@@ -154,29 +171,11 @@ public class Ticket {
             int newCount = Math.max(0, currentCategoryCount - quantity);
             categories.put(categoryKey, newCount);
 
-            if (!silent) printTicket();
+            System.out.println(this);
             return 0;
         }
         return -1;
     }
-
-
-    /**
-     * Updates the details of a product in the ticket while keeping its existing quantity.
-     *
-     * @param updatedProduct The product with updated information.
-     * @return 0 if the product was found and updated successfully,
-     * -1 if the product does not exist in the ticket.
-     */
-    private int updateProduct(Product updatedProduct) {
-        if (ticket.containsKey(updatedProduct)) {
-            int quantity = ticket.get(updatedProduct);
-            ticket.put(updatedProduct, quantity); // Override product keeping quantity
-            return 0;
-        }
-        return -1; // Product not found
-    }
-
 
     /**
      * Clears the current ticket and creates a new empty one.

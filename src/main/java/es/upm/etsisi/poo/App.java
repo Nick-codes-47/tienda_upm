@@ -37,6 +37,11 @@ public class App
         return catalog.getProduct(id);
     }
 
+    public void printTicket()
+    {
+        System.out.println(ticket);
+    }
+
     /**
      * @param args
      *      args[1] - input file path
