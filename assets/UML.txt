@@ -1,6 +1,6 @@
 @startuml
 class App {
-- Ticket ticket
+- tickets : TicketHandler
 - Catalog catalog
 - InputDriver input
 + Config config
@@ -32,6 +32,9 @@ class Ticket {
 - App app
 - HashMap<Product, Integer> ticket;
 - HashMap<String, Integer> categories;
+- creationDate : LocalDateTime
+- id : int
+- closingDate : LocalDateTime
 + Ticket(App app)
 + int handleRequest(Request request)
 - int addProduct(Product product, int quantity)
@@ -39,6 +42,11 @@ class Ticket {
 + int deleteProduct(Product product)
 - void resetTicket()
 + void printTicket()
+}
+class TicketHandler {
+- tickets : List<Ticket>
++ handleRequest(request : Request)
+- 
 }
 class Request {
 + String family
@@ -62,7 +70,7 @@ class InputDriver {
 }
 class Product {
 - int Id
-- String caetgory
+- Category category
 - String name
 - Double price
 + Product(String category, int id, String name, Double Price)
@@ -70,6 +78,53 @@ class Product {
 + Double getPrice()
 + String getName()
 + int getId()
+}
+enum Category {
+MERCH(0)
+STATIONERY(5)
+CLOTHES(7)
+BOOK(10)
+ELECTRONICS(3)
+- discount : double
++ Category(discount : double)
++ getDiscount() : double
+}
+class Users {
+- customers: Hashmap<String,Client>
+- cashiers : Hashmap<int,Cashier>
++ handleRequest(request : Request)
+- addCustomer(name : String, dni : String, email : Email, cashierId : int) : int
+- removeCustomer(dni : String) : int
+- listCustomers() : int
+- addCashier(name : String, email : Email) : int
+- removeCashier(id : String) : int
+- listCashiers() int
+- cashierTickets(id : String) : int
+}
+class Customer{
+- name : String
+- dni : String
+- email : Email
+- cashierId : int
++ Customer(name : String, dni : String, email : Email, cashierId : int)
++ getName() : String
++ getDni() : String
++ getCashId() : int
++ getEmail() : Email
+}
+class Cashier {
+- name : String
+- email : Email
++ Cashier(name : String, email : Email)
++ getName() : String
++ getEmail() : Email
+}
+class Email {
+- username : String
+- domain : String
++ Email(username : String, domain : String)
++ getUsername() : String
++ getDomain() : String
 }
 App *-- Catalog
 App *-- Ticket
