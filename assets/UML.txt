@@ -1,35 +1,22 @@
 @startuml
 class App {
 - tickets : TicketHandler
-- Catalog catalog
-- InputDriver input
-+ Config config
+- catalog : Catalog
+- input : InputDriver
++ config : Config
 + App()
-+ void init()
-+ Product getProduct(int Id)
-+ void deleteProduct(int Id)
-+ void updateProduct(int Id)
-+ void printTicket()
-+ {static} void main(String[] args)
-- int handleRequest(Request request)
-- void echo(Request request)
-- void help()
-- void exit()
++ init() : void
++ getProduct(id : int) : Product
++ deleteProduct(id : int) : void
++ updateProduct(id : int) : void
++ printTicket() : void
++ {static} main(args : String[]) : void
+- handleRequest(request : Request) : int
+- echo(request : Request) : void
+- help() : void
+- exit() : void
 }
-class TicketModule {
-- App app
-- HashMap<Integer, Integer> ticket;
-- HashMap<String, Integer> categories;
-- creationDate : LocalDateTime
-- id : int
-- closingDate : LocalDateTime
-- TicketModule(cashId : int, userId : String)
-- int handleRequest(Request request)
-- int addProduct(Product product, int quantity)
-+ int updateProduct(Product product)
-+ int deleteProduct(Product product)
-+ void printTicket()
-}
+
 class Email {
 - username : String
 - domain : String
@@ -37,21 +24,35 @@ class Email {
 + getUsername() : String
 + getDomain() : String
 }
-class Cashier {
-- name : String
-- email : Email
-- tickets : List<Ticket>
-+ Cashier(name : String, email : Email)
-+ getName() : String
-+ getEmail() : Email
-+ handleRequest(request : Request)
-- addTicket(userId : String) : int
-- addProduct(ticketId : int, prodId : int, amount: int,
-pers : String[]) : int
-- removeTicket() : int
-- printTicket() : int
+
+package protectTicket {
+    class Cashier {
+    - name : String
+    - email : Email
+    - tickets : List<Ticket>
+    + Cashier(name : String, email : Email)
+    + getName() : String
+    + getEmail() : Email
+    + handleRequest(request : Request) : void
+    - addTicket(userId : String) : int
+    - addProduct(ticketId : int, prodId : int, amount : int, pers : String[]) : int
+    - removeTicket() : int
+    - printTicket() : int
+    }
+    class TicketModule {
+    - app : App
+    - ticket : HashMap<int, int>
+    - categories : HashMap<String, Integer>
+    - creationDate : LocalDateTime
+    - id : int
+    - closingDate : LocalDateTime
+    # TicketModule(cashId : int, userId : String)
+    # addProduct(id : int, quantity : int) : int
+    # printTicket() : void
+    }
 }
-class Customer{
+
+class Customer {
 - name : String
 - email : Email
 - cashierId : int
@@ -62,73 +63,76 @@ class Customer{
 + getEmail() : Email
 + addTicket(ticketId : int) : int
 }
+
 class UserModule {
-- customers: Hashmap<String,Client>
-- cashiers : Hashmap<int,Cashier>
-+ UserModule(App app)
+- customers : HashMap<String, Client>
+- cashiers : HashMap<int, Cashier>
++ UserModule(app : App)
 + handleRequest(request : Request) : int
 - addCustomer(name : String, email : Email, cashierId : int) : int
 - removeCustomer(dni : String) : int
 - listCustomers() : int
 - addCashier(name : String, email : Email) : int
 - removeCashier(id : String) : int
-- listCashiers() int
+- listCashiers() : int
 - cashierTickets(id : String) : int
 - cashierAction(request : Request) : int
 - listTickets() : int
 }
+
 class Request {
-+ String family
-+ String command
-+ ArrayList<String> args
++ family : String
++ command : String
++ args : ArrayList<String>
 + Request()
 }
+
 class Config {
-- HashMap<String category, Double discount> categories
+- categories : HashMap<String, Double>
 + Config()
-+ Config(String filePath)
-+ Double getDiscount(String category)
-+ int getMaxProducts()
-+ int getMaxProductsPerTicket()
-+ boolean validCategory(String category)
-+ String[] getCategories()
++ Config(filePath : String)
++ getDiscount(category : String) : Double
++ getMaxProducts() : int
++ getMaxProductsPerTicket() : int
++ validCategory(category : String) : boolean
++ getCategories() : String[]
 }
+
 class InputDriver {
-- Scanner input
-+ Request next()
+- input : Scanner
++ next() : Request
 }
+
 class ProductModule {
-- App app
-- HashMap<int id, Product product> products
-+ ProductModule(App app)
-+ int handleRequest(Request request)
-+ Product getProduct(int id)
-- int addProduct(String name, String category, double price,
-maxPers : int)
-- updateProduct(int Id, String field, String value) : int
-- addFood(name : String, price : double, expirationDate : String,
-maxPeople : int) : int
-- addMeeting(name : String, price : double, expirationDate : String,
-maxPeople : int) : int
+- app : App
+- products : HashMap<int, Product>
++ ProductModule(app : App)
++ handleRequest(request : Request) : int
++ getProduct(id : int) : Product
+- addProduct(name : String, category : String, price : double, maxPers : int) : int
+- updateProduct(id : int, field : String, value : String) : int
+- addFood(name : String, price : double, expirationDate : String, maxPeople : int) : int
+- addMeeting(name : String, price : double, expirationDate : String, maxPeople : int) : int
 - printProducts() : void
-- deleteProduct(int Id) : int
+- deleteProduct(id : int) : int
 }
+
 class Product {
-- Category category
-- String name
-- Double price
+- category : Category
+- name : String
+- price : Double
 - maxPers : int
 - event : Event
-+ Product(Category category, String name, Double Price, String date,
-int maxPeople)
-+ Product(Category category, String name, Double Price, maxPers : int)
-+ Product(Category category, String name, Double Price)
-+ String getCategory()
-+ Double getPrice()
-+ String getName()
++ Product(category : Category, name : String, price : Double, date : String, maxPeople : int)
++ Product(category : Category, name : String, price : Double, maxPers : int)
++ Product(category : Category, name : String, price : Double)
++ getCategory() : String
++ getPrice() : Double
++ getName() : String
 + getMaxPers() : int
 + getEvent() : Event
 }
+
 class Event {
 - expireDate : LocalDate
 - maxPeople : int
@@ -136,15 +140,17 @@ class Event {
 + Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
 + getExpireDate() : LocalDate
 + getMaxPeople() : int
-+ getType : EventType
++ getType() : EventType
 }
+
 enum EventType {
 FOOD(36)
 MEETING(12)
-- planningTime 'hours' : int
-+ EventType (planningTime : int)
+- planningTime : int
++ EventType(planningTime : int)
 + getPlanTime() : int
 }
+
 enum Category {
 MERCH(0)
 STATIONERY(5)
@@ -155,13 +161,21 @@ ELECTRONICS(3)
 + Category(discount : double)
 + getDiscount() : double
 }
+
 App *-- ProductModule
 App *-- UserModule
 App *-- Config
-App *-- InputDriver
+App *-- InputDriver : creates Request
 ProductModule o-- Product
+Product o-- Event
+UserModule o-- Customer
+UserModule o-- Cashier 
+Customer o-- Email
+Cashier o-- Email
+Cashier o-- TicketModule
 App -- Request : uses >
 App -- ProductModule : sends Request >
 App -- UserModule : sends Request >
-InputDriver -- App : creates Request >
+UserModule -- Cashier : sends Request >
+Cashier -- TicketModule : sends Request >
 @enduml
