@@ -1,6 +1,7 @@
 @startuml
 class App {
 - modules : HashMap<handlerId : String, RequestHandler>
+- userRegisters : HashMap<registerId : String, UserRegister>
 + App()
 + init() : void
 + {static} main(args : String[]) : void
@@ -74,8 +75,8 @@ UserHandler <|-- CashierHandler
 
 interface Action {
 + result : int
-+ {abstract} Action(App, args : String[])
-+ {abstract} exec() : int
++ {abstract} Action()
++ {abstract} exec(App, args : String[]) : int
 + {abstract} help() : void
 }
 
@@ -105,11 +106,10 @@ Action <|.. ListUsers
 }
 
 class Catalog {
-- products : HashMap<productId : int, Product>
+- products : HashMap<productId : int, ProductBase>
 + getProduct(id : int) : Product
-+ addProduct(name : String, category : String, price : double, maxPers : int) : int
++ add(ProductBase) : int
 + updateProduct(id : int, field : String, value : String) : int
-+ addEvent(name : String, price : double, expirationDate : String, maxPeople : int) : int
 + printProducts() : void
 + deleteProduct(id : int) : int
 }
@@ -156,19 +156,15 @@ class Event {
 BaseProduct <|-- Event
 
 class UserRegister {
-- customers : HashMap<dni : String, Customer>
-- cashiers : HashMap<cashierId: String, User>
+- users: HashMap<userId: String, User>
 + UserRegister()
 + getUser(userId : String) : User
-+ addCustomer(name : String, email : Email, cashierId : int) : int
-+ removeCustomer(dni : String) : int
-+ listCustomers() : int
-+ addCashier(name : String, email : Email) : int
-+ removeCashier(id : String) : int
-+ listCashiers() : int
++ add(User) : int
++ removeUser(userId : String) : int
++ listUsers() : int
 }
 
-App *-- UserRegister
+App *-- "2" UserRegister
 
 class User {
 - name : String
@@ -202,7 +198,7 @@ class TicketBook {
 - userToTicket : Hashmap<userId : String, ticketIds : String[]>
 + TicketBook()
 + getTicket(ticketId: int) : Ticket
-+ addTicket(cashId : String, customerId : String) : int
++ add(Ticket) : int
 + getTickets() : Hashmap<ticketId : int, TicketEntry>
 + getTicketsFromUser(userId : String) : Hashmap<ticketId : int, TicketEntry>
 }
@@ -210,9 +206,9 @@ class TicketBook {
 App *-- TicketBook
 
 struct TicketEntry {
-- cashId : String
-- customerId : String
-- ticket : Ticket
++ cashId : String
++ customerId : String
++ ticket : Ticket
 }
 
 TicketBook *-- "0...n" TicketEntry
@@ -224,7 +220,7 @@ class Ticket {
 - id : int
 - closingDate : LocalDateTime
 + Ticket()
-+ addProduct(id : int, quantity : int) : int
++ add(Product, amount: int) : int
 + removeProduct(prodId: int) : int
 + printTicket() : void
 }
