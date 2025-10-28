@@ -58,7 +58,7 @@ Request <-- InputDriver : Creates
 
 class RequestHandler {
 - actions : HashMap<actionId : String, Action>
-+ handleRequest(request : Request) : Action
++ getAction(request : Request) : Action
 }
 
 App *-- "0...n" RequestHandler
@@ -70,8 +70,11 @@ RequestHandler <|-- TicketHandler
 RequestHandler <|-- UserHandler
 RequestHandler <|-- ProductHandler
 
+UserHandler <|-- CashierHandler
+
 interface Action {
 + result : int
++ {abstract} Action(App, args : String[])
 + {abstract} exec() : int
 + {abstract} help() : void
 }
@@ -83,6 +86,8 @@ Action <|.. RemoveProductFromTicket
 Action <|.. PrintTicket
 Action <|.. ListTickets
 }
+
+note top of ListTickets: Also used by CashierHandler
 
 package ProductHandlerActions {
 Action <|.. AddProduct
@@ -100,7 +105,7 @@ Action <|.. ListUsers
 }
 
 class Catalog {
-- products : HashMap<int, Product>
+- products : HashMap<productId : int, Product>
 + getProduct(id : int) : Product
 + addProduct(name : String, category : String, price : double, maxPers : int) : int
 + updateProduct(id : int, field : String, value : String) : int
@@ -151,9 +156,10 @@ class Event {
 BaseProduct <|-- Event
 
 class UserRegister {
-- customers : HashMap<String, User>
-- cashiers : HashMap<int, User>
+- customers : HashMap<dni : String, Customer>
+- cashiers : HashMap<cashierId: String, User>
 + UserRegister()
++ getUser(userId : String) : User
 + addCustomer(name : String, email : Email, cashierId : int) : int
 + removeCustomer(dni : String) : int
 + listCustomers() : int
@@ -192,12 +198,13 @@ class Customer {
 User <|-- Customer
 
 class TicketBook {
-- tickets : Hashmap<ticketId : Integer, ticketEntry : TicketEntry>
+- tickets : Hashmap<ticketId : int, ticketEntry : TicketEntry>
 - userToTicket : Hashmap<userId : String, ticketIds : String[]>
 + TicketBook()
-+ addTicket(cashId : String, customerId : String) : Ticket
-+ getTickets() : Hashmap<ticketId : Integer, TicketEntry>
-+ getTicketsFromUser(userId : String) : Hashmap<ticketId : Integer, TicketEntry>
++ getTicket(ticketId: int) : Ticket
++ addTicket(cashId : String, customerId : String) : int
++ getTickets() : Hashmap<ticketId : int, TicketEntry>
++ getTicketsFromUser(userId : String) : Hashmap<ticketId : int, TicketEntry>
 }
 
 App *-- TicketBook
@@ -211,15 +218,15 @@ struct TicketEntry {
 TicketBook *-- "0...n" TicketEntry
 
 class Ticket {
-    - ticket : HashMap<int, int>
-    - categories : HashMap<String, Integer>
-    - creationDate : LocalDateTime
-    - id : int
-    - closingDate : LocalDateTime
-    + Ticket(cashId : int, userId : String)
-    + addProduct(id : int, quantity : int) : int
-    + removeProduct(prodId: int) : int
-    + printTicket() : void
+- products: HashMap<productId : int, amount: int>
+- categories : HashMap<Category, amount: int>
+- creationDate : LocalDateTime
+- id : int
+- closingDate : LocalDateTime
++ Ticket()
++ addProduct(id : int, quantity : int) : int
++ removeProduct(prodId: int) : int
++ printTicket() : void
 }
 
 TicketEntry *-- Ticket
