@@ -1,7 +1,12 @@
 @startuml
 class App {
++ catalog : Catalaog
++ tickets : TicketBook
++ cashiers : UserRepository
++ customers : UserRepository
 - modules : HashMap<handlerId : String, RequestHandler>
-- userRegisters : HashMap<registerId : String, UserRegister>
+- input : InputDriver
+- config : Config
 + App()
 + init() : void
 + {static} main(args : String[]) : void
@@ -72,11 +77,12 @@ RequestHandler <|-- UserHandler
 RequestHandler <|-- ProductHandler
 
 UserHandler <|-- CashierHandler
+UserHandler <|-- CustomerHandler
 
 interface Action {
 + result : int
-+ {abstract} Action()
-+ {abstract} exec(App, args : String[]) : int
++ {abstract} Action(App)
++ {abstract} exec(args : String[]) : int
 + {abstract} help() : void
 }
 
@@ -103,7 +109,22 @@ package UserHandlerActions {
 Action <|.. AddUser
 Action <|.. RemoveUser
 Action <|.. ListUsers
+
+class AddUser {
++ AddUser(userRegisterId : id)
 }
+
+class RemoveUser {
++ AddUser(userRegisterId : id)
+}
+
+class ListUsers {
++ AddUser(userRegisterId : id)
+}
+
+RemoveUser <|-- RemoveCashier
+}
+
 
 class Catalog {
 - products : HashMap<productId : int, ProductBase>
