@@ -1,84 +1,181 @@
 @startuml
 class App {
-- Ticket ticket
-- Catalog catalog
-- InputDriver input
-+ Config config
+- tickets : TicketHandler
+- catalog : Catalog
+- input : InputDriver
++ config : Config
 + App()
-+ void init()
-+ Product getProduct(int Id)
-+ void deleteProduct(int Id)
-+ void updateProduct(int Id)
-+ void printTicket()
-+ {static} void main(String[] args)
-- int handleRequest(Request request)
-- void echo(Request request)
-- void help()
-- void exit()
++ init() : void
++ getProduct(id : int) : Product
++ deleteProduct(id : int) : void
++ updateProduct(id : int) : void
++ printTicket() : void
++ {static} main(args : String[]) : void
+- handleRequest(request : Request) : int
+- echo(request : Request) : void
+- help() : void
+- exit() : void
 }
-class Catalog {
-- App app
-- HashMap<int id, Product product> products
-+ Catalog(App app)
-+ int handleRequest(Request request)
-+ Product getProduct(int id)
-- void printProductList()
-- int addProduct(int Id, String name, String category, double price)
-- int updateProduct(int Id, String field, String value)
-- int deleteProduct(int Id)
 
+class Email {
+- username : String
+- domain : String
++ Email(username : String, domain : String)
++ getUsername() : String
++ getDomain() : String
 }
-class Ticket {
-- App app
-- HashMap<Product, Integer> ticket;
-- HashMap<String, Integer> categories;
-+ Ticket(App app)
-+ int handleRequest(Request request)
-- int addProduct(Product product, int quantity)
-+ int updateProduct(Product product)
-+ int deleteProduct(Product product)
-- void resetTicket()
-+ void printTicket()
+
+package protectTicket {
+    class Cashier {
+    - name : String
+    - email : Email
+    - tickets : List<Ticket>
+    + Cashier(name : String, email : Email)
+    + getName() : String
+    + getEmail() : Email
+    + handleRequest(request : Request) : void
+    - addTicket(userId : String) : int
+    - addProduct(ticketId : int, prodId : int, amount : int, pers : String[]) : int
+    - removeTicket() : int
+    - printTicket() : int
+    }
+    class TicketModule {
+    - app : App
+    - ticket : HashMap<int, int>
+    - categories : HashMap<String, Integer>
+    - creationDate : LocalDateTime
+    - id : int
+    - closingDate : LocalDateTime
+    # TicketModule(cashId : int, userId : String)
+    # addProduct(id : int, quantity : int) : int
+    # printTicket() : void
+    }
 }
+
+class Customer {
+- name : String
+- email : Email
+- cashierId : int
+- tickets : List<int>
++ Customer(name : String, email : Email, cashierId : int)
++ getName() : String
++ getCashId() : int
++ getEmail() : Email
++ addTicket(ticketId : int) : int
+}
+
+class UserModule {
+- customers : HashMap<String, Client>
+- cashiers : HashMap<int, Cashier>
++ UserModule(app : App)
++ handleRequest(request : Request) : int
+- addCustomer(name : String, email : Email, cashierId : int) : int
+- removeCustomer(dni : String) : int
+- listCustomers() : int
+- addCashier(name : String, email : Email) : int
+- removeCashier(id : String) : int
+- listCashiers() : int
+- cashierTickets(id : String) : int
+- cashierAction(request : Request) : int
+- listTickets() : int
+}
+
 class Request {
-+ String family
-+ String command
-+ ArrayList<String> args
++ family : String
++ command : String
++ args : ArrayList<String>
 + Request()
 }
+
 class Config {
-- HashMap<String category, Double discount> categories
+- categories : HashMap<String, Double>
 + Config()
-+ Config(String filePath)
-+ Double getDiscount(String category)
-+ int getMaxProducts()
-+ int getMaxProductsPerTicket()
-+ boolean validCategory(String category)
-+ String[] getCategories()
++ Config(filePath : String)
++ getDiscount(category : String) : Double
++ getMaxProducts() : int
++ getMaxProductsPerTicket() : int
++ validCategory(category : String) : boolean
++ getCategories() : String[]
 }
+
 class InputDriver {
-- Scanner input
-+ Request next()
+- input : Scanner
++ next() : Request
 }
+
+class ProductModule {
+- app : App
+- products : HashMap<int, Product>
++ ProductModule(app : App)
++ handleRequest(request : Request) : int
++ getProduct(id : int) : Product
+- addProduct(name : String, category : String, price : double, maxPers : int) : int
+- updateProduct(id : int, field : String, value : String) : int
+- addFood(name : String, price : double, expirationDate : String, maxPeople : int) : int
+- addMeeting(name : String, price : double, expirationDate : String, maxPeople : int) : int
+- printProducts() : void
+- deleteProduct(id : int) : int
+}
+
 class Product {
-- int Id
-- String caetgory
-- String name
-- Double price
-+ Product(String category, int id, String name, Double Price)
-+ String getCategory()
-+ Double getPrice()
-+ String getName()
-+ int getId()
+- category : Category
+- name : String
+- price : Double
+- maxPers : int
+- event : Event
++ Product(category : Category, name : String, price : Double, date : String, maxPeople : int)
++ Product(category : Category, name : String, price : Double, maxPers : int)
++ Product(category : Category, name : String, price : Double)
++ getCategory() : String
++ getPrice() : Double
++ getName() : String
++ getMaxPers() : int
++ getEvent() : Event
 }
-App *-- Catalog
-App *-- Ticket
+
+class Event {
+- expireDate : LocalDate
+- maxPeople : int
+- type : EventType
++ Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
++ getExpireDate() : LocalDate
++ getMaxPeople() : int
++ getType() : EventType
+}
+
+enum EventType {
+FOOD(36)
+MEETING(12)
+- planningTime : int
++ EventType(planningTime : int)
++ getPlanTime() : int
+}
+
+enum Category {
+MERCH(0)
+STATIONERY(5)
+CLOTHES(7)
+BOOK(10)
+ELECTRONICS(3)
+- discount : double
++ Category(discount : double)
++ getDiscount() : double
+}
+
+App *-- ProductModule
+App *-- UserModule
 App *-- Config
-App *-- InputDriver
-Catalog o-- Product
-Ticket o-- Product
+App *-- InputDriver : creates Request
+ProductModule o-- Product
+Product o-- Event
+UserModule o-- Customer
+UserModule o-- Cashier 
+Customer o-- Email
+Cashier o-- Email
+Cashier o-- TicketModule
 App -- Request : uses >
-App -- Catalog : sends Request >
-App -- Ticket : sends Request >
-InputDriver -- App : creates Request >
+App -- ProductModule : sends Request >
+App -- UserModule : sends Request >
+UserModule -- Cashier : sends Request >
+Cashier -- TicketModule : sends Request >
 @enduml
