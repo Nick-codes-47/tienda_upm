@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.ProductContainer;
 
 public enum EventType {
-    FOOD(36), MEETING(12);
+    FOOD(72), MEETING(12);
 
     private final int planningTime;
 
