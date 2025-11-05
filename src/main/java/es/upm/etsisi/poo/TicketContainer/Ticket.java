@@ -1,4 +1,8 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.TicketContainer;
+
+import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.Requests.Request;
 
 import java.util.ArrayList;
 import java.util.HashMap;

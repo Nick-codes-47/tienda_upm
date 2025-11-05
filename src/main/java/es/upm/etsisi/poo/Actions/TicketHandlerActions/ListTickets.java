@@ -1,10 +1,10 @@
-package es.upm.etsisi.poo.TicketHandlerActions;
+package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
-import es.upm.etsisi.poo.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.Actions.Action;
 
-public class AddProductToTicket extends Action {
-    public AddProductToTicket(App app) {
+public class ListTickets extends Action {
+    public ListTickets(App app) {
         super(app);
     }
 

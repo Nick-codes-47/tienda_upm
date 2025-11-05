@@ -1,4 +1,7 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.ProductContainer;
+
+import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.Requests.Request;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;

@@ -1,10 +1,10 @@
-package es.upm.etsisi.poo.ProductHandlerActions;
+package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
-import es.upm.etsisi.poo.Action;
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class AddFood extends Action {
-    public AddFood(App app) {
+public class RemoveProductFromTicket extends Action {
+    public RemoveProductFromTicket(App app) {
         super(app);
     }
 
@@ -18,5 +18,4 @@ public class AddFood extends Action {
     public void help() {
         // TODO ALL
     }
-
 }

@@ -1,10 +1,10 @@
-package es.upm.etsisi.poo.ProductHandlerActions;
+package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
-import es.upm.etsisi.poo.Action;
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class AddMeeting extends Action {
-    public AddMeeting(App app) {
+public class AddUser extends Action {
+    public AddUser(App app) {
         super(app);
     }
 

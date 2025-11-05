@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.ProductContainer;
 
 abstract class BaseProduct {
     private final String name;

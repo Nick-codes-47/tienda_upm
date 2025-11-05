@@ -1,10 +1,10 @@
-package es.upm.etsisi.poo.TicketHandlerActions;
+package es.upm.etsisi.poo.Actions.ProductHandlerActions;
 
-import es.upm.etsisi.poo.Action;
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class PrintTicket extends Action {
-    public PrintTicket(App app) {
+public class AddMeeting extends Action {
+    public AddMeeting(App app) {
         super(app);
     }
 

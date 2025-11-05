@@ -1,10 +1,10 @@
-package es.upm.etsisi.poo.ProductHandlerActions;
+package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
-import es.upm.etsisi.poo.Action;
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class UpdateProduct extends Action {
-    public UpdateProduct(App app) {
+public class RemoveUser extends Action {
+    public RemoveUser(App app) {
         super(app);
     }
 

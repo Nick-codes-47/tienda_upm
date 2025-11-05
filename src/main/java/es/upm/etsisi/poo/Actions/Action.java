@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.Actions;
+
+import es.upm.etsisi.poo.App;
 
 public abstract class Action {
     public int result;
