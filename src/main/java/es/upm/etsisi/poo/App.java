@@ -10,6 +10,7 @@ import java.util.function.Consumer;
 
 public class App
 {
+    public Catalog catalog;
     public Config config;
 
     App(String[] args)
