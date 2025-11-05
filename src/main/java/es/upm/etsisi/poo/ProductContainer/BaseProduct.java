@@ -1,9 +1,6 @@
 package es.upm.etsisi.poo.ProductContainer;
 
 public class BaseProduct {
-    private final int id;
-    private String name;
-    private double price;
 
     public BaseProduct(int id, String name, double price) throws InvalidProductException {
         // id and price must be positive numbers
@@ -35,4 +32,8 @@ public class BaseProduct {
     public void setName(String name) { this.name = name;}
     public double getPrice() { return this.price; }
     public void setPrice(double price) { this.price = price; }
+
+    private final int id;
+    private String name;
+    private double price;
 }

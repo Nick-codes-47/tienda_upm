@@ -154,7 +154,7 @@ public class Catalog {
 
         // If everything went well we add the product
         try {
-            Product newProduct = new Product(category, id, name, price);
+            Product newProduct = new Product(id, name, category, price);
             products.put(id, newProduct);
             System.out.println(newProduct);
             return 0;
