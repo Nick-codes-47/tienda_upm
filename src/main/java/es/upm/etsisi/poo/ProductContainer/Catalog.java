@@ -6,6 +6,7 @@ import es.upm.etsisi.poo.Requests.Request;
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 
 /**
  * Class that implements a HashMap to store all the products available in the store
@@ -41,7 +42,7 @@ public class Catalog {
                     return 1;
                 }
                 try {
-                    return this.addProduct(
+                    return this.add(
                             Integer.parseInt(args.get(0)), // id
                             args.get(1),                   // name
                             args.get(2),                   // category
@@ -135,7 +136,7 @@ public class Catalog {
      * -1 if product couldn't be created;
      * 0 if the product was added to the catalog without problem;
      */
-    private int addProduct(int id, String name, String category, double price) {
+    public int add(int id, String name, String category, double price) {
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
             System.err.println("ERROR: You reached the maximum number of products!");
@@ -162,6 +163,15 @@ public class Catalog {
             System.err.println(e.getMessage());
             return -1;
         }
+    }
+
+    public int getNewId() {
+        Set<Integer> usedIds = products.keySet();
+        int newId = 0;
+        while (usedIds.contains(newId)) {
+            newId++;
+        }
+        return newId;
     }
 
     /**
