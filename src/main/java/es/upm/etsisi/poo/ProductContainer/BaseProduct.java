@@ -1,21 +1,36 @@
 package es.upm.etsisi.poo.ProductContainer;
 
-abstract class BaseProduct {
+public class BaseProduct {
+    private final int id;
     private final String name;
     private final double price;
 
-    public BaseProduct(String name, double price) {
-        // TODO HANDLE REQUIREMENTS
-        if (price <= 0) {
-            System.out.println("ERROR: Product price must be positive and higher than 0");
+    public BaseProduct(int id, String name, double price) throws InvalidProductException {
+        // id and price must be positive numbers
+        if (id <= 0 || price <= 0) {
+            StringBuilder msg = new StringBuilder("ERROR: Product ");
+            if (id <= 0) msg.append("ID");
+            if (id <= 0 && price <= 0) msg.append(" and ");
+            if (price <= 0) msg.append("price");
+            msg.append(" must be positive and higher than 0");
+            throw new InvalidProductException(msg.toString());
         }
-        if (name == null || name.isEmpty() || name.length() >= 100) {
-            System.out.println("ERROR: Product's name is invalid (must have less than 100 characters)");
+        else if (name == null || name.isEmpty() || name.length() >= 100) {
+            throw new InvalidProductException("ERROR: Product's name is invalid (must have less than 100 characters)");
         }
+        this.id = id;
         this.name = name;
         this.price = price;
     }
 
+    public static class InvalidProductException extends Exception {
+        public InvalidProductException(String message) {
+            super(message);
+        }
+    }
+
+
+    public int getId() { return id; }
     public String getName() { return this.name; }
     public double getPrice() { return this.price; }
 }
