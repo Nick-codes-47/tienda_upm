@@ -14,7 +14,11 @@ public class Product extends BaseProduct {
      */
     public Product(int id, String name, String category, double price) throws InvalidProductException {
         super(id,name,price);
-        this.category = category;
+        try {
+            this.category = Category.valueOf(category.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidProductException("ERROR: Product's category is invalid");
+        }
     }
 
     public int getId() { return super.getId(); }
@@ -22,8 +26,8 @@ public class Product extends BaseProduct {
     public void setName(String name) { super.setName(name); }
     public double getPrice() { return super.getPrice(); }
     public void setPrice(double price) { super.setPrice(price); }
-    public String getCategory() { return this.category; }
-    public void setCategory(String category) { this.category = category; }
+    public Category getCategory() { return this.category; }
+    public void setCategory(Category category) { this.category = category; }
 
     /**
      * Compares this product to another with the ID
@@ -46,10 +50,10 @@ public class Product extends BaseProduct {
 
     @Override
     public String toString() {
-        return "{class:Product, id:"+this.getId()+", name:'"+this.getName()+"', category:"+this.category.toUpperCase()+
+        return "{class:Product, id:"+this.getId()+", name:'"+this.getName()+"', category:"+this.category+
                 ", price:"+this.getPrice()+"}";
     }
 
 
-    private String category;
+    private Category category;
 }
