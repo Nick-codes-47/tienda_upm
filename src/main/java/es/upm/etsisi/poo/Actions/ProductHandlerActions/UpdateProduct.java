@@ -4,8 +4,10 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
 import java.util.Set;
 
 public class UpdateProduct extends Action {
@@ -59,7 +61,18 @@ public class UpdateProduct extends Action {
                 f.set(product, value);
             }
 
+            // We print the product updated
             System.out.println(product);
+
+            // We look for tickets that had this product
+            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
+            if (!tickets.isEmpty()) {
+                // We show the tickets that had the product
+                System.out.println("The tickets with the following ids had the product and it was updated:");
+                for (Ticket ticket : tickets) {
+                    System.out.println("- "ticket.getId());
+                }
+            }
             return 0;
 
         } catch (NumberFormatException e) {
