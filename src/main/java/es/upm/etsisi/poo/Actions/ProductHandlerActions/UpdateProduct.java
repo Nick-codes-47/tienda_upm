@@ -64,13 +64,14 @@ public class UpdateProduct extends Action {
             // We print the product updated
             System.out.println(product);
 
+            // TODO manage closed tickets
             // We look for tickets that had this product
             ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
             if (!tickets.isEmpty()) {
                 // We show the tickets that had the product
                 System.out.println("The tickets with the following ids had the product and it was updated:");
                 for (Ticket ticket : tickets) {
-                    System.out.println("- "ticket.getId());
+                    System.out.println("- "+ticket.getId());
                 }
             }
             return 0;
