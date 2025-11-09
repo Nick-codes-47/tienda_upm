@@ -4,6 +4,7 @@ import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
+import es.upm.etsisi.poo.TicketContainer.TicketBook;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -11,6 +12,7 @@ import java.util.function.Consumer;
 public class App
 {
     public Catalog catalog;
+    public TicketBook tickets;
     public Config config;
 
     App(String[] args)
