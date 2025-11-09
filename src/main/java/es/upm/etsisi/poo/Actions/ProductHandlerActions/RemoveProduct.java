@@ -40,7 +40,7 @@ public class RemoveProduct extends Action {
                 return 4;
             }
             // If we could delete it from the catalog we try in the tickets
-            ArrayList<Ticket> tickets = this.deleteProdFromTickets(id);
+            ArrayList<Ticket> tickets = app.tickets.deleteProdFromTickets(id);
             if (!tickets.isEmpty()) {
                 // We show the tickets that had the product
                 System.out.println("The tickets with the following ids had the product and it was deleted:");
@@ -62,17 +62,5 @@ public class RemoveProduct extends Action {
     @Override
     public void help() {
         System.out.println("prod remove <id>");
-    }
-
-    private ArrayList<Ticket> deleteProdFromTickets(int id) {
-        ArrayList<Ticket> tickets = new ArrayList<>();
-        // We look which tickets have the product and delete it from them
-        for (TicketEntry ticketEntry : app.tickets.getTickets().values()) {
-            int deleteFromTicket = ticketEntry.getTicket().deleteProduct(id);
-            if (deleteFromTicket == 0)
-                // if the ticket had the product we add it to the list
-                tickets.add(ticketEntry.getTicket());
-        }
-        return tickets;
     }
 }
