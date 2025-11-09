@@ -157,50 +157,6 @@ public class Catalog {
     }
 
     /**
-     * Method to update the fields of a product (NAME, CATEGORY, PRICE) in the catalog and the ticket
-     *
-     * @param id    to search the product
-     * @param field to know which field of the product needs to be changed
-     * @param value the new value of the field
-     * @return -1 if the product doesn't exist in the catalog.
-     * 0 if the field was changed correctly
-     * 1 if the product exists but the field doesn't
-     * 2 if we don't have permission to change the field (ID)
-     */
-    private int updateProduct(int id, String field, String value) {
-        Product product = this.getProduct(id);
-        if (product == null) {
-            System.err.println("ERROR: Product with id " + id + " does not exist!");
-            return -1;
-        }
-        // We try to get the product's field to be modified
-        try {
-            Field f = Product.class.getDeclaredField(field.toLowerCase()); // TODO be careful if Products variable are written in camelCase
-            // We only permit changes on other fields different from the id
-            if (!field.equalsIgnoreCase("id")) {
-                f.setAccessible(true);
-            }
-            // We check if we have to change the price to parse
-            if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
-                f.set(product, Double.parseDouble(value));
-            } else {
-                f.set(product, value);
-            }
-            // We print the product with the new value for the field
-            System.out.println(product+"\n");
-            // We tell ticket that a product was updated
-            app.updateProduct(product);
-            return 0; // if everything went well
-        } catch (NoSuchFieldException e) {
-            System.err.println("ERROR: Field not valid!");
-            return 1; // if field doesn't exist we return 1
-        } catch (IllegalAccessException e) {
-            System.err.println("ERROR: Illegal access! (You can't modify the id)");
-            return 2; // Mainly if we try to modify the ID
-        }
-    }
-
-    /**
      * Method to delete a product from the catalog and the ticket
      *
      * @param id to search the product

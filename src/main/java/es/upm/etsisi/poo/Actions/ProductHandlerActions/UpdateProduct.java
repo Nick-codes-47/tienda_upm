@@ -2,20 +2,81 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.Product;
+
+import java.lang.reflect.Field;
+import java.util.Set;
 
 public class UpdateProduct extends Action {
     public UpdateProduct(App app) {
         super(app);
     }
 
+    /**
+     * Method to update the fields of a product (NAME, CATEGORY, PRICE)
+     * @param args the parameters to update the product
+     * @return 0 if it was successful
+     *         1 if one of the number arguments is invalid
+     *         3 if the number of arguments is wrong
+     *         5 if the field is invalid
+     *         6 if the user doesn't have access to change the specified field
+     */
     @Override
     public int execute(String[] args) {
-        // TODO ALL
-        return 0;
+        if (args.length != 3) {
+            System.err.println("ERROR: wrong number of arguments");
+            return 3;
+        }
+        // if the number of arguments are correct we try to update
+        try {
+            int id = Integer.parseInt(args[0]);
+            BaseProduct product = app.catalog.getProduct(id);
+            if (product == null) {
+                System.err.println("ERROR: Product with id " + id + " does not exist!");
+                return -1;
+            }
+
+            // We obtain the field to modify and the new value
+            String field = args[1];
+            String value = args[2];
+
+            // We only allow to modify the following fields
+            Set<String> allowedFields = Set.of("name", "price", "category");
+
+            if (!allowedFields.contains(field.toLowerCase())) {
+                System.err.println("ERROR: You can only modify 'name', 'price' or 'category'");
+                return 1;
+            }
+
+            // We modify the field once we know it's valid
+            Field f = product.getClass().getDeclaredField(field); // TODO be careful if Products variable are written in camelCase
+            f.setAccessible(true);
+
+            if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
+                f.set(product, Double.parseDouble(value));
+            } else {
+                f.set(product, value);
+            }
+
+            System.out.println(product);
+            return 0;
+
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: Id or price is not valid");
+            return 1;
+        } catch (NoSuchFieldException e) {
+            System.err.println("ERROR: Field not valid!");
+            return 5;
+        } catch (IllegalAccessException e) {
+            System.err.println("ERROR: Illegal access! (You can't modify that field)");
+            return 6;
+        }
     }
+
 
     @Override
     public void help() {
-        // TODO ALL
+        System.out.println("prod update <id> NAME|CATEGORY|PRICE <value>");
     }
 }
