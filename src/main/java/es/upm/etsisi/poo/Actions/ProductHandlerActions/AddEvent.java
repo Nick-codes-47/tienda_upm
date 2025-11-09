@@ -39,7 +39,12 @@ public class AddEvent extends Action {
                         Integer.parseInt(args[3]),       // max people
                         this.eventType                   // type
                 );
-                return app.catalog.add(event);
+                int add = app.catalog.add(event);
+                if (add == 0) {
+                    // If the product was added we show it
+                    System.out.println(event);
+                }
+                return add;
             } catch (NumberFormatException e) {
                 System.err.println("ERROR: price and/or max_people are not valid");
                 return 1;

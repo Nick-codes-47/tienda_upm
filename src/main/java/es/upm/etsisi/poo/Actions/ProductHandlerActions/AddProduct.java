@@ -36,7 +36,12 @@ public class AddProduct extends Action {
                             args[1],    // category
                             Double.parseDouble(args[2])     // price
                     );
-                    return app.catalog.add(product);
+                    int add = app.catalog.add(product);
+                    if (add == 0){
+                        // If the product was added we show it
+                        System.out.println(product);
+                    }
+                    return add;
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: price is not valid");
                     return 1;
@@ -56,7 +61,12 @@ public class AddProduct extends Action {
                             Double.parseDouble(args[2]),     // price
                             Integer.parseInt(args[3])   // max_Personalizable
                     );
-                    return app.catalog.add(product);
+                    int add = app.catalog.add(product);
+                    if (add == 0){
+                        // If the product was added we show it
+                        System.out.println(product);
+                    }
+                    return add;
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: price and/or maxPers are not valid");
                     return 1;
