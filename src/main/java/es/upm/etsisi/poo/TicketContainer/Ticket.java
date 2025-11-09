@@ -26,6 +26,10 @@ public class Ticket {
         }
     }
 
+    public boolean hasProduct(int prodId) {
+        return ticket.containsKey(prodId);
+    }
+
     /**
      * Handles a user request directed to the Ticket module.
      * This method interprets the command and arguments contained in the given
