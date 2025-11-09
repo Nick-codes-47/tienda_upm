@@ -128,19 +128,19 @@ public class Catalog {
      *
      * @param product the product that needs to be added to the catalog
      * @return 0 if the product was added to the catalog without problem;
-     *         1 if the product passed was a null;
-     *         2 if we already reached the maxProducts;
+     *         -2 if the product passed was a null;
+     *         -1 if we already reached the maxProducts;
      */
     public int add(BaseProduct product) {
         // Discard null objects
         if (product == null) {
             System.err.println("ERROR: Product is null");
-            return 1;
+            return -2;
         }
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
             System.err.println("ERROR: You reached the maximum number of products!");
-            return 2;
+            return -1;
         }
         products.put(product.getId(), product);
         return 0;

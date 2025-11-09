@@ -17,7 +17,8 @@ public class AddProduct extends Action {
     /**
      * Method that executes the action to add a Product or CustomProduct to the catalog
      * @param args the arguments required to add a product to the catalog
-     * @return 0 if all went well
+     * @return -1 if the catalog is full
+     *         0 if all went well
      *         1 if the price or maxPersonalizable were not double or int respectively
      *         2 if one of the arguments was invalid to create the product
      *         3 if they weren't enough arguments
@@ -43,7 +44,6 @@ public class AddProduct extends Action {
                     System.err.println(e.getMessage());
                     return 2;
                 }
-                break;
             }
             case 4: {
                 // Case of a personalizable product
@@ -64,7 +64,6 @@ public class AddProduct extends Action {
                     System.err.println(e.getMessage());
                     return 2;
                 }
-                break;
             }
             default:  {
                 System.err.println("ERROR: wrong number of arguments");

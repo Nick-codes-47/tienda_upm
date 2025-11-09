@@ -20,7 +20,8 @@ public class AddEvent extends Action {
     /**
      * Method that executes the action to add an event to the catalog
      * @param args the arguments required to add an event to the catalog
-     * @return 0 if all went well
+     * @return -1 if the catalog is full
+     *         0 if all went well
      *         1 if an argument was invalid to parse
      *         2 if one of the arguments was invalid to create the product
      *         3 if they weren't enough arguments
