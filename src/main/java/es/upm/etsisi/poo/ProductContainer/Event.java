@@ -21,8 +21,6 @@ public class Event extends BaseProduct {
     public int getMaxPeople() { return this.maxPeople; }
     public EventType getType() { return this.type; }
 
-    public double getTotalPrice() { return super.getPrice() * this.maxPeople; }
-
     private LocalDate expireDate;
     private int maxPeople;
     private EventType type;
