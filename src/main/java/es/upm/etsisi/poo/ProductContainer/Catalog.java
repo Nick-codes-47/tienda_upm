@@ -143,6 +143,7 @@ public class Catalog {
             return -1;
         }
         products.put(product.getId(), product);
+        System.out.println(product);
         return 0;
     }
 
