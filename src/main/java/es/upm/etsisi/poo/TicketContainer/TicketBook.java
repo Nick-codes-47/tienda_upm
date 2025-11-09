@@ -33,18 +33,27 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that had deleted a product
+     * @param ticketsDelete list of tickets from which we have to delete the product
      * @param id the id of the product to delete
-     * @return Tickets that contained the product
      */
-    public ArrayList<Ticket> deleteProdFromTickets(int id) {
-        ArrayList<Ticket> tickets = new ArrayList<>();
+    public void deleteProdFromTickets(ArrayList<Ticket> ticketsDelete, int id) {
+        for (Ticket ticket : ticketsDelete) {
+            ticket.deleteProduct(id);
+        }
+    }
+
+    /**
+     * Method to obtain all the tickets that contain a product
+     * @param id the id of the product
+     * @return Tickets that contain the product
+     */
+    public ArrayList<Ticket> getTicketsWithProd(int id) {
+        ArrayList<Ticket> ticketsWithProd = new ArrayList<>();
         // We look which tickets have the product and delete it from them
         for (TicketEntry ticketEntry : this.tickets.values()) {
-            int deleteFromTicket = ticketEntry.getTicket().deleteProduct(id);
-            if (deleteFromTicket == 0)
-                // if the ticket had the product we add it to the list
-                tickets.add(ticketEntry.getTicket());
+            if (ticketEntry.getTicket().hasProduct(id))
+                ticketsWithProd.add(ticketEntry.getTicket());
         }
-        return tickets;
+        return ticketsWithProd;
     }
 }
