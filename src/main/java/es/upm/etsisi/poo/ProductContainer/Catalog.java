@@ -144,7 +144,6 @@ public class Catalog {
         }
         // Put the product in the map and print it
         products.put(product.getId(), product);
-        System.out.println(product);
         return 0;
     }
 
