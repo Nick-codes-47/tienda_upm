@@ -142,6 +142,7 @@ public class Catalog {
             System.err.println("ERROR: You reached the maximum number of products!");
             return -1;
         }
+        // Put the product in the map and print it
         products.put(product.getId(), product);
         System.out.println(product);
         return 0;
@@ -207,17 +208,12 @@ public class Catalog {
      * @return -1 if the product doesn't exist
      * 0 if we could delete the product
      */
-    private int deleteProduct(int id) {
-        Product product = this.getProduct(id);
-        if (product == null) {
-            System.err.println("ERROR: Product with id " + id + " does not exist!");
-            return -1;
+    public BaseProduct deleteProduct(int id) {
+        BaseProduct product = this.getProduct(id);
+        if (product != null) {
+            // If the product exist in the catalog we delete it
+            products.remove(id);
         }
-        // If the product exist in the catalog we print it and delete it
-        System.out.println(product+"\n");
-        products.remove(id);
-        //We tell the ticket the removed product
-        app.deleteProduct(product);
-        return 0;
+        return product;
     }
 }
