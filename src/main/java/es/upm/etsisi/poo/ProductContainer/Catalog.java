@@ -13,7 +13,7 @@ import java.util.Set;
  */
 public class Catalog {
     private final App app;
-    private final HashMap<Integer, Product> products;
+    private final HashMap<Integer, BaseProduct> products;
     private final int maxProducts;
     public static final String COMMAND_PREFIX = "prod";
 
@@ -105,7 +105,7 @@ public class Catalog {
      * @return null if the id is not correct.
      * the product with the id if it's correct
      */
-    public Product getProduct(int id) {
+    public BaseProduct getProduct(int id) {
         return products.get(id);
     }
 
@@ -117,7 +117,7 @@ public class Catalog {
             System.out.println("There are no products in the catalog yet!");
         } else {
             System.out.println("Catalog: ");
-            for (Product product : products.values()) {
+            for (BaseProduct product : products.values()) {
                 System.out.println(" " + product.toString());
             }
         }
@@ -126,43 +126,24 @@ public class Catalog {
     /**
      * Method to add a product to the catalog so it is available to buy it
      *
-     * @param id       to have an identification for the product
-     * @param name     name of the product
-     * @param category category of the product
-     * @param price    price of the product
-     * @return -4 if we already reached the maxProducts;
-     * -3 if the id already exists;
-     * -2 if the category doesn't exist;
-     * -1 if product couldn't be created;
-     * 0 if the product was added to the catalog without problem;
+     * @param product the product that needs to be added to the catalog
+     * @return 0 if the product was added to the catalog without problem;
+     *         1 if the product passed was a null;
+     *         2 if we already reached the maxProducts;
      */
-    public int add(int id, String name, String category, double price) {
+    public int add(BaseProduct product) {
+        // Discard null objects
+        if (product == null) {
+            System.err.println("ERROR: Product is null");
+            return 1;
+        }
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
             System.err.println("ERROR: You reached the maximum number of products!");
-            return -4;
+            return 2;
         }
-        // We check if there already is a product with the same id
-        if (products.containsKey(id)) {
-            System.err.println("ERROR: Product's id already exists");
-            return -3;
-        }
-        // If the id does exist we check if the category is valid
-        if (!app.config.validCategory(category)) {
-            System.err.println("ERROR: Invalid category!");
-            return -2;
-        }
-
-        // If everything went well we add the product
-        try {
-            Product newProduct = new Product(id, name, category, price);
-            products.put(id, newProduct);
-            System.out.println(newProduct);
-            return 0;
-        } catch (Product.InvalidProductException e) {
-            System.err.println(e.getMessage());
-            return -1;
-        }
+        products.put(product.getId(), product);
+        return 0;
     }
 
     public int getNewId() {
