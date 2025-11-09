@@ -3,19 +3,30 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.CustomProduct;
 import es.upm.etsisi.poo.ProductContainer.Product;
 
+/**
+ * Class to add a Product or CustomProduct to the catalog
+ */
 public class AddProduct extends Action {
     public AddProduct(App app) {
         super(app);
     }
 
+    /**
+     * Method that executes the action to add a Product or CustomProduct to the catalog
+     * @param args the arguments required to add a product to the catalog
+     * @return 0 if all went well
+     *         1 if the price or maxPersonalizable were not double or int respectively
+     *         2 if one of the arguments was invalid to create the product
+     *         3 if they weren't enough arguments
+     */
     @Override
     public int execute(String[] args) {
-        // Case normal product
-        if (args.length == 3) {
-            // TODO mirar para cambiar la comprobación en función de los enums
-            if (app.config.validCategory(args[2])) {
+        switch (args.length) {
+            case 3: {
+                // Case of a normal product
                 int newId = app.catalog.getNewId();
                 try {
                     BaseProduct product = new Product(
@@ -26,17 +37,45 @@ public class AddProduct extends Action {
                     );
                     return app.catalog.add(product);
                 } catch (NumberFormatException e) {
-                    System.err.println("ERROR: id and/or price are not valid");
-                    return 2;
+                    System.err.println("ERROR: price is not valid");
+                    return 1;
                 } catch (BaseProduct.InvalidProductException e) {
                     System.err.println(e.getMessage());
+                    return 2;
                 }
+                break;
+            }
+            case 4: {
+                // Case of a personalizable product
+                int newId = app.catalog.getNewId();
+                try {
+                    BaseProduct product = new CustomProduct(
+                            newId,  // id
+                            args[0],    // name
+                            args[1],    // category
+                            Double.parseDouble(args[2]),     // price
+                            Integer.parseInt(args[3])   // max_Personalizable
+                    );
+                    return app.catalog.add(product);
+                } catch (NumberFormatException e) {
+                    System.err.println("ERROR: price and/or maxPers are not valid");
+                    return 1;
+                } catch (BaseProduct.InvalidProductException e) {
+                    System.err.println(e.getMessage());
+                    return 2;
+                }
+                break;
+            }
+            default:  {
+                System.err.println("ERROR: wrong number of arguments");
+                return 3;
             }
         }
-        // TODO case personalizable product
-        return 0;
     }
 
+    /**
+     * Shows how to call the action
+     */
     @Override
     public void help() {
         System.out.println("prod add \"<name>\" <category> <price> [<maxPers>]");
