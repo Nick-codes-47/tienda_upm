@@ -13,5 +13,11 @@ public class CustomProduct extends Product {
         return personalizable;
     }
 
+    @Override
+    public String toString() {
+        return "{class:Product, id:"+super.getId()+", name:'"+super.getName()+"', category:"+super.getCategory()+
+                ", maximum personalizable:"+this.personalizable+", price:"+super.getPrice()+"}";
+    }
+
     private int personalizable;
 }

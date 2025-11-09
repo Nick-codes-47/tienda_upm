@@ -62,26 +62,13 @@ public class AddEvent extends Action {
     @Override
     public void help() {
         for (EventType eventType : EventType.values()) {
-            System.out.println("add"+ toSentenceCase(eventType) +
+            System.out.println("add"+ EventType.toSentenceCase(eventType) +
                     " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>");
         }
     }
 
     public void setEventType(EventType eventType) {
         this.eventType = eventType;
-    }
-
-    private String toSentenceCase(EventType eventType) {
-        // Store in a String the eventType
-        String type = eventType.name();
-
-        // Convert to upper case the first character
-        char firstChar = type.charAt(0);
-        String firstletter = String.valueOf(firstChar).toUpperCase();
-
-        // Convert to lower case the rest of the word
-        String restOfWord = type.substring(1).toLowerCase();
-        return firstletter + restOfWord;
     }
 
     private EventType eventType;

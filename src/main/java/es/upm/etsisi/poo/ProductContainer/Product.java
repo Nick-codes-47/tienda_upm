@@ -21,11 +21,6 @@ public class Product extends BaseProduct {
         }
     }
 
-    public int getId() { return super.getId(); }
-    public String getName() { return super.getName() ; }
-    public void setName(String name) { super.setName(name); }
-    public double getPrice() { return super.getPrice(); }
-    public void setPrice(double price) { super.setPrice(price); }
     public Category getCategory() { return this.category; }
     public void setCategory(Category category) { this.category = category; }
 
@@ -39,19 +34,19 @@ public class Product extends BaseProduct {
         if (this == obj) return true;
         if (obj == null || getClass() != obj.getClass()) return false;
         Product other = (Product) obj;
-        return this.getId() == other.getId();
+        return super.getId() == other.getId();
     }
 
     @Override
     public int hashCode() {
-        return Integer.hashCode(this.getId());
+        return Integer.hashCode(super.getId());
     }
 
 
     @Override
     public String toString() {
-        return "{class:Product, id:"+this.getId()+", name:'"+this.getName()+"', category:"+this.category+
-                ", price:"+this.getPrice()+"}";
+        return "{class:Product, id:"+super.getId()+", name:'"+super.getName()+"', category:"+this.category+
+                ", price:"+super.getPrice()+"}";
     }
 
 

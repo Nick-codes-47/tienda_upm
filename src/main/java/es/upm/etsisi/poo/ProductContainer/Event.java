@@ -21,6 +21,13 @@ public class Event extends BaseProduct {
     public int getMaxPeople() { return this.maxPeople; }
     public EventType getType() { return this.type; }
 
+    @Override
+    public String toString() {
+        return "{class:"+EventType.toSentenceCase(type)+", id:"+super.getId()+", name:'"+super.getName()+
+                ", expiration date:"+this.expireDate.toString()+", maximum people:"+this.maxPeople+
+                ", price/person:" +super.getPrice()+"}";
+    }
+
     private LocalDate expireDate;
     private int maxPeople;
     private EventType type;
