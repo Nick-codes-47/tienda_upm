@@ -39,9 +39,11 @@ public class RemoveProduct extends Action {
                 System.err.println("ERROR: Product with id " + id + " does not exist!");
                 return 4;
             }
-            // If we could delete it from the catalog we try in the tickets
-            ArrayList<Ticket> tickets = app.tickets.deleteProdFromTickets(id);
+            // We search for tickets with the product
+            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
             if (!tickets.isEmpty()) {
+                // We delete the product from the tickets
+                app.tickets.deleteProdFromTickets(tickets, id);
                 // We show the tickets that had the product
                 System.out.println("The tickets with the following ids had the product and it was deleted:");
                 for (Ticket ticket : tickets) {
