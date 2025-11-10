@@ -3,7 +3,6 @@ package es.upm.etsisi.poo.ProductContainer;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.Requests.Request;
 
-import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
@@ -109,19 +108,7 @@ public class Catalog {
         return products.get(id);
     }
 
-    /**
-     * Method that prints the catalog of products
-     */
-    private void printProdList() {
-        if (products.isEmpty()) {
-            System.out.println("There are no products in the catalog yet!");
-        } else {
-            System.out.println("Catalog: ");
-            for (BaseProduct product : products.values()) {
-                System.out.println(" " + product.toString());
-            }
-        }
-    }
+    public HashMap<Integer, BaseProduct> getProducts() { return products; }
 
     /**
      * Method to add a product to the catalog so it is available to buy it
@@ -134,12 +121,10 @@ public class Catalog {
     public int add(BaseProduct product) {
         // Discard null objects
         if (product == null) {
-            System.err.println("ERROR: Product is null");
             return -2;
         }
         // We check if we reached the maxProducts
         if (products.size() >= maxProducts) {
-            System.err.println("ERROR: You reached the maximum number of products!");
             return -1;
         }
         // Put the product in the map and print it
