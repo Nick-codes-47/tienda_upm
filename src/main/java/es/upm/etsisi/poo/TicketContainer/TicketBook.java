@@ -38,7 +38,9 @@ public class TicketBook {
      */
     public void deleteProdFromTickets(ArrayList<Ticket> ticketsDelete, int id) {
         for (Ticket ticket : ticketsDelete) {
-            ticket.deleteProduct(id);
+            if (!ticket.isClosed())
+                // we only delete if the ticket is still open
+                ticket.deleteProduct(id);
         }
     }
 
