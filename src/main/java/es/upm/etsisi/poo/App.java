@@ -1,10 +1,13 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
+import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
+import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -13,6 +16,8 @@ public class App
 {
     public Catalog catalog;
     public TicketBook tickets;
+    public UserRegister cashiers;
+    public UserRegister customers;
     public Config config;
 
     App(String[] args)
@@ -41,26 +46,6 @@ public class App
                 System.out.println();
             }
         }
-    }
-
-    public Product getProduct(int id)
-    {
-        return catalog.getProduct(id);
-    }
-
-    public void updateProduct(Product product)
-    {
-        ticket.updateProduct(product);
-    }
-
-    public void deleteProduct(Product product)
-    {
-        ticket.deleteProduct(product);
-    }
-
-    public void printTicket()
-    {
-        System.out.println(ticket);
     }
 
     /**
@@ -136,6 +121,8 @@ public class App
         return 0;
     }
 
+    private void executeAction(Action action) {}
+
     /**
      * This method prints all the commands with its parameters
      */
@@ -205,6 +192,7 @@ public class App
 
     private InputDriver input;
 
+    private final HashMap<String, RequestHandler> modules = new HashMap<>();
     private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
 
     private final String BUILTIN_CMD_EXIT = "exit";
