@@ -1,8 +1,6 @@
 package es.upm.etsisi.poo.UserContainer;
 
 public class Email {
-    private String username;
-    private String domain;
 
     public Email(String username, String domain) {
         this.username = username;
@@ -16,4 +14,7 @@ public class Email {
     public String getDomain() {
         return domain;
     }
+
+    private final String username;
+    private final String domain;
 }

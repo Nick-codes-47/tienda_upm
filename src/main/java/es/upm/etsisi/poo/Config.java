@@ -24,28 +24,6 @@ public class Config {
         loadConfig();
     }
 
-    public boolean validCategory(String category)
-    {
-        return categories.containsKey(category.toUpperCase());
-    }
-
-    public Double getDiscount(String category)
-    {
-        Double discount = null;
-
-        if (categories.containsKey(category))
-        {
-            discount = categories.get(category);
-        }
-
-        return discount;
-    }
-
-    public String[] getCategories()
-    {
-        return categories.keySet().toArray(new String[0]);
-    }
-
     public int getMaxProducts()
     {
         return maxProducts;
@@ -219,8 +197,6 @@ public class Config {
     private static final String CONFIG_DEFAULT_FILENAME = "config.txt";
 
     private final String configFilePath;
-
-    private final Map<String, Double> categories = new HashMap<>();
 
     private int maxProducts;
     private int maxProductPerTicket;

@@ -1,15 +1,23 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
+import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
+import es.upm.etsisi.poo.TicketContainer.TicketBook;
+import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
 
 public class App
 {
+    public Catalog catalog;
+    public TicketBook tickets;
+    public UserRegister cashiers;
+    public UserRegister customers;
     public Config config;
 
     App(String[] args)
@@ -17,7 +25,7 @@ public class App
         loadConfig(args);
 
         catalog = new Catalog(this);
-        ticket = new Ticket(this);
+        tickets = new TicketBook(this);
 
         initCommandMaps();
     }
@@ -32,32 +40,12 @@ public class App
         while (exit == 0)
         {
             Request request = input.next();
-            if (!request.family.isEmpty())
+            if (!request.handlerId.isEmpty())
             {
                 exit = handleRequest(request);
                 System.out.println();
             }
         }
-    }
-
-    public Product getProduct(int id)
-    {
-        return catalog.getProduct(id);
-    }
-
-    public void updateProduct(Product product)
-    {
-        ticket.updateProduct(product);
-    }
-
-    public void deleteProduct(Product product)
-    {
-        ticket.deleteProduct(product);
-    }
-
-    public void printTicket()
-    {
-        System.out.println(ticket);
     }
 
     /**
@@ -116,22 +104,24 @@ public class App
 
     private int handleRequest(Request request)
     {
-        if (commands.containsKey(request.family))
+        if (commands.containsKey(request.handlerId))
         {
-            commands.get(request.family).accept(request);
+            commands.get(request.handlerId).accept(request);
         }
         else
         {
-            System.err.printf("ERROR: Invalid command %s\n", request.family);
+            System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
 
-        if (request.family.equals(BUILTIN_CMD_EXIT))
+        if (request.handlerId.equals(BUILTIN_CMD_EXIT))
         {
             return 1;
         }
 
         return 0;
     }
+
+    private void executeAction(Action action) {}
 
     /**
      * This method prints all the commands with its parameters
@@ -177,14 +167,14 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.family + " " + request.command);
+        System.out.println(request.handlerId + " " + request.actionId);
     }
 
     private void acknowledgeResult(int result, Request request)
     {
         if (result == 0)
         {
-            System.out.println(request.family + " " + request.command + ": ok");
+            System.out.println(request.handlerId + " " + request.actionId + ": ok");
         }
     }
 
@@ -197,11 +187,9 @@ public class App
         commands.put(BUILTIN_CMD_ECHO, this::echo);
     }
 
-    private final Catalog catalog;
-    private final Ticket ticket;
-
     private InputDriver input;
 
+    private final HashMap<String, RequestHandler> modules = new HashMap<>();
     private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
 
     private final String BUILTIN_CMD_EXIT = "exit";
