@@ -25,7 +25,7 @@ public class App
         loadConfig(args);
 
         catalog = new Catalog(this);
-        ticket = new Ticket(this);
+        tickets = new TicketBook(this);
 
         initCommandMaps();
     }
@@ -186,9 +186,6 @@ public class App
         commands.put(BUILTIN_CMD_HELP, (request) -> help());
         commands.put(BUILTIN_CMD_ECHO, this::echo);
     }
-
-    private final Catalog catalog;
-    private final Ticket ticket;
 
     private InputDriver input;
 
