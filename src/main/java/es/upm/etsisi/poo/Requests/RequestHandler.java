@@ -4,15 +4,12 @@ import es.upm.etsisi.poo.Actions.Action;
 
 import java.util.HashMap;
 
-public class RequestHandler {
+abstract class RequestHandler {
     private HashMap<String, Action> actions;
 
     public RequestHandler() {
         actions = new HashMap<>();
     }
 
-    public Action getAction(Request request) {
-        // TODO ALL
-        return null;
-    }
+    abstract Action getAction(Request request);
 }
