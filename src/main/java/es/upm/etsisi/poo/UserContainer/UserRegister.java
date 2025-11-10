@@ -3,7 +3,6 @@ package es.upm.etsisi.poo.UserContainer;
 import java.util.HashMap;
 
 public class UserRegister {
-    private HashMap<String, User> users;
 
     public UserRegister() {
         users = new HashMap<>();
@@ -28,4 +27,6 @@ public class UserRegister {
         // TODO ALL
         return 0;
     }
+
+    private HashMap<String, User> users;
 }
