@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
+import es.upm.etsisi.poo.App;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -7,7 +9,7 @@ public class TicketBook {
     private HashMap<Integer, TicketEntry> tickets;
     private HashMap<String, String[]> userToTicket;
 
-    public TicketBook() {
+    public TicketBook(App app) {
         this.tickets = new HashMap<>();
         this.userToTicket = new HashMap<>();
     }
