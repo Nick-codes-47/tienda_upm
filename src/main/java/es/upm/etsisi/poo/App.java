@@ -35,7 +35,7 @@ public class App
         while (exit == 0)
         {
             Request request = input.next();
-            if (!request.family.isEmpty())
+            if (!request.handlerId.isEmpty())
             {
                 exit = handleRequest(request);
                 System.out.println();
@@ -119,16 +119,16 @@ public class App
 
     private int handleRequest(Request request)
     {
-        if (commands.containsKey(request.family))
+        if (commands.containsKey(request.handlerId))
         {
-            commands.get(request.family).accept(request);
+            commands.get(request.handlerId).accept(request);
         }
         else
         {
-            System.err.printf("ERROR: Invalid command %s\n", request.family);
+            System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
 
-        if (request.family.equals(BUILTIN_CMD_EXIT))
+        if (request.handlerId.equals(BUILTIN_CMD_EXIT))
         {
             return 1;
         }
@@ -180,14 +180,14 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.family + " " + request.command);
+        System.out.println(request.handlerId + " " + request.actionId);
     }
 
     private void acknowledgeResult(int result, Request request)
     {
         if (result == 0)
         {
-            System.out.println(request.family + " " + request.command + ": ok");
+            System.out.println(request.handlerId + " " + request.actionId + ": ok");
         }
     }
 

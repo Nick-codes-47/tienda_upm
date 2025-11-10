@@ -46,7 +46,7 @@ public class Ticket {
      * @param request the request containing the command and its arguments.
      */
     public int handleRequest(Request request) {
-        String command = request.command;
+        String command = request.actionId;
         ArrayList<String> args = request.args;
 
         switch (command) {
