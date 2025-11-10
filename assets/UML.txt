@@ -1,150 +1,32 @@
 @startuml
 class App {
-- tickets : TicketHandler
-- catalog : Catalog
++ catalog : Catalog
++ tickets : TicketBook
++ cashiers : UserRegister
++ customers : UserRegister
+- modules : HashMap<handlerId : String, RequestHandler>
 - input : InputDriver
-+ config : Config
+- config : Config
 + App()
 + init() : void
-+ getProduct(id : int) : Product
-+ deleteProduct(id : int) : void
-+ updateProduct(id : int) : void
-+ printTicket() : void
 + {static} main(args : String[]) : void
-- handleRequest(request : Request) : int
+- handleRequest(request : Request) : Action
+- exec(Action) : void
 - echo(request : Request) : void
 - help() : void
 - exit() : void
 }
 
-class Email {
-- username : String
-- domain : String
-+ Email(username : String, domain : String)
-+ getUsername() : String
-+ getDomain() : String
-}
-
-package protectTicket {
-    class Cashier {
-    - name : String
-    - email : Email
-    - tickets : List<Ticket>
-    + Cashier(name : String, email : Email)
-    + getName() : String
-    + getEmail() : Email
-    + handleRequest(request : Request) : void
-    - addTicket(userId : String) : int
-    - addProduct(ticketId : int, prodId : int, amount : int, pers : String[]) : int
-    - removeTicket() : int
-    - printTicket() : int
-    }
-    class TicketModule {
-    - app : App
-    - ticket : HashMap<int, int>
-    - categories : HashMap<String, Integer>
-    - creationDate : LocalDateTime
-    - id : int
-    - closingDate : LocalDateTime
-    # TicketModule(cashId : int, userId : String)
-    # addProduct(id : int, quantity : int) : int
-    # printTicket() : void
-    }
-}
-
-class Customer {
-- name : String
-- email : Email
-- cashierId : int
-- tickets : List<int>
-+ Customer(name : String, email : Email, cashierId : int)
-+ getName() : String
-+ getCashId() : int
-+ getEmail() : Email
-+ addTicket(ticketId : int) : int
-}
-
-class UserModule {
-- customers : HashMap<String, Client>
-- cashiers : HashMap<int, Cashier>
-+ UserModule(app : App)
-+ handleRequest(request : Request) : int
-- addCustomer(name : String, email : Email, cashierId : int) : int
-- removeCustomer(dni : String) : int
-- listCustomers() : int
-- addCashier(name : String, email : Email) : int
-- removeCashier(id : String) : int
-- listCashiers() : int
-- cashierTickets(id : String) : int
-- cashierAction(request : Request) : int
-- listTickets() : int
-}
-
-class Request {
-+ family : String
-+ command : String
-+ args : ArrayList<String>
-+ Request()
-}
-
 class Config {
-- categories : HashMap<String, Double>
 + Config()
-+ Config(filePath : String)
-+ getDiscount(category : String) : Double
 + getMaxProducts() : int
 + getMaxProductsPerTicket() : int
-+ validCategory(category : String) : boolean
-+ getCategories() : String[]
 }
 
-class InputDriver {
-- input : Scanner
-+ next() : Request
-}
-
-class ProductModule {
-- app : App
-- products : HashMap<int, Product>
-+ ProductModule(app : App)
-+ handleRequest(request : Request) : int
-+ getProduct(id : int) : Product
-- addProduct(name : String, category : String, price : double, maxPers : int) : int
-- updateProduct(id : int, field : String, value : String) : int
-- addFood(name : String, price : double, expirationDate : String, maxPeople : int) : int
-- addMeeting(name : String, price : double, expirationDate : String, maxPeople : int) : int
-- printProducts() : void
-- deleteProduct(id : int) : int
-}
-
-class Product {
-- category : Category
-- name : String
-- price : Double
-- maxPers : int
-- event : Event
-+ Product(category : Category, name : String, price : Double, date : String, maxPeople : int)
-+ Product(category : Category, name : String, price : Double, maxPers : int)
-+ Product(category : Category, name : String, price : Double)
-+ getCategory() : String
-+ getPrice() : Double
-+ getName() : String
-+ getMaxPers() : int
-+ getEvent() : Event
-}
-
-class Event {
-- expireDate : LocalDate
-- maxPeople : int
-- type : EventType
-+ Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
-+ getExpireDate() : LocalDate
-+ getMaxPeople() : int
-+ getType() : EventType
-}
+App *-- Config
 
 enum EventType {
-FOOD(36)
+FOOD(72)
 MEETING(12)
 - planningTime : int
 + EventType(planningTime : int)
@@ -160,22 +42,219 @@ ELECTRONICS(3)
 - discount : double
 + Category(discount : double)
 + getDiscount() : double
++ toSentenceCase(eventType : EventType) : String
 }
 
-App *-- ProductModule
-App *-- UserModule
-App *-- Config
-App *-- InputDriver : creates Request
-ProductModule o-- Product
-Product o-- Event
-UserModule o-- Customer
-UserModule o-- Cashier 
-Customer o-- Email
-Cashier o-- Email
-Cashier o-- TicketModule
-App -- Request : uses >
-App -- ProductModule : sends Request >
-App -- UserModule : sends Request >
-UserModule -- Cashier : sends Request >
-Cashier -- TicketModule : sends Request >
+class InputDriver {
+- input : Scanner
++ InputDriver()
++ InputDriver(file : String)
++ next() : Request
+}
+
+App *-- InputDriver
+
+class Request {
++ handlerId : String
++ actionId : String
++ args : ArrayList<String>
++ Request(line : String)
+- tokenize(line : String) : ArrayList<String>
+}
+
+Request <-- InputDriver : Creates
+
+class RequestHandler {
+- actions : HashMap<actionId : String, Action>
++ getAction(request : Request) : Action
++ getActions() : HashMap<actionId : String, Action>
+}
+
+App *-- "0...n" RequestHandler
+Action <-- App : Executes
+Action <-- RequestHandler : Sends To App
+Request <-- RequestHandler: Receives
+
+RequestHandler <|-- TicketHandler
+RequestHandler <|-- UserHandler
+RequestHandler <|-- ProductHandler
+
+UserHandler <|-- CashierHandler
+UserHandler <|-- CustomerHandler
+
+abstract Action {
++ Action(App)
++ {abstract} exec(args : String[]) : int
++ {abstract} help() : void
+}
+
+package TicketHandlerActions {
+Action <|.. AddTicket
+Action <|.. AddProductToTicket
+Action <|.. RemoveProductFromTicket
+Action <|.. PrintTicket
+Action <|.. ListTickets
+}
+
+note top of ListTickets: Also used by CashierHandler
+
+package ProductHandlerActions {
+Action <|.. AddProduct
+Action <|.. UpdateProduct
+Action <|.. AddEvent
+Action <|.. ListProducts
+Action <|.. RemoveProduct
+}
+
+package UserHandlerActions {
+Action <|.. AddUser
+Action <|.. RemoveUser
+Action <|.. ListUsers
+
+class AddUser {
++ AddUser(userRegisterId : id)
+}
+
+class RemoveUser {
++ RemoveUser(userRegisterId : id)
+}
+
+class ListUsers {
++ ListUser(userRegisterId : id)
+}
+
+RemoveUser <|-- RemoveCashier
+}
+
+
+class Catalog {
+- products : HashMap<productId : int, ProductBase>
++ getProduct(id : int) : Product
++ getProducts() : HashMap<productId : int, ProductBase>
++ add(ProductBase) : int
+# getNewId() : int
++ deleteProduct(id : int) : int
+}
+
+App *-- Catalog
+Category <-- Catalog : Checks
+EventType <-- Catalog : Checks
+
+abstract class BaseProduct {
+- id : int
+- name : String
+- price : double
++ BaseProduct(id : int, name : String, price : Double)
++ getId() : int
++ getPrice() : Double
++ setPrice() : void
++ getName() : String
++ setName : void
+}
+
+Catalog *-- "0...n" BaseProduct
+
+class Product {
+- category : Category
++ Product(category : String)
+}
+
+BaseProduct <|-- Product
+
+class CustomProduct {
+- maxPers : int
++ Personalizable(maxPers : int)
++ getMaxPers() : int
+}
+
+Product <|-- CustomProduct
+
+class Event {
+- expireDate : LocalDate
+- maxPeople : int
+- type : EventType
++ Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
++ getExpireDate() : LocalDate
++ getMaxPeople() : int
++ getType() : EventType
+}
+
+BaseProduct <|-- Event
+
+class UserRegister {
+- users: HashMap<userId: String, User>
++ UserRegister()
++ getUser(userId : String) : User
++ add(User) : int
++ removeUser(userId : String) : int
++ listUsers() : int
+}
+
+App *-- "2" UserRegister
+
+class User {
+- name : String
+- email : Email
++ User(name : String, email : String)
++ getName() : String
++ getEmail() : Email
+}
+
+UserRegister *-- "0...n" User
+
+class Email {
+- username : String
+- domain : String
++ Email(username : String, domain : String)
++ getUsername() : String
++ getDomain() : String
+}
+
+User *-- Email
+
+class Customer {
++ Customer(cashierId : int)
++ getCashId() : int
+}
+
+User <|-- Customer
+
+class TicketBook {
+- tickets : Hashmap<ticketId : int, ticketEntry : TicketEntry>
+- userToTicket : Hashmap<userId : String, ticketIds : String[]>
++ TicketBook()
++ getTicket(ticketId: int) : Ticket
++ add(Ticket) : int
++ getTickets() : Hashmap<ticketId : int, TicketEntry>
++ getTicketsFromUser(userId : String) : Hashmap<ticketId : int, TicketEntry>
++ getTicketsWithProd(prodId : int) : ArrayList<Ticket>
++ deleteProdFromTickets(ticketsDelete : ArrayList<Ticket>, prodId : int) : void
+}
+
+App *-- TicketBook
+
+struct TicketEntry {
++ cashId : String
++ customerId : String
++ ticket : Ticket
+}
+
+TicketBook *-- "0...n" TicketEntry
+
+class Ticket {
+- products: HashMap<productId : int, amount: int>
+- categories : HashMap<Category, amount: int>
+- creationDate : LocalDateTime
+- id : int
+- closingDate : LocalDateTime
++ Ticket()
++ add(Product, amount: int) : int
++ removeProduct(prodId: int) : int
++ printTicket() : void
++ hasProduct(prodId : int) : boolean
++ isClosed() : boolean
+}
+
+TicketEntry *-- Ticket
+
 @enduml
