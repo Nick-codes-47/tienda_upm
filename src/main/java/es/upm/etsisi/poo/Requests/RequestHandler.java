@@ -11,5 +11,9 @@ abstract class RequestHandler {
         actions = new HashMap<>();
     }
 
+    public HashMap<String, Action> getActions() {
+        return actions;
+    }
+
     abstract Action getAction(Request request);
 }
