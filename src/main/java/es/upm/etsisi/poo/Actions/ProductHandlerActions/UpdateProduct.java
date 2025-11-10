@@ -21,6 +21,7 @@ public class UpdateProduct extends Action {
      * @return 0 if it was successful
      *         1 if one of the number arguments is invalid
      *         3 if the number of arguments is wrong
+     *         4 if the product is not in the catalog
      *         5 if the field is invalid
      *         6 if the user doesn't have access to change the specified field
      */
@@ -36,7 +37,7 @@ public class UpdateProduct extends Action {
             BaseProduct product = app.catalog.getProduct(id);
             if (product == null) {
                 System.err.println("ERROR: Product with id " + id + " does not exist!");
-                return -1;
+                return 4;
             }
 
             // We obtain the field to modify and the new value
@@ -64,14 +65,14 @@ public class UpdateProduct extends Action {
             // We print the product updated
             System.out.println(product);
 
-            // TODO manage closed tickets
             // We look for tickets that had this product
             ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
             if (!tickets.isEmpty()) {
                 // We show the tickets that had the product
                 System.out.println("The tickets with the following ids had the product and it was updated:");
                 for (Ticket ticket : tickets) {
-                    System.out.println("- "+ticket.getId());
+                    if (!ticket.isClosed())
+                        System.out.println("- "+ticket.getId());
                 }
             }
             return 0;
