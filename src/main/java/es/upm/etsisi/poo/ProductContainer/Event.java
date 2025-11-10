@@ -28,7 +28,7 @@ public class Event extends BaseProduct {
                 ", price/person:" +super.getPrice()+"}";
     }
 
-    private LocalDate expireDate;
-    private int maxPeople;
-    private EventType type;
+    private final LocalDate expireDate;
+    private final int maxPeople;
+    private final EventType type;
 }

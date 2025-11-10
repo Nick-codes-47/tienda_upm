@@ -9,7 +9,7 @@ public class CustomProduct extends Product {
         this.personalizable = pers;
     }
 
-    public int getMaxPersonalizable() {
+    public int getMaxPers() {
         return personalizable;
     }
 
@@ -19,5 +19,5 @@ public class CustomProduct extends Product {
                 ", maximum personalizable:"+this.personalizable+", price:"+super.getPrice()+"}";
     }
 
-    private int personalizable;
+    private final int personalizable;
 }

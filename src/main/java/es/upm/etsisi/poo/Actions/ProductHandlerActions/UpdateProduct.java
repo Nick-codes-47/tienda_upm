@@ -56,6 +56,7 @@ public class UpdateProduct extends Action {
             Field f = product.getClass().getDeclaredField(field); // TODO be careful if Products variable are written in camelCase
             f.setAccessible(true);
 
+            // TODO now category is enum, we have to parse
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
                 f.set(product, Double.parseDouble(value));
             } else {
