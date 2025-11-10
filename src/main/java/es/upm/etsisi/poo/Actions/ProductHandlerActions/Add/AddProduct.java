@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Actions.ProductHandlerActions;
+package es.upm.etsisi.poo.Actions.ProductHandlerActions.Add;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
@@ -17,7 +17,8 @@ public class AddProduct extends Action {
     /**
      * Method that executes the action to add a Product or CustomProduct to the catalog
      * @param args the arguments required to add a product to the catalog
-     * @return -1 if the catalog is full
+     * @return -2 if the product passed is null
+     *         -1 if the catalog is full
      *         0 if all went well
      *         1 if the price or maxPersonalizable were not double or int respectively
      *         2 if one of the arguments was invalid to create the product
@@ -31,17 +32,12 @@ public class AddProduct extends Action {
                 int newId = app.catalog.getNewId();
                 try {
                     BaseProduct product = new Product(
-                            newId,  // id
-                            args[0],    // name
-                            args[1],    // category
-                            Double.parseDouble(args[2])     // price
+                            newId,                      // id
+                            args[0],                    // name
+                            args[1],                    // category
+                            Double.parseDouble(args[2]) // price
                     );
-                    int add = app.catalog.add(product);
-                    if (add == 0){
-                        // If the product was added we show it
-                        System.out.println(product);
-                    }
-                    return add;
+                    return addToCatalog(app,product);
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: price is not valid");
                     return 1;
@@ -55,18 +51,13 @@ public class AddProduct extends Action {
                 int newId = app.catalog.getNewId();
                 try {
                     BaseProduct product = new CustomProduct(
-                            newId,  // id
-                            args[0],    // name
-                            args[1],    // category
-                            Double.parseDouble(args[2]),     // price
-                            Integer.parseInt(args[3])   // max_Personalizable
+                            newId,                          // id
+                            args[0],                        // name
+                            args[1],                        // category
+                            Double.parseDouble(args[2]),    // price
+                            Integer.parseInt(args[3])       // max_Personalizable
                     );
-                    int add = app.catalog.add(product);
-                    if (add == 0){
-                        // If the product was added we show it
-                        System.out.println(product);
-                    }
-                    return add;
+                    return addToCatalog(app,product);
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: price and/or maxPers are not valid");
                     return 1;
@@ -88,5 +79,23 @@ public class AddProduct extends Action {
     @Override
     public void help() {
         System.out.println("prod add \"<name>\" <category> <price> [<maxPers>]");
+    }
+
+    /**
+     * Method to handle the adding of a product to the catalog and the possible errors
+     * @param app The app to access the catalog
+     * @param product The product to be added
+     * @return 0 if all went well
+     *         -1 if the product is null
+     *         -2 if the catalog is full
+     */
+    protected static int addToCatalog(App app, BaseProduct product) {
+        int add = app.catalog.add(product);
+        if (add == 0){
+            // If the product was added we show it
+            System.out.println(product);
+        } else if (add == -2) System.err.println("ERROR: Product is null");
+        else if (add == -1) System.err.println("ERROR: You reached the maximum number of products!");
+        return add;
     }
 }

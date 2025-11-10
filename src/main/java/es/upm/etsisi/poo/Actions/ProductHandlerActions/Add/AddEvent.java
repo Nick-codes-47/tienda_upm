@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Actions.ProductHandlerActions;
+package es.upm.etsisi.poo.Actions.ProductHandlerActions.Add;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
@@ -39,12 +39,7 @@ public class AddEvent extends Action {
                         Integer.parseInt(args[3]),       // max people
                         this.eventType                   // type
                 );
-                int add = app.catalog.add(event);
-                if (add == 0) {
-                    // If the product was added we show it
-                    System.out.println(event);
-                }
-                return add;
+                return AddProduct.addToCatalog(app, event);
             } catch (NumberFormatException e) {
                 System.err.println("ERROR: price and/or max_people are not valid");
                 return 1;
