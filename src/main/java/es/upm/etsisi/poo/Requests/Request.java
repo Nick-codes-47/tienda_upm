@@ -5,8 +5,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class Request {
-    public String family = "";
-    public String command = "";
+    public String handlerId = "";
+    public String actionId = "";
     public ArrayList<String> args = new ArrayList<>();
 
     public Request(String line)
@@ -14,9 +14,9 @@ public class Request {
         ArrayList<String> tokens = tokenize(line);
 
         if (!tokens.isEmpty()) {
-            family = tokens.get(0);
+            handlerId = tokens.get(0);
             if (tokens.size() > 1) {
-                command = tokens.get(1);
+                actionId = tokens.get(1);
                 if (tokens.size() > 2) {
                     args = new ArrayList<>(tokens.subList(2, tokens.size()));
                 }
