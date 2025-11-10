@@ -13,6 +13,7 @@ public class Ticket {
     private HashMap<Product, Integer> ticket; // TODO is not better to use Prods id?
     private HashMap<String, Integer> categories;
     private final int numMaxElements;
+    private boolean closed; // TODO may be changed to a string or enum of state
     public static final String COMMAND_PREFIX = "ticket";
 
     public Ticket(App app) {
@@ -29,6 +30,8 @@ public class Ticket {
     public boolean hasProduct(int prodId) {
         return ticket.containsKey(prodId);
     }
+
+    public boolean isClosed() { return this.closed; }
 
     /**
      * Handles a user request directed to the Ticket module.
