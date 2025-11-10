@@ -1,9 +1,9 @@
 @startuml
 class App {
-+ catalog : Catalaog
++ catalog : Catalog
 + tickets : TicketBook
-+ cashiers : UserRepository
-+ customers : UserRepository
++ cashiers : UserRegister
++ customers : UserRegister
 - modules : HashMap<handlerId : String, RequestHandler>
 - input : InputDriver
 - config : Config
@@ -26,7 +26,7 @@ class Config {
 App *-- Config
 
 enum EventType {
-FOOD(36)
+FOOD(72)
 MEETING(12)
 - planningTime : int
 + EventType(planningTime : int)
@@ -42,6 +42,7 @@ ELECTRONICS(3)
 - discount : double
 + Category(discount : double)
 + getDiscount() : double
++ toSentenceCase(eventType : EventType) : String
 }
 
 class InputDriver {
@@ -58,6 +59,7 @@ class Request {
 + actionId : String
 + args : ArrayList<String>
 + Request(line : String)
+- tokenize(line : String) : ArrayList<String>
 }
 
 Request <-- InputDriver : Creates
@@ -65,6 +67,7 @@ Request <-- InputDriver : Creates
 class RequestHandler {
 - actions : HashMap<actionId : String, Action>
 + getAction(request : Request) : Action
++ getActions() : HashMap<actionId : String, Action>
 }
 
 App *-- "0...n" RequestHandler
@@ -79,9 +82,8 @@ RequestHandler <|-- ProductHandler
 UserHandler <|-- CashierHandler
 UserHandler <|-- CustomerHandler
 
-interface Action {
-+ result : int
-+ {abstract} Action(App)
+abstract Action {
++ Action(App)
 + {abstract} exec(args : String[]) : int
 + {abstract} help() : void
 }
@@ -99,8 +101,7 @@ note top of ListTickets: Also used by CashierHandler
 package ProductHandlerActions {
 Action <|.. AddProduct
 Action <|.. UpdateProduct
-Action <|.. AddFood
-Action <|.. AddMeeting
+Action <|.. AddEvent
 Action <|.. ListProducts
 Action <|.. RemoveProduct
 }
@@ -115,11 +116,11 @@ class AddUser {
 }
 
 class RemoveUser {
-+ AddUser(userRegisterId : id)
++ RemoveUser(userRegisterId : id)
 }
 
 class ListUsers {
-+ AddUser(userRegisterId : id)
++ ListUser(userRegisterId : id)
 }
 
 RemoveUser <|-- RemoveCashier
@@ -129,9 +130,9 @@ RemoveUser <|-- RemoveCashier
 class Catalog {
 - products : HashMap<productId : int, ProductBase>
 + getProduct(id : int) : Product
++ getProducts() : HashMap<productId : int, ProductBase>
 + add(ProductBase) : int
-+ updateProduct(id : int, field : String, value : String) : int
-+ printProducts() : void
+# getNewId() : int
 + deleteProduct(id : int) : int
 }
 
@@ -140,11 +141,15 @@ Category <-- Catalog : Checks
 EventType <-- Catalog : Checks
 
 abstract class BaseProduct {
+- id : int
 - name : String
-- price : Double
-+ BaseProduct(name : String, price : Double)
+- price : double
++ BaseProduct(id : int, name : String, price : Double)
++ getId() : int
 + getPrice() : Double
++ setPrice() : void
 + getName() : String
++ setName : void
 }
 
 Catalog *-- "0...n" BaseProduct
@@ -222,6 +227,8 @@ class TicketBook {
 + add(Ticket) : int
 + getTickets() : Hashmap<ticketId : int, TicketEntry>
 + getTicketsFromUser(userId : String) : Hashmap<ticketId : int, TicketEntry>
++ getTicketsWithProd(prodId : int) : ArrayList<Ticket>
++ deleteProdFromTickets(ticketsDelete : ArrayList<Ticket>, prodId : int) : void
 }
 
 App *-- TicketBook
@@ -244,6 +251,8 @@ class Ticket {
 + add(Product, amount: int) : int
 + removeProduct(prodId: int) : int
 + printTicket() : void
++ hasProduct(prodId : int) : boolean
++ isClosed() : boolean
 }
 
 TicketEntry *-- Ticket
