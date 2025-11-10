@@ -13,8 +13,9 @@ import java.time.format.DateTimeParseException;
  * Class to add an Event to the Catalog
  */
 public class AddEvent extends Action {
-    public AddEvent(App app) {
+    public AddEvent(App app, EventType eventType) {
         super(app);
+        this.eventType = eventType;
     }
 
     /**
@@ -61,15 +62,9 @@ public class AddEvent extends Action {
      */
     @Override
     public void help() {
-        for (EventType eventType : EventType.values()) {
-            System.out.println("add"+ EventType.toSentenceCase(eventType) +
-                    " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>");
-        }
+        System.out.println("add" + EventType.toSentenceCase(eventType) +
+                " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>");
     }
 
-    public void setEventType(EventType eventType) {
-        this.eventType = eventType;
-    }
-
-    private EventType eventType;
+    private final EventType eventType;
 }
