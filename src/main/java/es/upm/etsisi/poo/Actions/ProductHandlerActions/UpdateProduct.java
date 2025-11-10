@@ -93,7 +93,9 @@ public class UpdateProduct extends Action {
         }
     }
 
-
+    /**
+     * Shows how to call the action to update a product
+     */
     @Override
     public void help() {
         System.out.println("prod update <id> NAME|CATEGORY|PRICE <value>");
