@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Requests;
+package es.upm.etsisi.poo.Requests.Handlers;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.Actions.ProductHandlerActions.Add.AddEvent;
@@ -8,10 +8,11 @@ import es.upm.etsisi.poo.Actions.ProductHandlerActions.RemoveProduct;
 import es.upm.etsisi.poo.Actions.ProductHandlerActions.UpdateProduct;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.EventType;
+import es.upm.etsisi.poo.Requests.RequestHandler;
 
 import java.util.HashMap;
 
-public class ProductHandler extends RequestHandler{
+public class ProductHandler extends RequestHandler {
     public ProductHandler(App app) {
         super();
         // We obtain the map of actions

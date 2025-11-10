@@ -1,8 +1,9 @@
-package es.upm.etsisi.poo.Requests;
+package es.upm.etsisi.poo.Requests.Handlers;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.Actions.TicketHandlerActions.*;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.Requests.RequestHandler;
 
 import java.util.HashMap;
 
