@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo;
+package es.upm.etsisi.poo.ProductContainer;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
