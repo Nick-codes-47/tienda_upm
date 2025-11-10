@@ -11,13 +11,11 @@ import java.util.Set;
  * Class that implements a HashMap to store all the products available in the store
  */
 public class Catalog {
-    private final App app;
     private final HashMap<Integer, BaseProduct> products;
     private final int maxProducts;
     public static final String COMMAND_PREFIX = "prod";
 
     public Catalog(App app) {
-        this.app = app;
         this.maxProducts = app.config.getMaxProducts();
         products = new HashMap<>();
     }
