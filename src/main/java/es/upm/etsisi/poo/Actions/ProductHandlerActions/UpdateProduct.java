@@ -4,7 +4,6 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.Category;
-import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 import java.lang.reflect.Field;
@@ -110,9 +109,11 @@ public class UpdateProduct extends Action {
 
     /**
      * Shows how to call the action to update a product
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod update <id> NAME|CATEGORY|PRICE <value>");
+    public String help() {
+        return "prod update <id> NAME|CATEGORY|PRICE <value>";
     }
 }

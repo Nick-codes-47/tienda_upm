@@ -15,7 +15,8 @@ public class AddProductToTicket extends Action {
     }
 
     @Override
-    public void help() {
+    public String help() {
         // TODO ALL
+        return "";
     }
 }

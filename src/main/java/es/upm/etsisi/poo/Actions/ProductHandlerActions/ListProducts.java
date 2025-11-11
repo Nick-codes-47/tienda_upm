@@ -44,9 +44,11 @@ public class ListProducts extends Action {
 
     /**
      * Shows how to call the action to list the products
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod list");
+    public String help() {
+        return "prod list";
     }
 }

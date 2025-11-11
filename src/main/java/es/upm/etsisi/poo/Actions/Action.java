@@ -11,5 +11,5 @@ public abstract class Action {
 
     abstract public int execute(String[] args);
 
-    abstract public void help();
+    abstract public String help();
 }

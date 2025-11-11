@@ -4,7 +4,6 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
-import es.upm.etsisi.poo.TicketContainer.TicketEntry;
 
 import java.util.ArrayList;
 
@@ -66,9 +65,11 @@ public class RemoveProduct extends Action {
 
     /**
      * Shows how to call the action to remove a product
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod remove <id>");
+    public String help() {
+        return "prod remove <id>";
     }
 }

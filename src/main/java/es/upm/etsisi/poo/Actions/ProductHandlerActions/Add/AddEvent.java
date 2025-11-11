@@ -59,11 +59,13 @@ public class AddEvent extends Action {
 
     /**
      * Shows how to call all actions that involve adding an event
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("add" + EventType.toSentenceCase(eventType) +
-                " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>");
+    public String help() {
+        return "add" + EventType.toSentenceCase(eventType) +
+                " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>";
     }
 
     private final EventType eventType;
