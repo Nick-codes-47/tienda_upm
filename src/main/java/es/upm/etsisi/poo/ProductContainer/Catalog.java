@@ -11,12 +11,9 @@ import java.util.Set;
  * Class that implements a HashMap to store all the products available in the store
  */
 public class Catalog {
-    private final HashMap<Integer, BaseProduct> products;
-    private final int maxProducts;
     public static final String COMMAND_PREFIX = "prod";
 
     public Catalog(App app) {
-        this.maxProducts = app.config.getMaxProducts();
         products = new HashMap<>();
     }
 
@@ -47,7 +44,7 @@ public class Catalog {
             return -2;
         }
         // We check if we reached the maxProducts
-        if (products.size() >= maxProducts) {
+        if (products.size() >= MAX_PRODUCTS) {
             return -1;
         }
         // Put the product in the map and print it
@@ -55,6 +52,11 @@ public class Catalog {
         return 0;
     }
 
+    /**
+     * Method to obtain a new id in ascendant order among the products in the catalog. When a product is removed and its
+     * id was less than the current id, the next product added will have this id
+     * @return new ID
+     */
     public int getNewId() {
         Set<Integer> usedIds = products.keySet();
         int newId = 0;
@@ -65,11 +67,10 @@ public class Catalog {
     }
 
     /**
-     * Method to delete a product from the catalog and the ticket
+     * Method to delete a product from the catalog
      *
      * @param id to search the product
-     * @return -1 if the product doesn't exist
-     * 0 if we could delete the product
+     * @return either the product that was removed or null if the product doesn't exist in the catalog.
      */
     public BaseProduct deleteProduct(int id) {
         BaseProduct product = this.getProduct(id);
@@ -79,4 +80,7 @@ public class Catalog {
         }
         return product;
     }
+
+    private final HashMap<Integer, BaseProduct> products;
+    private final int MAX_PRODUCTS = 200;
 }
