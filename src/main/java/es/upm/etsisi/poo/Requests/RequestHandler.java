@@ -11,8 +11,20 @@ public class RequestHandler {
         actions = new HashMap<>();
     }
 
+    public HashMap<String, Action> getActions() {
+        return actions;
+    }
+
     public Action getAction(Request request) {
-        // TODO ALL
-        return null;
+        if (request != null) {
+            // We get the action in the request
+            String action = request.actionId;
+            // We look if we have that action in the map
+            Action actionToReturn = this.actions.get(action);
+            if (actionToReturn == null) {
+                System.err.println("ERROR: No such action: " + action);
+            }
+            return actionToReturn;
+        } else return null;
     }
 }

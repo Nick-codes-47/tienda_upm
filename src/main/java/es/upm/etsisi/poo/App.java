@@ -1,15 +1,26 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
+import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
+import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
+import es.upm.etsisi.poo.TicketContainer.TicketBook;
+import es.upm.etsisi.poo.UserContainer.UserRegister;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class App
 {
+    public Catalog catalog;
+    public TicketBook tickets;
+    public UserRegister cashiers;
+    public UserRegister customers;
     public Config config;
 
     App(String[] args)
@@ -17,7 +28,7 @@ public class App
         loadConfig(args);
 
         catalog = new Catalog(this);
-        ticket = new Ticket(this);
+        tickets = new TicketBook(this);
 
         initCommandMaps();
     }
@@ -32,32 +43,12 @@ public class App
         while (exit == 0)
         {
             Request request = input.next();
-            if (!request.family.isEmpty())
+            if (!request.handlerId.isEmpty())
             {
                 exit = handleRequest(request);
                 System.out.println();
             }
         }
-    }
-
-    public Product getProduct(int id)
-    {
-        return catalog.getProduct(id);
-    }
-
-    public void updateProduct(Product product)
-    {
-        ticket.updateProduct(product);
-    }
-
-    public void deleteProduct(Product product)
-    {
-        ticket.deleteProduct(product);
-    }
-
-    public void printTicket()
-    {
-        System.out.println(ticket);
     }
 
     /**
@@ -116,16 +107,16 @@ public class App
 
     private int handleRequest(Request request)
     {
-        if (commands.containsKey(request.family))
+        if (commands.containsKey(request.handlerId))
         {
-            commands.get(request.family).accept(request);
+            commands.get(request.handlerId).accept(request);
         }
         else
         {
-            System.err.printf("ERROR: Invalid command %s\n", request.family);
+            System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
 
-        if (request.family.equals(BUILTIN_CMD_EXIT))
+        if (request.handlerId.equals(BUILTIN_CMD_EXIT))
         {
             return 1;
         }
@@ -133,37 +124,24 @@ public class App
         return 0;
     }
 
+    private void executeAction(Action action) {}
+
     /**
      * This method prints all the commands with its parameters
      */
     private void help() {
-        String commands = "Commands:\n" +
-                " prod add <id> \"<name>\" <category> <price>\n" +
-                " prod list\n" +
-                " prod update <id> NAME|CATEGORY|PRICE <value>\n" +
-                " prod remove <id>\n" +
-                " ticket new\n" +
-                " ticket add <prodId> <quantity>\n" +
-                " ticket remove <prodId>\n" +
-                " ticket print\n" +
-                " echo \"<texto>\"\n" +
-                " help\n" +
-                " exit\n\n";
-        StringBuilder categories = new StringBuilder("Categories: ");
-        for (String category : config.getCategories()) {
-            categories.append(category.toUpperCase()).append(", ");
+        // Show the commands
+        System.out.println("Commands:");
+        for (RequestHandler requestHandler : modules.values()) {
+            for (Action action : requestHandler.getActions().values()) {
+                System.out.println(action.help());
+            }
         }
-        // We delete the last coma
-        categories.deleteCharAt(categories.length() - 2);
-        // We build a string for the discounts
-        StringBuilder catDiscounts = new StringBuilder("Discounts if there are ≥2 units in the category: ");
-        for (String category : config.getCategories()) {
-            catDiscounts.append(category.toUpperCase()).append(" ")
-                    .append(String.format("%.0f",config.getDiscount(category) * 100)).append("%").append(", ");
-        }
-        catDiscounts.deleteCharAt(catDiscounts.length() - 2);
-        catDiscounts.append(".");
-        System.out.print(commands+categories+"\n"+catDiscounts+"\n");
+
+        // Show the categories
+        System.out.println("Categories: "+Category.getCategories());
+        // Show the categories and there discounts
+        System.out.println("Discounts if there are ≥2 units in the category: "+Category.getCategoriesWithDiscount());
     }
 
     /**
@@ -177,14 +155,14 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.family + " " + request.command);
+        System.out.println(request.handlerId + " " + request.actionId);
     }
 
     private void acknowledgeResult(int result, Request request)
     {
         if (result == 0)
         {
-            System.out.println(request.family + " " + request.command + ": ok");
+            System.out.println(request.handlerId + " " + request.actionId + ": ok");
         }
     }
 
@@ -197,11 +175,9 @@ public class App
         commands.put(BUILTIN_CMD_ECHO, this::echo);
     }
 
-    private final Catalog catalog;
-    private final Ticket ticket;
-
     private InputDriver input;
 
+    private final HashMap<String, RequestHandler> modules = new HashMap<>();
     private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
 
     private final String BUILTIN_CMD_EXIT = "exit";

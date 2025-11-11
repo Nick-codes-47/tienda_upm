@@ -1,9 +1,12 @@
 package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
@@ -11,8 +14,12 @@ import java.util.Map;
 public class Ticket {
     private final App app;
     private HashMap<Product, Integer> ticket; // TODO is not better to use Prods id?
-    private HashMap<String, Integer> categories;
+    private HashMap<Category, Integer> categories;
     private final int numMaxElements;
+    private LocalDateTime creationDate;
+    private int id;
+    private LocalDateTime closingDate;
+    private boolean closed; // TODO may be changed to a string or enum of state
     public static final String COMMAND_PREFIX = "ticket";
 
     public Ticket(App app) {
@@ -25,6 +32,12 @@ public class Ticket {
             categories.put(category, 0);
         }
     }
+
+    public boolean hasProduct(int prodId) {
+        return ticket.containsKey(prodId);
+    }
+
+    public boolean isClosed() { return this.closed; }
 
     /**
      * Handles a user request directed to the Ticket module.
@@ -39,7 +52,7 @@ public class Ticket {
      * @param request the request containing the command and its arguments.
      */
     public int handleRequest(Request request) {
-        String command = request.command;
+        String command = request.actionId;
         ArrayList<String> args = request.args;
 
         switch (command) {

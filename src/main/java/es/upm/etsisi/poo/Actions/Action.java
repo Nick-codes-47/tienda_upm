@@ -3,7 +3,6 @@ package es.upm.etsisi.poo.Actions;
 import es.upm.etsisi.poo.App;
 
 public abstract class Action {
-    public int result;
     public App app;
 
     public Action(App app) {
@@ -12,6 +11,5 @@ public abstract class Action {
 
     abstract public int execute(String[] args);
 
-    abstract public void help();
-
+    abstract public String help();
 }
