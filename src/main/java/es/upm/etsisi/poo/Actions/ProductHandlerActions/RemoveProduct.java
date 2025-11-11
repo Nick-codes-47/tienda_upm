@@ -41,13 +41,19 @@ public class RemoveProduct extends Action {
             }
             // We search for tickets with the product
             ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
+            boolean anyOpen = false;
             if (!tickets.isEmpty()) {
                 // We delete the product from the tickets
                 app.tickets.deleteProdFromTickets(tickets, id);
                 // We show the tickets that had the product
-                System.out.println("The tickets with the following ids had the product and it was deleted:");
                 for (Ticket ticket : tickets) {
-                    System.out.println(ticket.getId());
+                    if (!ticket.isClosed()) {
+                        if (!anyOpen) {
+                            System.out.println("The tickets with the following ids had the product and it was deleted:");
+                            anyOpen = true;
+                        }
+                    }
+                    System.out.println("- "+ticket.getId());
                 }
             }
             // Since everything went well we return 0
