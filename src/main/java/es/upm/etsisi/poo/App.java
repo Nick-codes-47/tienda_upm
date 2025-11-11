@@ -2,6 +2,7 @@ package es.upm.etsisi.poo;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
+import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
@@ -9,7 +10,9 @@ import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class App
@@ -127,33 +130,18 @@ public class App
      * This method prints all the commands with its parameters
      */
     private void help() {
-        String commands = "Commands:\n" +
-                " prod add <id> \"<name>\" <category> <price>\n" +
-                " prod list\n" +
-                " prod update <id> NAME|CATEGORY|PRICE <value>\n" +
-                " prod remove <id>\n" +
-                " ticket new\n" +
-                " ticket add <prodId> <quantity>\n" +
-                " ticket remove <prodId>\n" +
-                " ticket print\n" +
-                " echo \"<texto>\"\n" +
-                " help\n" +
-                " exit\n\n";
-        StringBuilder categories = new StringBuilder("Categories: ");
-        for (String category : config.getCategories()) {
-            categories.append(category.toUpperCase()).append(", ");
+        // Show the commands
+        System.out.println("Commands:");
+        for (RequestHandler requestHandler : modules.values()) {
+            for (Action action : requestHandler.getActions().values()) {
+                System.out.println(action.help());
+            }
         }
-        // We delete the last coma
-        categories.deleteCharAt(categories.length() - 2);
-        // We build a string for the discounts
-        StringBuilder catDiscounts = new StringBuilder("Discounts if there are ≥2 units in the category: ");
-        for (String category : config.getCategories()) {
-            catDiscounts.append(category.toUpperCase()).append(" ")
-                    .append(String.format("%.0f",config.getDiscount(category) * 100)).append("%").append(", ");
-        }
-        catDiscounts.deleteCharAt(catDiscounts.length() - 2);
-        catDiscounts.append(".");
-        System.out.print(commands+categories+"\n"+catDiscounts+"\n");
+
+        // Show the categories
+        System.out.println("Categories: "+Category.getCategories());
+        // Show the categories and there discounts
+        System.out.println("Discounts if there are ≥2 units in the category: "+Category.getCategoriesWithDiscount());
     }
 
     /**
