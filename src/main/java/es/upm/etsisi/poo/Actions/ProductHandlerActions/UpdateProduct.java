@@ -103,14 +103,7 @@ public class UpdateProduct extends Action {
             System.err.println("ERROR category is not valid");
 
             System.out.println("Valid categories:");
-            boolean coma = false;
-            for (Category category : Category.values()) {
-                if (!coma) {
-                    System.out.println(category.name());
-                    coma = true;
-                }
-                else System.out.println(", "+category.name());
-            }
+            System.out.println(Category.getCategories());
             return 8;
         }
     }
