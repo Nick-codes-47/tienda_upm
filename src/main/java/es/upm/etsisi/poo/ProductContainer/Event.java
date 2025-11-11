@@ -8,7 +8,7 @@ public class Event extends BaseProduct {
         throws InvalidProductException{
         super(id,name, price);
         // TODO comprobaciones sobre planificaciones según el type
-        if (maxPeople < 1 || maxPeople > 100)
+        if (maxPeople < 1 || maxPeople > MAX_PEOPLE_ALLOWED)
             throw new InvalidProductException("ERROR: Events must have between 1 and 100 people");
         if (expireDate == null || expireDate.isBefore(LocalDate.now()))
             throw new InvalidProductException("ERROR: ExpireDate can't be null or before now");
@@ -31,4 +31,5 @@ public class Event extends BaseProduct {
     private final LocalDate expireDate;
     private final int maxPeople;
     private final EventType type;
+    private final int MAX_PEOPLE_ALLOWED = 100;
 }
