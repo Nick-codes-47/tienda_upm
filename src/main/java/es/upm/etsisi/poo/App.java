@@ -130,18 +130,26 @@ public class App
      * This method prints all the commands with its parameters
      */
     private void help() {
+        // Initialize StringBuilder to build the entire output
+        StringBuilder output = new StringBuilder();
+
         // Show the commands
-        System.out.println("Commands:");
+        output.append("Commands:\n");
         for (RequestHandler requestHandler : modules.values()) {
             for (Action action : requestHandler.getActions().values()) {
-                System.out.println(action.help());
+                output.append(action.help()).append("\n");
             }
         }
 
         // Show the categories
-        System.out.println("Categories: "+Category.getCategories());
-        // Show the categories and there discounts
-        System.out.println("Discounts if there are ≥2 units in the category: "+Category.getCategoriesWithDiscount());
+        output.append("Categories: ").append(Category.getCategories()).append("\n");
+
+        // Show the categories and their discounts
+        output.append("Discounts if there are ≥2 units in the category: ")
+                .append(Category.getCategoriesWithDiscount()).append("\n\n");
+
+        // Print all the content built in the StringBuilder at the end
+        System.out.print(output);
     }
 
     /**
