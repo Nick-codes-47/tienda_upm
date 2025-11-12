@@ -15,4 +15,11 @@ public class TicketEntry {
         return this.ticket;
     }
 
+    public String getCashId() {
+        return cashId;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
 }
