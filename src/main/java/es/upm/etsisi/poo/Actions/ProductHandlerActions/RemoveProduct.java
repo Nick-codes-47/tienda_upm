@@ -4,7 +4,6 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
-import es.upm.etsisi.poo.TicketContainer.TicketEntry;
 
 import java.util.ArrayList;
 
@@ -41,13 +40,19 @@ public class RemoveProduct extends Action {
             }
             // We search for tickets with the product
             ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
+            boolean anyOpen = false;
             if (!tickets.isEmpty()) {
                 // We delete the product from the tickets
                 app.tickets.deleteProdFromTickets(tickets, id);
                 // We show the tickets that had the product
-                System.out.println("The tickets with the following ids had the product and it was deleted:");
                 for (Ticket ticket : tickets) {
-                    System.out.println(ticket.getId());
+                    if (!ticket.isClosed()) {
+                        if (!anyOpen) {
+                            System.out.println("The tickets with the following ids had the product and it was deleted:");
+                            anyOpen = true;
+                        }
+                    }
+                    System.out.println("- "+ticket.getId());
                 }
             }
             // Since everything went well we return 0
@@ -60,9 +65,11 @@ public class RemoveProduct extends Action {
 
     /**
      * Shows how to call the action to remove a product
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod remove <id>");
+    public String help() {
+        return "prod remove <id>";
     }
 }

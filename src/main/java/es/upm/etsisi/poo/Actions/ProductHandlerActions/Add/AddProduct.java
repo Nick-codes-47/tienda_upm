@@ -75,10 +75,12 @@ public class AddProduct extends Action {
 
     /**
      * Shows how to call the action
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod add \"<name>\" <category> <price> [<maxPers>]");
+    public String help() {
+        return "prod add \"<name>\" <category> <price> [<maxPers>]";
     }
 
     /**

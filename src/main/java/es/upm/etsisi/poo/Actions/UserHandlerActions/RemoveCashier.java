@@ -14,7 +14,8 @@ public class RemoveCashier extends RemoveUser {
     }
 
     @Override
-    public void help() {
+    public String help() {
         // TODO ALL
+        return "";
     }
 }

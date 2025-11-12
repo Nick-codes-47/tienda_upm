@@ -3,7 +3,7 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 import java.lang.reflect.Field;
@@ -24,6 +24,7 @@ public class UpdateProduct extends Action {
      *         4 if the product is not in the catalog
      *         5 if the field is invalid
      *         6 if the user doesn't have access to change the specified field
+     *         8 if the category introduced is invalid
      */
     @Override
     public int execute(String[] args) {
@@ -36,6 +37,7 @@ public class UpdateProduct extends Action {
             int id = Integer.parseInt(args[0]);
             BaseProduct product = app.catalog.getProduct(id);
             if (product == null) {
+                // Product does not exist
                 System.err.println("ERROR: Product with id " + id + " does not exist!");
                 return 4;
             }
@@ -48,18 +50,22 @@ public class UpdateProduct extends Action {
             Set<String> allowedFields = Set.of("name", "price", "category");
 
             if (!allowedFields.contains(field.toLowerCase())) {
-                System.err.println("ERROR: You can only modify 'name', 'price' or 'category'");
+                System.err.println("ERROR: You can only modify 'NAME', 'PRICE' or 'CATEGORY'");
                 return 1;
             }
 
-            // We modify the field once we know it's valid
-            Field f = product.getClass().getDeclaredField(field); // TODO be careful if Products variable are written in camelCase
+            // We try to modify the field once we know it's valid
+            Field f = product.getClass().getDeclaredField(field); // TODO be careful if Products variables are written in camelCase
             f.setAccessible(true);
 
-            // TODO now category is enum, we have to parse
             if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
+                // The price is modified
                 f.set(product, Double.parseDouble(value));
+            } else if (f.getType().equals(Category.class)) {
+                // The category is modified
+                f.set(product, Category.valueOf(value));
             } else {
+                // The name is modified
                 f.set(product, value);
             }
 
@@ -82,23 +88,32 @@ public class UpdateProduct extends Action {
 
             return 0;
 
-        } catch (NumberFormatException e) {
-            System.err.println("ERROR: Id or price is not valid");
-            return 1;
         } catch (NoSuchFieldException e) {
-            System.err.println("ERROR: Field not valid!");
+            System.err.println("ERROR: Field not valid for this product! (Events don't have category)");
             return 5;
         } catch (IllegalAccessException e) {
             System.err.println("ERROR: Illegal access! (You can't modify that field)");
             return 6;
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: Id or price is not valid");
+            return 1;
+        } catch (IllegalArgumentException e) {
+            // The value of the new category is not valid
+            System.err.println("ERROR category is not valid");
+
+            System.out.println("Valid categories:");
+            System.out.println(Category.getCategories());
+            return 8;
         }
     }
 
     /**
      * Shows how to call the action to update a product
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("prod update <id> NAME|CATEGORY|PRICE <value>");
+    public String help() {
+        return "prod update <id> NAME|CATEGORY|PRICE <value>";
     }
 }

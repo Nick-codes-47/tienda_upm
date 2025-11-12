@@ -33,12 +33,12 @@ public class AddEvent extends Action {
             int newId = app.catalog.getNewId();
             try {
                 BaseProduct event = new Event(
-                        newId,                           // ID
-                        args[0],                         // name
-                        Double.parseDouble(args[1]),     // price
-                        LocalDate.parse(args[2]),        // expiration date
-                        Integer.parseInt(args[3]),       // max people
-                        this.eventType                   // type
+                        newId,                                          // ID
+                        args[0],                                        // name
+                        Double.parseDouble(args[1]),                    // price
+                        LocalDate.parse(args[2]).atStartOfDay(),        // expiration date
+                        Integer.parseInt(args[3]),                      // max people
+                        this.eventType                                  // type
                 );
                 return AddProduct.addToCatalog(app, event);
             } catch (NumberFormatException e) {
@@ -59,11 +59,13 @@ public class AddEvent extends Action {
 
     /**
      * Shows how to call all actions that involve adding an event
+     *
+     * @return a string with the command and its arguments
      */
     @Override
-    public void help() {
-        System.out.println("add" + EventType.toSentenceCase(eventType) +
-                " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>");
+    public String help() {
+        return "add" + EventType.toSentenceCase(eventType) +
+                " \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>";
     }
 
     private final EventType eventType;
