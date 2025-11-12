@@ -50,9 +50,9 @@ public class TicketBook {
      * @param customerId El ID del cliente asociado.
      * @return 0 si es exitoso, -1 si el ticketId ya existe.
      */
-    public int add(App app, String ticketId, String cashId, String customerId) {
+    public int addNewTicket(App app, String ticketId, String cashId, String customerId) {
         if (this.tickets.containsKey(ticketId)) {
-            return -1; // Ticket duplicado
+            return -1;
         }
 
         Ticket newTicket = new Ticket(app, ticketId);

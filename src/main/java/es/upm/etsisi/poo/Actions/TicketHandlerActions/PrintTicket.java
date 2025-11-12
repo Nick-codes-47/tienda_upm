@@ -11,26 +11,22 @@ public class PrintTicket extends Action {
 
     @Override
     public int execute(String[] args) {
-        // 1. Control de argumentos
         if (args.length != 2) {
-            System.err.println("ERROR: Se requieren dos argumentos: <ticketId> <cashId>.");
+            System.err.println("ERROR: Two arguments are required: <ticketId> <cashId>.");
             return -1;
         }
 
         String ticketId = args[0];
         String cashId = args[1];
 
-        // 2. Delegación de la validación y obtención del Ticket
         Ticket ticket = app.tickets.getTicketIfCashierMatches(ticketId, cashId);
 
-        // 3. Control de resultados
         if (ticket == null) {
-            System.err.printf("ERROR: No se encontró el ticket '%s' o el cajero '%s' no está autorizado para imprimirlo.\n", ticketId, cashId);
+            System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", ticketId, cashId);
             return -2;
         }
 
-        // 4. Delegación de la impresión
-        System.out.println("--- IMPRESIÓN DE TICKET " + ticketId + " (Cajero: " + cashId + ") ---");
+        System.out.println("--- TICKET: " + ticketId + " (CASHIER: " + cashId + ") ---");
         ticket.printTicket();
         System.out.println("----------------------------------------------");
 
@@ -39,6 +35,6 @@ public class PrintTicket extends Action {
 
     @Override
     public String help() {
-        return "ticket print <ticketId> <cashId>: Muestra por consola el contenido de un ticket específico, verificando la autorización del cajero.";
+        return "ticket print <ticketId> <cashId>: Shows the ticket related with a cashier .";
     }
 }

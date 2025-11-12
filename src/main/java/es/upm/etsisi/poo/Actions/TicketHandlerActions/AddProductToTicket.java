@@ -20,7 +20,11 @@ public class AddProductToTicket extends Action {
 
     @Override
     public String help() {
-        // TODO ALL
-        return "ticket add <ticketId> <cashId> <prodId> <amount> [--p --p]";
+        return "ticket add <ticketId> <cashId> <prodId> <amount> [--p --p]\n" +
+                "\t-\t--p For every personalization\n" +
+                "\t-\tA personalizable product can be bought without being personalized\n" +
+                "\t-\tAmount is the number of products to be added for normal products and\n" +
+                "\t\t    personalizable ones, also is the amount of people for meetings\n" +
+                "\t-\tCannot be added more than once the same meeting in the same product\n";
     }
 }

@@ -11,11 +11,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
+    private static final int MAX_PRODUCTS_PER_TICKET = 100;
     private final App app;
     private TicketState ticketState;
     private HashMap<BaseProduct, Integer> ticket;
     private HashMap<Category, Integer> categories;
-    private final int numMaxElements;
     private LocalDateTime creationDate;
     private LocalDateTime closingDate;
     public static final String COMMAND_PREFIX = "ticket";
@@ -27,7 +27,6 @@ public class Ticket {
         this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.numMaxElements = app.config.getMaxProductPerTicket();
         this.ticketState = TicketState.ACTIVO;
 
         for (Category category : Category.values()) {
@@ -65,20 +64,16 @@ public class Ticket {
      * Añade productos al ticket. Solo permitido si el ticket está ACTIVO.
      */
     public int addProduct(Product product, int quantity) {
-        // 🆕 NUEVO CONTROL: No se puede añadir si está cerrado
         if (this.ticketState == TicketState.CERRADO) {
             System.err.println("ERROR: Cannot add product. Ticket is closed (invoice printed).");
-            return -3; // Nuevo código de error para ticket cerrado
+            return -3;
         }
 
         int totalUnits = calculateTotalUnits();
 
-        if (totalUnits >= numMaxElements) {
+        if ((totalUnits + quantity) > MAX_PRODUCTS_PER_TICKET) {
             System.err.println("ERROR: maximum number of products reached.");
             return -1;
-        } else if ((totalUnits + quantity) > numMaxElements) {
-            System.err.println("ERROR: maximum number of products reached.");
-            return -2;
         } else {
             Category categoryKey = product.getCategory();
 
@@ -94,7 +89,12 @@ public class Ticket {
     }
 
     /**
-     * Sobrecarga de addProduct. Hereda el control de estado.
+     * Sobrecarga de addProduct para productos editables. Hereda el control de estado
+     * @param product
+     * @param quantity
+     * @param maxEditable
+     * @param edits
+     * @return
      */
     public int addProduct(Product product, int quantity, int maxEditable, ArrayList<String> edits) {
         int result = addProduct(product, quantity);
@@ -108,7 +108,6 @@ public class Ticket {
      * Elimina productos del ticket. Solo permitido si el ticket está ACTIVO.
      */
     public int deleteProduct(Product productToDelete) {
-        // 🆕 NUEVO CONTROL: No se puede eliminar si está cerrado
         if (this.ticketState == TicketState.CERRADO) {
             System.err.println("ERROR: Cannot delete product. Ticket is closed (invoice printed).");
             return -3;
@@ -156,7 +155,6 @@ public class Ticket {
     public String getTicketId() {
         return ticketId;
     }
-
     public int updateProduct(Product product) {
         if (ticket.containsKey(product)) {
             System.out.println(this);
