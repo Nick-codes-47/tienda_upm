@@ -3,16 +3,13 @@ package es.upm.etsisi.poo;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Category;
-import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class App
