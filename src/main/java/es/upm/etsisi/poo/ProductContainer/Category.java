@@ -35,6 +35,5 @@ public enum Category {
         return result.toString();
     }
 
-
     private final double discount;
 }
