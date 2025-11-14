@@ -22,7 +22,7 @@ public class Event extends BaseProduct {
     /**
      * Sets the actual people value to the one in the parameter. It checks
      * @param actualPeople the new value of actualPeople
-     * @throws InvalidProductException Controls that the parameter actualPeople is valid
+     * @throws InvalidProductException Controls that the parameter actualPeople is valid in the Event
      */
     public void setActualPeople (int actualPeople) throws InvalidProductException {
         if (actualPeople > maxPeople) {
@@ -68,7 +68,7 @@ public class Event extends BaseProduct {
                 .append(", max people allowed:")
                 .append(this.maxPeople);
         if (actualPeople != -1)
-            sb.append(", actualPeople:").append(actualPeople);
+            sb.append(", actual People in Event:").append(actualPeople);
 
         return sb.toString();
     }
