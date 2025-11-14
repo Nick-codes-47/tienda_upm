@@ -17,7 +17,6 @@ public class Event extends BaseProduct {
     }
 
     public LocalDateTime getExpireDate() { return this.expireDate; }
-
     public EventType getType() { return this.type; }
 
     /**
