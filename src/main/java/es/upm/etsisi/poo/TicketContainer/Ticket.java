@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Request;
@@ -13,9 +14,9 @@ import java.util.Map;
 
 public class Ticket {
     private final App app;
-    private HashMap<Product, Integer> ticket; // TODO is not better to use Prods id?
+    private HashMap<BaseProduct, Integer> ticket; // TODO is not better to use Prods id?
     private HashMap<Category, Integer> categories;
-    private final int numMaxElements;
+    private final int NUM_MAX_ELEMENTS = 100;
     private LocalDateTime creationDate;
     private int id;
     private LocalDateTime closingDate;
@@ -26,15 +27,14 @@ public class Ticket {
         this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.numMaxElements = app.config.getMaxProductPerTicket();
 
-        for (String category : app.config.getCategories()) {
+        for (Category category : Category.values()) {
             categories.put(category, 0);
         }
     }
 
-    public boolean hasProduct(int prodId) {
-        return ticket.containsKey(prodId);
+    public boolean hasProduct(BaseProduct product) {
+        return ticket.containsKey(product);
     }
 
     public boolean isClosed() { return this.closed; }
@@ -53,34 +53,34 @@ public class Ticket {
      */
     public int handleRequest(Request request) {
         String command = request.actionId;
-        ArrayList<String> args = request.args;
+        String[] args = request.args;
 
         switch (command) {
             case "new":
                 return resetTicket();
 
             case "add":
-                if (args.size() < 2) {
+                if (args.length < 2) {
                     System.err.println("ERROR: two arguments are required: id and quantity.");
                     return -1;
                 }
 
                 int id, quantity;
                 try {
-                    id = Integer.parseInt(args.get(0));
+                    id = Integer.parseInt(args[0]);
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: the product ID must be an integer.");
                     return -1;
                 }
 
                 try {
-                    quantity = Integer.parseInt(args.get(1));
+                    quantity = Integer.parseInt(args[1]);
                 } catch (NumberFormatException e) {
                     System.err.println("ERROR: the quantity must be an integer.");
                     return -1;
                 }
 
-                Product product = app.getProduct(id);
+                BaseProduct product = app.catalog.getProduct(id);
 
                 if (product == null) {
                     System.err.println("ERROR: the product with id " + id + " does not exist.");
@@ -90,14 +90,14 @@ public class Ticket {
                 return addProduct(product, quantity);
 
             case "remove":
-                if (args.isEmpty()) {
+                if (args.length == 0) {
                     System.err.println("ERROR: one argument is required: product ID.");
                     return -1;
                 }
 
                 try {
-                    int removeId = Integer.parseInt(args.get(0));
-                    Product productToRemove = app.getProduct(removeId);
+                    int removeId = Integer.parseInt(args[0]);
+                    BaseProduct productToRemove = app.catalog.getProduct(removeId);
 
                     int result = deleteProduct(productToRemove);
                     if (result != 0)
@@ -144,24 +144,24 @@ public class Ticket {
      *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
      *      Return 0 if product can be added
      */
-    private int addProduct(Product product, int quantity) {
+    private int addProduct(BaseProduct product, int quantity) {
 
         int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 
-        if (totalUnits >= numMaxElements) {
+        if (totalUnits >= NUM_MAX_ELEMENTS) {
             System.err.println("ERROR: maximum number of products reached.");
             return -1;
-        } else if ((totalUnits + quantity) > numMaxElements) {
+        } else if ((totalUnits + quantity) > NUM_MAX_ELEMENTS) {
             System.err.println("ERROR: maximum number of products reached.");
             return -2;
         } else {
-            String categoryKey = product.getCategory().toUpperCase();
+            Category category = product.getCategory();
 
             int currentQuantity = ticket.getOrDefault(product, 0);
             ticket.put(product, currentQuantity + quantity);
 
-            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
-            categories.put(categoryKey, currentCategoryCount + quantity);
+            int currentCategoryCount = categories.getOrDefault(category, 0);
+            categories.put(category, currentCategoryCount + quantity);
 
             System.out.println(this);
 
@@ -176,18 +176,18 @@ public class Ticket {
      * @return 0 if the product was found and removed successfully,
      * -1 if the product does not exist in the ticket.
      */
-    public int deleteProduct(Product productToDelete) {
+    public int deleteProduct(BaseProduct productToDelete) {
         if (ticket.containsKey(productToDelete)) {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
 
             // Usar categoría en mayúsculas (coherente con el resto del código)
-            String categoryKey = productToDelete.getCategory().toUpperCase();
-            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
+            Category category = productToDelete.getCategory();
+            int currentCategoryCount = categories.getOrDefault(category, 0);
 
             // Asegurar que nunca quede negativa
             int newCount = Math.max(0, currentCategoryCount - quantity);
-            categories.put(categoryKey, newCount);
+            categories.put(category, newCount);
 
             System.out.println(this);
             return 0;
@@ -223,22 +223,22 @@ public class Ticket {
         double totalDiscount = 0;
 
         // Counting amount of products per category
-        Map<String, Integer> categoryCounts = new HashMap<>();
-        for (Map.Entry<Product, Integer> entry : ticket.entrySet()) {
-            String category = entry.getKey().getCategory().toUpperCase();
+        Map<Category, Integer> categoryCounts = new HashMap<>();
+        for (Map.Entry<BaseProduct, Integer> entry : ticket.entrySet()) {
+            Category category = entry.getKey().getCategory();
             int cantidad = entry.getValue();
             categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
         }
 
         // Sorting products by name
-        ArrayList<Map.Entry<Product, Integer>> entries = new ArrayList<>(ticket.entrySet());
+        ArrayList<Map.Entry<BaseProduct, Integer>> entries = new ArrayList<>(ticket.entrySet());
         entries.sort((e1, e2) -> e1.getKey().getName().compareToIgnoreCase(e2.getKey().getName()));
 
-        for (Map.Entry<Product, Integer> entry : entries) {
-            Product producto = entry.getKey();
+        for (Map.Entry<BaseProduct, Integer> entry : entries) {
+            BaseProduct producto = entry.getKey();
             int cantidad = entry.getValue();
-            String category = producto.getCategory().toUpperCase();
-            Double discountRate = app.config.getDiscount(category);
+            Category category = producto.getCategory();
+            Double discountRate = category.getDiscount();
 
             for (int i = 0; i < cantidad; i++) {
                 str.append(producto);

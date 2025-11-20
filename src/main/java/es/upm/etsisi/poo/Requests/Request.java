@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Request {
     public String handlerId = "";
     public String actionId = "";
-    public ArrayList<String> args = new ArrayList<>();
+    public String[] args;
 
     public Request(String line)
     {
@@ -18,7 +18,7 @@ public class Request {
             if (tokens.size() > 1) {
                 actionId = tokens.get(1);
                 if (tokens.size() > 2) {
-                    args = new ArrayList<>(tokens.subList(2, tokens.size()));
+                    args = tokens.subList(startIndex, tokens.size()).toArray(new String[0]);
                 }
             }
         }

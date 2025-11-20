@@ -21,31 +21,27 @@ public class App
     public TicketBook tickets;
     public UserRegister cashiers;
     public UserRegister customers;
-    public Config config;
 
     App(String[] args)
     {
-        loadConfig(args);
-
         catalog = new Catalog(this);
         tickets = new TicketBook(this);
 
-        initCommandMaps();
+        initCommandsMap();
+        initModulesMap();
     }
 
     public void init(String inputFile)
     {
-        int exit = 0;
-
         initInput(inputFile);
         printWelcome();
 
-        while (exit == 0)
+        while (true)
         {
             Request request = input.next();
             if (!request.handlerId.isEmpty())
             {
-                exit = handleRequest(request);
+                handleRequest(request);
                 System.out.println();
             }
         }
@@ -81,18 +77,6 @@ public class App
                 "Ticket module. Type 'help' to see commands.");
     }
 
-    private void loadConfig(String[] args)
-    {
-        if (args.length > 2)
-        {
-            config = new Config(args[2]);
-        }
-        else
-        {
-            config = new Config();
-        }
-    }
-
     private void initInput(String inputFile)
     {
         if (inputFile != null)
@@ -105,9 +89,13 @@ public class App
         }
     }
 
-    private int handleRequest(Request request)
+    private void handleRequest(Request request)
     {
-        if (commands.containsKey(request.handlerId))
+        if (modules.containsKey(request.handlerId))
+        {
+            modules.get(request.handlerId).getAction(request.actionId).execute(request.args);
+        }
+        else if (commands.containsKey(request.handlerId))
         {
             commands.get(request.handlerId).accept(request);
         }
@@ -115,13 +103,6 @@ public class App
         {
             System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
-
-        if (request.handlerId.equals(BUILTIN_CMD_EXIT))
-        {
-            return 1;
-        }
-
-        return 0;
     }
 
     private void executeAction(Action action) {}
@@ -166,21 +147,20 @@ public class App
         System.out.println(request.handlerId + " " + request.actionId);
     }
 
-    private void acknowledgeResult(int result, Request request)
+    private void initCommandsMap()
     {
-        if (result == 0)
-        {
-            System.out.println(request.handlerId + " " + request.actionId + ": ok");
-        }
-    }
-
-    private void initCommandMaps()
-    {
-        commands.put(Catalog.COMMAND_PREFIX, (request) -> acknowledgeResult(catalog.handleRequest(request), request));
-        commands.put(Ticket.COMMAND_PREFIX, (request) -> acknowledgeResult(ticket.handleRequest(request), request));
         commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
         commands.put(BUILTIN_CMD_HELP, (request) -> help());
         commands.put(BUILTIN_CMD_ECHO, this::echo);
+    }
+
+    private void initModulesMap()
+    {
+        // TODO change keys to something less magical
+        modules.put("prod", new ProductHandler());
+        modules.put("ticket", new TicketHandler());
+        modules.put("client", new CustomerHandler());
+        modules.put("cash", new CashierHandler());
     }
 
     private InputDriver input;

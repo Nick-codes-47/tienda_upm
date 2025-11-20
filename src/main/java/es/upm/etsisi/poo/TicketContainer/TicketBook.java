@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -35,14 +36,14 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that had deleted a product
-     * @param ticketsDelete list of tickets from which we have to delete the product
      * @param id the id of the product to delete
      */
-    public void deleteProdFromTickets(ArrayList<Ticket> ticketsDelete, int id) {
-        for (Ticket ticket : ticketsDelete) {
+    public void deleteProdFromTickets(BaseProduct product) {
+        for (TicketEntry ticketEntry : tickets) {
+            Ticket ticket = ticketEntry.ticket;
             if (!ticket.isClosed())
                 // we only delete if the ticket is still open
-                ticket.deleteProduct(id);
+                ticket.deleteProduct(product);
         }
     }
 

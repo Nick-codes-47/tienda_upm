@@ -43,7 +43,7 @@ public class RemoveProduct extends Action {
             boolean anyOpen = false;
             if (!tickets.isEmpty()) {
                 // We delete the product from the tickets
-                app.tickets.deleteProdFromTickets(tickets, id);
+                app.tickets.deleteProdFromTickets(prod);
                 // We show the tickets that had the product
                 for (Ticket ticket : tickets) {
                     if (!ticket.isClosed()) {
