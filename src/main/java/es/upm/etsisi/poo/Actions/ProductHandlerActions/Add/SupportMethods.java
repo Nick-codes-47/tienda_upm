@@ -33,7 +33,7 @@ public interface SupportMethods {
         // If the ID was not provided, generate a new one
         int finalId = idProvided ? id : app.catalog.getNewId();
 
-        return new ParsedIdResult(finalId, offset, idProvided);
+        return new ParsedIdResult(finalId, offset);
     }
 
     /**
@@ -43,7 +43,7 @@ public interface SupportMethods {
         public final int id;
         public final int offset;
 
-        public ParsedIdResult(int id, int offset, boolean idProvided) {
+        public ParsedIdResult(int id, int offset) {
             this.id = id;
             this.offset = offset;
         }

@@ -64,7 +64,7 @@ public class Catalog {
      */
     public int getNewId() {
         Set<Integer> usedIds = products.keySet();
-        int newId = 0;
+        int newId = 1;
         while (usedIds.contains(newId)) {
             newId++;
         }
