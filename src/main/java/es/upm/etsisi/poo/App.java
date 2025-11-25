@@ -28,7 +28,7 @@ public class App
 
     App(String[] args)
     {
-        catalog = new Catalog(this);
+        catalog = new Catalog();
         tickets = new TicketBook(this);
 
         initCommandsMap();
