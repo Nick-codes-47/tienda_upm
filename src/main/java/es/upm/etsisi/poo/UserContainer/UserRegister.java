@@ -2,19 +2,19 @@ package es.upm.etsisi.poo.UserContainer;
 
 import java.util.HashMap;
 
-public class UserRegister {
+public class UserRegister<T extends User> {
 
     public UserRegister() {
-        users = new HashMap<String, User>();
+        users = new HashMap<String, T>();
     }
 
-    public int addUser(String id, User user){
-        if (id != null || user != null)
+    public int addUser(T user){
+        if (user != null)
             return 1;
-        if (users.containsKey(id))
+        if (users.containsKey(user.getId()))
             return 2;
 
-        users.put(id, user);
+        users.put(user.getId(), user);
         return 0;
     }
 
@@ -38,5 +38,5 @@ public class UserRegister {
         return users.size();
     }
 
-    private final HashMap<String, User> users;
+    private final HashMap<String, T> users;
 }

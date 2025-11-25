@@ -10,15 +10,11 @@ public class AddCustomer extends AddUser {
         super(app, app.customers);
     }
 
-    User createUser(String[] args) {
-        // if (!app.cashiers.containsKey(args[3]))
-        //     return null; // TODO enable
+    @Override
+    protected User createUser(String[] args) { // TODO: better use a factory ?
+        if (app.cashiers.getUser(args[3]) != null)
+            return null;
 
         return new Customer(args[0], new Email(args[2]), args[1], args[3]);
-    }
-
-    String generateUsersId(Customer customer)
-    {
-        return customer.getDni();
     }
 }

@@ -12,6 +12,8 @@ import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
+import es.upm.etsisi.poo.UserContainer.Customer;
+import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 import java.util.ArrayList;
@@ -23,8 +25,8 @@ public class App
 {
     public Catalog catalog;
     public TicketBook tickets;
-    public UserRegister cashiers;
-    public UserRegister customers;
+    public UserRegister<User> cashiers;
+    public UserRegister<Customer> customers;
 
     App(String[] args)
     {

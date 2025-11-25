@@ -13,23 +13,17 @@ public class AddUser extends UserAction {
 
     public int execute(String[] args) {
         User user = createUser(args);
-        String id = generateUsersId(user);
         
-        return userRegister.addUser(id, user);
+        return userRegister.addUser(user);
     }
 
     @Override
     public String help() {
-        // TODO ALL
+        // TODO: ALL
         return "";
     }
 
-    User createUser(String[] args) {
+    protected User createUser(String[] args) {
         return new User(args[0], new Email(args[1]));
-    }
-
-    private String generateUsersId(User user) {
-        int userCount = userRegister.size();
-        return String.format("UW%07d", userCount);
     }
 }
