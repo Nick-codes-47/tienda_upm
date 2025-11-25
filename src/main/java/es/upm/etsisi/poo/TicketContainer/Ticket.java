@@ -39,6 +39,8 @@ public class Ticket {
 
     public boolean isClosed() { return this.closed; }
 
+    public int getId() {return id; }
+
     /**
      * Handles a user request directed to the Ticket module.
      * This method interprets the command and arguments contained in the given
@@ -155,13 +157,13 @@ public class Ticket {
             System.err.println("ERROR: maximum number of products reached.");
             return -2;
         } else {
-            Category category = product.getCategory();
+//            Category category = product.getCategory(); // TODO no longer a valid sol not all baseproduct have a category
 
             int currentQuantity = ticket.getOrDefault(product, 0);
             ticket.put(product, currentQuantity + quantity);
 
-            int currentCategoryCount = categories.getOrDefault(category, 0);
-            categories.put(category, currentCategoryCount + quantity);
+//            int currentCategoryCount = categories.getOrDefault(category, 0); // TODO no longer a valid sol
+//            categories.put(category, currentCategoryCount + quantity); // TODO no longer a valid sol
 
             System.out.println(this);
 
@@ -182,12 +184,12 @@ public class Ticket {
             ticket.remove(productToDelete);
 
             // Usar categoría en mayúsculas (coherente con el resto del código)
-            Category category = productToDelete.getCategory();
-            int currentCategoryCount = categories.getOrDefault(category, 0);
+            // Category category = productToDelete.getCategory(); // TODO not longer a valid sol
+            // int currentCategoryCount = categories.getOrDefault(category, 0);
 
             // Asegurar que nunca quede negativa
-            int newCount = Math.max(0, currentCategoryCount - quantity);
-            categories.put(category, newCount);
+            // int newCount = Math.max(0, currentCategoryCount - quantity);
+            // categories.put(category, newCount);
 
             System.out.println(this);
             return 0;
@@ -225,9 +227,9 @@ public class Ticket {
         // Counting amount of products per category
         Map<Category, Integer> categoryCounts = new HashMap<>();
         for (Map.Entry<BaseProduct, Integer> entry : ticket.entrySet()) {
-            Category category = entry.getKey().getCategory();
+            // Category category = entry.getKey().getCategory();
             int cantidad = entry.getValue();
-            categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
+            // categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
         }
 
         // Sorting products by name
@@ -237,19 +239,19 @@ public class Ticket {
         for (Map.Entry<BaseProduct, Integer> entry : entries) {
             BaseProduct producto = entry.getKey();
             int cantidad = entry.getValue();
-            Category category = producto.getCategory();
-            Double discountRate = category.getDiscount();
+            // Category category = producto.getCategory();
+            // Double discountRate = category.getDiscount();
 
             for (int i = 0; i < cantidad; i++) {
                 str.append(producto);
 
-                if (discountRate != null && categoryCounts.get(category) >= 2) {
-                    double discount = producto.getPrice() * discountRate;
-                    if (discount > 0) {
-                        str.append(" **discount -").append(String.format("%.1f", discount));
-                        totalDiscount += discount;
-                    }
-                }
+//                if (discountRate != null && categoryCounts.get(category) >= 2) {
+//                    double discount = producto.getPrice() * discountRate;
+//                    if (discount > 0) {
+//                        str.append(" **discount -").append(String.format("%.1f", discount));
+//                        totalDiscount += discount;
+//                    }
+//                }
 
                 str.append("\n");
                 totalPrice += producto.getPrice();

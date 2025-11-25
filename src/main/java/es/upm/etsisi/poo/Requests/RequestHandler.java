@@ -5,7 +5,6 @@ import es.upm.etsisi.poo.Actions.Action;
 import java.util.HashMap;
 
 public class RequestHandler {
-    public static final String handlerId;
     private HashMap<String, Action> actions;
 
     public RequestHandler() {

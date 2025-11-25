@@ -18,7 +18,7 @@ public class Request {
             if (tokens.size() > 1) {
                 actionId = tokens.get(1);
                 if (tokens.size() > 2) {
-                    args = tokens.subList(startIndex, tokens.size()).toArray(new String[0]);
+                    args = tokens.subList(2, tokens.size()).toArray(new String[0]);
                 }
             }
         }

@@ -36,10 +36,10 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that had deleted a product
-     * @param id the id of the product to delete
+     * @param product the product to delete
      */
     public void deleteProdFromTickets(BaseProduct product) {
-        for (TicketEntry ticketEntry : tickets) {
+        for (TicketEntry ticketEntry : tickets.values()) {
             Ticket ticket = ticketEntry.ticket;
             if (!ticket.isClosed())
                 // we only delete if the ticket is still open
@@ -52,11 +52,11 @@ public class TicketBook {
      * @param id the id of the product
      * @return Tickets that contain the product
      */
-    public ArrayList<Ticket> getTicketsWithProd(int id) {
+    public ArrayList<Ticket> getTicketsWithProd(BaseProduct product) {
         ArrayList<Ticket> ticketsWithProd = new ArrayList<>();
         // We look which tickets have the product and delete it from them
         for (TicketEntry ticketEntry : this.tickets.values()) {
-            if (ticketEntry.getTicket().hasProduct(id))
+            if (ticketEntry.getTicket().hasProduct(product))
                 ticketsWithProd.add(ticketEntry.getTicket());
         }
         return ticketsWithProd;

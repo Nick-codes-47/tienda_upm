@@ -4,6 +4,10 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.Requests.Handlers.CashierHandler;
+import es.upm.etsisi.poo.Requests.Handlers.CustomerHandler;
+import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;
+import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
@@ -157,10 +161,10 @@ public class App
     private void initModulesMap()
     {
         // TODO change keys to something less magical
-        modules.put("prod", new ProductHandler());
-        modules.put("ticket", new TicketHandler());
-        modules.put("client", new CustomerHandler());
-        modules.put("cash", new CashierHandler());
+        modules.put("prod", new ProductHandler(this));
+       modules.put("ticket", new TicketHandler(this));
+       modules.put("client", new CustomerHandler(this));
+       modules.put("cash", new CashierHandler(this));
     }
 
     private InputDriver input;
