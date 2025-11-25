@@ -2,10 +2,11 @@ package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.UserContainer.UserRegister;
 
-public class RemoveUser extends Action {
-    public RemoveUser(App app) {
-        super(app);
+public class RemoveUser extends UserAction {
+    public RemoveUser(App app, UserRegister userRegister) {
+        super(app, userRegister);
     }
 
     @Override

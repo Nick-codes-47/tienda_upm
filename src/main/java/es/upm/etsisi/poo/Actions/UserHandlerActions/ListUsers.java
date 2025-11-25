@@ -2,15 +2,18 @@ package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.UserContainer.User;
+import es.upm.etsisi.poo.UserContainer.UserRegister;
 
-public class ListUsers extends Action {
-    public ListUsers(App app) {
-        super(app);
+public class ListUsers extends UserAction {
+    public ListUsers(App app, UserRegister userRegister) {
+        super(app, userRegister);
     }
 
     @Override
     public int execute(String[] args) {
-        // TODO ALL
+        User[] users = userRegister.getUsers();
+        System.out.print(users);
         return 0;
     }
 

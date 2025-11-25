@@ -30,6 +30,8 @@ public class App
     {
         catalog = new Catalog(this);
         tickets = new TicketBook(this);
+        cashiers = new UserRegister();
+        customers = new UserRegister();
 
         initCommandsMap();
         initModulesMap();

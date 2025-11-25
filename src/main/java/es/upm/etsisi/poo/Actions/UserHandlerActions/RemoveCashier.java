@@ -4,7 +4,7 @@ import es.upm.etsisi.poo.App;
 
 public class RemoveCashier extends RemoveUser {
     public RemoveCashier(App app) {
-        super(app);
+        super(app, app.cashiers);
     }
 
     @Override

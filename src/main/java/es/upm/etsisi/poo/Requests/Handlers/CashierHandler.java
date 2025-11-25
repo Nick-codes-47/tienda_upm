@@ -16,9 +16,9 @@ public class CashierHandler extends RequestHandler {
         // We obtain the map of actions
         HashMap<String,Action> actions = super.getActions();
         // We introduce all the actions that we'll need
-        actions.put("add", new AddUser(app));
+        actions.put("add", new AddUser(app, app.cashiers));
         actions.put("remove", new RemoveCashier(app));
-        actions.put("list", new ListUsers(app));
+        actions.put("list", new ListUsers(app, app.cashiers));
         actions.put("tickets", new ListTickets(app));
     }
 }
