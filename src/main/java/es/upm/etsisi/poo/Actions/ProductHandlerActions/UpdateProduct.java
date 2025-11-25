@@ -113,20 +113,25 @@ public class UpdateProduct extends Action {
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        // We get the current class of the object
         Class<?> current = clazz;
         while (current != null) {
             try {
                 return current.getDeclaredField(fieldName);
             } catch (NoSuchFieldException e) {
+                // if this class doesn't have this field we look in the super class
                 current = current.getSuperclass();
             }
         }
+        // If we didn't find the field we let it know with a new NoSuchFieldException
         throw new NoSuchFieldException("Field '" + fieldName + "' not found");
     }
 
     private Object convertValue(Field field, String value) {
+        // We get the class of the field to be modified
         Class<?> type = field.getType();
 
+        // We see which type is the field and return the value parsed
         if (type.equals(String.class)) {
             return value;
         }
@@ -137,6 +142,7 @@ public class UpdateProduct extends Action {
             return Double.parseDouble(value);
         }
 
+        // if we didn't manage to parse to one of the permitted classes we throw a new IllegalArgumentException
         throw new IllegalArgumentException("Unsupported field type: " + type.getName());
     }
 }
