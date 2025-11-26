@@ -9,7 +9,7 @@ import es.upm.etsisi.poo.ProductContainer.Product;
 /**
  * Class to add a Product or CustomProduct to the catalog
  */
-public class AddProduct extends Action {
+public class AddProduct extends Action implements SupportMethods {
     public AddProduct(App app) {
         super(app);
     }
@@ -17,61 +17,65 @@ public class AddProduct extends Action {
     /**
      * Method that executes the action to add a Product or CustomProduct to the catalog
      * @param args the arguments required to add a product to the catalog
-     * @return -2 if the product passed is null
+     * @return -3 if the id is already in the catalog
      *         -1 if the catalog is full
      *         0 if all went well
-     *         1 if the price or maxPersonalizable were not double or int respectively
+     *         1 if id, price or maxPersonalizable were not valid
      *         2 if one of the arguments was invalid to create the product
      *         3 if they weren't enough arguments
      */
     @Override
     public int execute(String[] args) {
-        switch (args.length) {
-            case 3: {
-                // Case of a normal product
-                int newId = app.catalog.getNewId();
-                try {
-                    BaseProduct product = new Product(
-                            newId,                      // id
-                            args[0],                    // name
-                            args[1],                    // category
-                            Double.parseDouble(args[2]) // price
-                    );
-                    return addToCatalog(app,product);
-                } catch (NumberFormatException e) {
-                    System.err.println("ERROR: price is not valid");
-                    return 1;
-                } catch (BaseProduct.InvalidProductException e) {
-                    System.err.println(e.getMessage());
-                    return 2;
-                }
+
+        // We obtain the final id depending on whether the user passed the id or not
+        ParsedIdResult parsed = parseOptionalId(args, app);
+        int finalId = parsed.id;
+        int offset = parsed.offset; // used to get the right arguments in the constructor
+
+        // We need 3 or 4 real arguments:
+        // 3 → normal product
+        // 4 → customizable product
+        int realArgs = args.length - offset;
+        if (realArgs != 3 && realArgs != 4) {
+            System.err.println("ERROR: wrong number of arguments");
+            return 3;
+        }
+
+        try {
+            BaseProduct product;
+
+            if (realArgs == 3) {
+                // Normal product
+                product = new Product(
+                        finalId,                                   // id
+                        args[offset],                              // name
+                        args[offset + 1],                          // category
+                        Double.parseDouble(args[offset + 2])        // price
+                );
+
+            } else {
+                // Customizable product (4 args)
+                product = new CustomProduct(
+                        finalId,                                   // id
+                        args[offset],                              // name
+                        args[offset + 1],                          // category
+                        Double.parseDouble(args[offset + 2]),       // price
+                        Integer.parseInt(args[offset + 3])          // maxPersonalizable
+                );
             }
-            case 4: {
-                // Case of a personalizable product
-                int newId = app.catalog.getNewId();
-                try {
-                    BaseProduct product = new CustomProduct(
-                            newId,                          // id
-                            args[0],                        // name
-                            args[1],                        // category
-                            Double.parseDouble(args[2]),    // price
-                            Integer.parseInt(args[3])       // max_Personalizable
-                    );
-                    return addToCatalog(app,product);
-                } catch (NumberFormatException e) {
-                    System.err.println("ERROR: price and/or maxPers are not valid");
-                    return 1;
-                } catch (BaseProduct.InvalidProductException e) {
-                    System.err.println(e.getMessage());
-                    return 2;
-                }
-            }
-            default:  {
-                System.err.println("ERROR: wrong number of arguments");
-                return 3;
-            }
+
+            return addToCatalog(app, product);
+
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: price and/or maxPers are not valid. " +
+                    "(Please, Do not write just a number as a product's name)");
+            return 1;
+        } catch (BaseProduct.InvalidProductException e) {
+            System.err.println(e.getMessage());
+            return 2;
         }
     }
+
 
     /**
      * Shows how to call the action
@@ -80,24 +84,6 @@ public class AddProduct extends Action {
      */
     @Override
     public String help() {
-        return "prod add \"<name>\" <category> <price> [<maxPers>]";
-    }
-
-    /**
-     * Method to handle the adding of a product to the catalog and the possible errors
-     * @param app The app to access the catalog
-     * @param product The product to be added
-     * @return 0 if all went well
-     *         -1 if the product is null
-     *         -2 if the catalog is full
-     */
-    protected static int addToCatalog(App app, BaseProduct product) {
-        int add = app.catalog.add(product);
-        if (add == 0){
-            // If the product was added we show it
-            System.out.println(product);
-        } else if (add == -2) System.err.println("ERROR: Product is null");
-        else if (add == -1) System.err.println("ERROR: You reached the maximum number of products!");
-        return add;
+        return "prod add [id] \"<name>\" <category> <price> [<maxPers>]";
     }
 }

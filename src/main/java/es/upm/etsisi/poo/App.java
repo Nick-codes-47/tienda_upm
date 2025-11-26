@@ -3,13 +3,20 @@ package es.upm.etsisi.poo;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Category;
+import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.Requests.Handlers.CashierHandler;
+import es.upm.etsisi.poo.Requests.Handlers.CustomerHandler;
+import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;
+import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Consumer;
 
 public class App
@@ -18,31 +25,27 @@ public class App
     public TicketBook tickets;
     public UserRegister cashiers;
     public UserRegister customers;
-    public Config config;
 
     App(String[] args)
     {
-        loadConfig(args);
-
-        catalog = new Catalog(this);
+        catalog = new Catalog();
         tickets = new TicketBook(this);
 
-        initCommandMaps();
+        initCommandsMap();
+        initModulesMap();
     }
 
     public void init(String inputFile)
     {
-        int exit = 0;
-
         initInput(inputFile);
         printWelcome();
 
-        while (exit == 0)
+        while (true)
         {
             Request request = input.next();
             if (!request.handlerId.isEmpty())
             {
-                exit = handleRequest(request);
+                handleRequest(request);
                 System.out.println();
             }
         }
@@ -78,18 +81,6 @@ public class App
                 "Ticket module. Type 'help' to see commands.");
     }
 
-    private void loadConfig(String[] args)
-    {
-        if (args.length > 2)
-        {
-            config = new Config(args[2]);
-        }
-        else
-        {
-            config = new Config();
-        }
-    }
-
     private void initInput(String inputFile)
     {
         if (inputFile != null)
@@ -102,9 +93,13 @@ public class App
         }
     }
 
-    private int handleRequest(Request request)
+    private void handleRequest(Request request)
     {
-        if (commands.containsKey(request.handlerId))
+        if (modules.containsKey(request.handlerId))
+        {
+            modules.get(request.handlerId).getAction(request.actionId).execute(request.args);
+        }
+        else if (commands.containsKey(request.handlerId))
         {
             commands.get(request.handlerId).accept(request);
         }
@@ -112,13 +107,6 @@ public class App
         {
             System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
-
-        if (request.handlerId.equals(BUILTIN_CMD_EXIT))
-        {
-            return 1;
-        }
-
-        return 0;
     }
 
     private void executeAction(Action action) {}
@@ -127,18 +115,26 @@ public class App
      * This method prints all the commands with its parameters
      */
     private void help() {
+        // Initialize StringBuilder to build the entire output
+        StringBuilder output = new StringBuilder();
+
         // Show the commands
-        System.out.println("Commands:");
+        output.append("Commands:\n");
         for (RequestHandler requestHandler : modules.values()) {
             for (Action action : requestHandler.getActions().values()) {
-                System.out.println(action.help());
+                output.append(action.help()).append("\n");
             }
         }
 
         // Show the categories
-        System.out.println("Categories: "+Category.getCategories());
-        // Show the categories and there discounts
-        System.out.println("Discounts if there are ≥2 units in the category: "+Category.getCategoriesWithDiscount());
+        output.append("Categories: ").append(Category.getCategories()).append("\n");
+
+        // Show the categories and their discounts
+        output.append("Discounts if there are ≥2 units in the category: ")
+                .append(Category.getCategoriesWithDiscount()).append("\n\n");
+
+        // Print all the content built in the StringBuilder at the end
+        System.out.print(output);
     }
 
     /**
@@ -155,21 +151,20 @@ public class App
         System.out.println(request.handlerId + " " + request.actionId);
     }
 
-    private void acknowledgeResult(int result, Request request)
+    private void initCommandsMap()
     {
-        if (result == 0)
-        {
-            System.out.println(request.handlerId + " " + request.actionId + ": ok");
-        }
-    }
-
-    private void initCommandMaps()
-    {
-        commands.put(Catalog.COMMAND_PREFIX, (request) -> acknowledgeResult(catalog.handleRequest(request), request));
-        commands.put(Ticket.COMMAND_PREFIX, (request) -> acknowledgeResult(ticket.handleRequest(request), request));
         commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
         commands.put(BUILTIN_CMD_HELP, (request) -> help());
         commands.put(BUILTIN_CMD_ECHO, this::echo);
+    }
+
+    private void initModulesMap()
+    {
+        // TODO change keys to something less magical
+        modules.put("prod", new ProductHandler(this));
+       modules.put("ticket", new TicketHandler(this));
+       modules.put("client", new CustomerHandler(this));
+       modules.put("cash", new CashierHandler(this));
     }
 
     private InputDriver input;

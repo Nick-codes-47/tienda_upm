@@ -4,124 +4,192 @@ import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.Category;
 import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.Requests.Request;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
 public class Ticket {
-    private static final int MAX_PRODUCTS_PER_TICKET = 100;
     private final App app;
-    private TicketState ticketState;
-    private HashMap<BaseProduct, Integer> ticket;
+    private HashMap<BaseProduct, Integer> ticket; // TODO is not better to use Prods id?
     private HashMap<Category, Integer> categories;
+    private final int NUM_MAX_ELEMENTS = 100;
     private LocalDateTime creationDate;
+    private int id;
     private LocalDateTime closingDate;
+    private boolean closed; // TODO may be changed to a string or enum of state
     public static final String COMMAND_PREFIX = "ticket";
 
-    private String ticketId;
-
-
-    private Ticket(App app) {
+    public Ticket(App app) {
         this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.ticketState = TicketState.ACTIVO;
 
         for (Category category : Category.values()) {
             categories.put(category, 0);
         }
     }
 
-    public Ticket(App app, String ticketId) {
-        this(app);
-        this.ticketId = ticketId;
+    public boolean hasProduct(BaseProduct product) {
+        return ticket.containsKey(product);
     }
 
-    public boolean hasProduct(int prodId) {
-        BaseProduct p = app.catalog.getProduct(prodId);
-        return p != null && ticket.containsKey(p);
+    public boolean isClosed() { return this.closed; }
+
+    public int getId() {return id; }
+
+    /**
+     * Handles a user request directed to the Ticket module.
+     * This method interprets the command and arguments contained in the given
+     * Request object and performs the corresponding action on the ticket.
+     * Supported commands:
+     * - "new": resets the current ticket.
+     * - "add": adds a product to the ticket (requires product ID and quantity).
+     * - "remove": removes a product from the ticket (requires product ID).
+     * - "print": prints the current ticket contents.
+     *
+     * @param request the request containing the command and its arguments.
+     */
+    public int handleRequest(Request request) {
+        String command = request.actionId;
+        String[] args = request.args;
+
+        switch (command) {
+            case "new":
+                return resetTicket();
+
+            case "add":
+                if (args.length < 2) {
+                    System.err.println("ERROR: two arguments are required: id and quantity.");
+                    return -1;
+                }
+
+                int id, quantity;
+                try {
+                    id = Integer.parseInt(args[0]);
+                } catch (NumberFormatException e) {
+                    System.err.println("ERROR: the product ID must be an integer.");
+                    return -1;
+                }
+
+                try {
+                    quantity = Integer.parseInt(args[1]);
+                } catch (NumberFormatException e) {
+                    System.err.println("ERROR: the quantity must be an integer.");
+                    return -1;
+                }
+
+                BaseProduct product = app.catalog.getProduct(id);
+
+                if (product == null) {
+                    System.err.println("ERROR: the product with id " + id + " does not exist.");
+                    return -1;
+                }
+
+                return addProduct(product, quantity);
+
+            case "remove":
+                if (args.length == 0) {
+                    System.err.println("ERROR: one argument is required: product ID.");
+                    return -1;
+                }
+
+                try {
+                    int removeId = Integer.parseInt(args[0]);
+                    BaseProduct productToRemove = app.catalog.getProduct(removeId);
+
+                    int result = deleteProduct(productToRemove);
+                    if (result != 0)
+                    {
+                        System.err.println("ERROR: Product doesn't exist.");
+                    }
+                    return result;
+                } catch (NumberFormatException e) {
+                    System.err.println("ERROR: the product ID must be an integer.");
+                    return -1;
+                }
+
+            case "print":
+                printTicket();
+                return 0;
+
+            default:
+                System.err.println("ERROR: Invalid command " + command);
+                return -1;
+        }
     }
 
-    public boolean isClosed() {
-        return TicketState.CERRADO == this.ticketState;
-    }
-
-    private int calculateTotalUnits() {
-        return ticket.values().stream().mapToInt(Integer::intValue).sum();
+    public int updateProduct(Product product)
+    {
+        if (ticket.containsKey(product))
+        {
+            System.out.println(this);
+            return 0;
+        }
+        return 1;
     }
 
     public void printTicket() {
-        if (this.ticketState != TicketState.CERRADO) {
-            this.ticketState = TicketState.CERRADO;
-        }
-
         System.out.println(this);
     }
 
     /**
-     * Añade productos al ticket. Solo permitido si el ticket está ACTIVO.
+     * Method to add products to ticket
+     *
+     * @param product  Product to be added to the ticket
+     * @param quantity Quantity of products wanted to add
+     * @return
+     *      Return -1 if the number of products in the ticket is already maximum products
+     *      Return -2 if it’s not maximum products yet but the quantity I want to add exceeds maximum products
+     *      Return 0 if product can be added
      */
-    public int addProduct(Product product, int quantity) {
-        if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot add product. Ticket is closed (invoice printed).");
-            return -3;
-        }
+    private int addProduct(BaseProduct product, int quantity) {
 
-        int totalUnits = calculateTotalUnits();
+        int totalUnits = ticket.values().stream().mapToInt(Integer::intValue).sum();
 
-        if ((totalUnits + quantity) > MAX_PRODUCTS_PER_TICKET) {
+        if (totalUnits >= NUM_MAX_ELEMENTS) {
             System.err.println("ERROR: maximum number of products reached.");
             return -1;
+        } else if ((totalUnits + quantity) > NUM_MAX_ELEMENTS) {
+            System.err.println("ERROR: maximum number of products reached.");
+            return -2;
         } else {
-            Category categoryKey = product.getCategory();
+//            Category category = product.getCategory(); // TODO no longer a valid sol not all baseproduct have a category
 
             int currentQuantity = ticket.getOrDefault(product, 0);
             ticket.put(product, currentQuantity + quantity);
 
-            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
-            categories.put(categoryKey, currentCategoryCount + quantity);
+//            int currentCategoryCount = categories.getOrDefault(category, 0); // TODO no longer a valid sol
+//            categories.put(category, currentCategoryCount + quantity); // TODO no longer a valid sol
 
             System.out.println(this);
+
             return 0;
         }
     }
 
     /**
-     * Sobrecarga de addProduct para productos editables. Hereda el control de estado
-     * @param product
-     * @param quantity
-     * @param maxEditable
-     * @param edits
-     * @return
+     * Removes a product from the ticket by its id.
+     *
+     * @param productToDelete The product to remove.
+     * @return 0 if the product was found and removed successfully,
+     * -1 if the product does not exist in the ticket.
      */
-    public int addProduct(Product product, int quantity, int maxEditable, ArrayList<String> edits) {
-        int result = addProduct(product, quantity);
-        if (result != 0) {
-            return result;
-        }
-        return 0;
-    }
-
-    /**
-     * Elimina productos del ticket. Solo permitido si el ticket está ACTIVO.
-     */
-    public int deleteProduct(Product productToDelete) {
-        if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot delete product. Ticket is closed (invoice printed).");
-            return -3;
-        }
-
+    public int deleteProduct(BaseProduct productToDelete) {
         if (ticket.containsKey(productToDelete)) {
             int quantity = ticket.get(productToDelete);
             ticket.remove(productToDelete);
 
-            Category categoryKey = productToDelete.getCategory();
-            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
+            // Usar categoría en mayúsculas (coherente con el resto del código)
+            // Category category = productToDelete.getCategory(); // TODO not longer a valid sol
+            // int currentCategoryCount = categories.getOrDefault(category, 0);
 
-            int newCount = Math.max(0, currentCategoryCount - quantity);
-            categories.put(categoryKey, newCount);
+            // Asegurar que nunca quede negativa
+            // int newCount = Math.max(0, currentCategoryCount - quantity);
+            // categories.put(category, newCount);
 
             System.out.println(this);
             return 0;
@@ -130,86 +198,71 @@ public class Ticket {
     }
 
     /**
-     * Reinicia el ticket. Solo permitido si el ticket no está CERRADO.
-     * NO SE SI SE SIGUE PUDIENDO LLAMAR A ESTE METODO
-
+     * Clears the current ticket and creates a new empty one.
+     */
     private int resetTicket() {
-        // 🆕 NUEVO CONTROL: No se puede abrir/reiniciar si está cerrado
-        if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot reset ticket. Ticket is permanently closed.");
-            return -3;
-        }
-
         if (this.ticket != null) {
             this.ticket = new HashMap<>();
             this.categories = new HashMap<>();
-            this.ticketState = TicketState.ACTIVO;
-            this.closingDate = null;
             return 0;
         } else {
             return -1;
         }
     }
+
+    /**
+     * Builds a string representation of the ticket sorted by name.
+     * The string includes the list of products with their details,
+     * applied discounts by category when applicable,
+     * and a summary with total price, total discount, and final price.
+     *
+     * @return A formatted string representation of the ticket and its summary.
      */
-
-    public String getTicketId() {
-        return ticketId;
-    }
-    public int updateProduct(Product product) {
-        if (ticket.containsKey(product)) {
-            System.out.println(this);
-            return 0;
-        }
-        return 1;
-    }
-
     @Override
     public String toString() {
         StringBuilder str = new StringBuilder();
         double totalPrice = 0;
         double totalDiscount = 0;
 
+        // Counting amount of products per category
         Map<Category, Integer> categoryCounts = new HashMap<>();
         for (Map.Entry<BaseProduct, Integer> entry : ticket.entrySet()) {
-            Category category = entry.getKey().getCategory();
+            // Category category = entry.getKey().getCategory();
             int cantidad = entry.getValue();
-            categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
+            // categoryCounts.put(category, categoryCounts.getOrDefault(category, 0) + cantidad);
         }
 
+        // Sorting products by name
         ArrayList<Map.Entry<BaseProduct, Integer>> entries = new ArrayList<>(ticket.entrySet());
         entries.sort((e1, e2) -> e1.getKey().getName().compareToIgnoreCase(e2.getKey().getName()));
 
         for (Map.Entry<BaseProduct, Integer> entry : entries) {
             BaseProduct producto = entry.getKey();
             int cantidad = entry.getValue();
-            Category category = producto.getCategory();
-            Double discountRate = app.config.getDiscount(category.name());
+            // Category category = producto.getCategory();
+            // Double discountRate = category.getDiscount();
 
             for (int i = 0; i < cantidad; i++) {
                 str.append(producto);
 
-                if (discountRate != null && categoryCounts.get(category) >= 2) {
-                    double discount = producto.getPrice() * discountRate;
-                    if (discount > 0) {
-                        str.append(" **discount -").append(String.format("%.1f", discount));
-                        totalDiscount += discount;
-                    }
-                }
+//                if (discountRate != null && categoryCounts.get(category) >= 2) {
+//                    double discount = producto.getPrice() * discountRate;
+//                    if (discount > 0) {
+//                        str.append(" **discount -").append(String.format("%.1f", discount));
+//                        totalDiscount += discount;
+//                    }
+//                }
 
                 str.append("\n");
                 totalPrice += producto.getPrice();
             }
         }
 
-        str.append("Ticket ID: ").append(ticketId).append(" | Estado: ").append(ticketState);
-        if (closingDate != null) {
-            str.append(" | Cierre: ").append(closingDate.toString());
-        }
-
-        str.append("\nTotal price: ").append(String.format("%.1f", totalPrice));
+        str.append("Total price: ").append(String.format("%.1f", totalPrice));
         str.append("\nTotal discount: ").append(String.format("%.1f", totalDiscount));
         str.append("\nFinal price: ").append(String.format("%.1f", totalPrice - totalDiscount));
 
         return str.toString();
     }
+
 }
