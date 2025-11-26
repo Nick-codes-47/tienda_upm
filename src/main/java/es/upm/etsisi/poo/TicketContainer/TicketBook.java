@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Product; // Importamos Product para la personalización
+import es.upm.etsisi.poo.ProductContainer.Product;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -21,16 +21,6 @@ public class TicketBook {
         this.userToTicket = new HashMap<>();
     }
 
-    public int add(Ticket ticket) {
-        // TODO ALL
-        return 0;
-    }
-
-    public Ticket getTicket(int id) {
-        // TODO ALL
-        return null;
-    }
-
     public HashMap<String, TicketEntry> getTickets() {
         return tickets;
     }
@@ -45,14 +35,12 @@ public class TicketBook {
     public HashMap<String, TicketEntry> getTicketsFromUsers(String userId) {
         HashMap<String, TicketEntry> userTickets = new HashMap<>();
 
-        // 1. Obtener los IDs de ticket asociados a este userId
         String[] ticketIds = userToTicket.get(userId);
 
         if (ticketIds == null || ticketIds.length == 0) {
-            return userTickets; // Devuelve un mapa vacío si no hay tickets
+            return userTickets;
         }
 
-        // 2. Buscar cada TicketEntry en el mapa principal 'tickets' usando los IDs
         for (String ticketId : ticketIds) {
             TicketEntry entry = tickets.get(ticketId);
 
@@ -182,53 +170,43 @@ public class TicketBook {
      * @return 0 si es exitoso. Códigos de error remapeados para la acción.
      */
     public int addProductToTicket(String ticketId, String cashId, String prodIdStr, int amount, ArrayList<String> personalizations) {
-        // 1. Verificar ticket y autorización de cajero
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
-            return -1; // Ticket no encontrado o cajero no autorizado
+            return -1;
         }
 
-        // 2. Convertir y validar ID de producto
         int prodId;
         try {
             prodId = Integer.parseInt(prodIdStr);
         } catch (NumberFormatException e) {
-            return -2; // ID de producto no es un número
+            return -2;
         }
 
-        // 3. Buscar el producto en el catálogo
         BaseProduct product = this.app.catalog.getProduct(prodId);
         if (product == null) {
-            return -3; // Producto no encontrado en el catálogo
+            return -3;
         }
 
         int result;
         if (product instanceof Product productInstance) {
-            // Producto normal o personalizable
-
-            // Asumo que Product tiene un método para obtener las personalizaciones máximas
-            // Nota: Aquí se deberían validar las personalizaciones contra lo permitido.
-            // Por simplicidad, llamamos a la variante de personalización si es un 'Product'
             int maxEditable = 0; // Usamos 0 como placeholder
 
             result = ticket.addProduct(productInstance, amount, maxEditable, personalizations);
         } else {
-            // Evento (Reunión/Comida)
             result = ticket.addProduct(product, amount);
         }
 
-        // 4. Remapear códigos de error de Ticket.addProduct
         if (result == -3) {
-            return -4; // Ticket cerrado (ERROR: Cannot add item. Ticket is closed)
+            return -4;
         } else if (result == -1) {
-            return -5; // Límite de ítems alcanzado (ERROR: maximum number of items reached)
+            return -5;
         } else if (result == -4) {
-            return -6; // Error de planificación de Evento (ERROR: Cannot add %s event)
+            return -6;
         } else if (result == -5) {
-            return -7; // Evento ya añadido (ERROR: Cannot add the same Event twice)
+            return -7;
         }
 
-        return 0; // Éxito
+        return 0;
     }
 
     /**
