@@ -77,7 +77,7 @@ public class UpdateProduct extends Action {
                         System.out.println("The tickets with the following ids had the product and it was updated:");
                         anyOpen = true;
                     }
-                    System.out.println("- " + ticket.getId());
+                    System.out.println("- " + ticket.getTicketId());
                 }
             }
 
