@@ -52,7 +52,7 @@ public class RemoveProduct extends Action {
                             anyOpen = true;
                         }
                     }
-                    System.out.println("- "+ticket.getId());
+                    System.out.println("- "+ticket.getTicketId());
                 }
             }
             // Since everything went well we return 0

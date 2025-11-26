@@ -46,6 +46,7 @@ public class Ticket {
         return TicketState.CERRADO == this.ticketState;
     }
 
+
     private int calculateTotalUnits() {
         return ticket.values().stream().mapToInt(Integer::intValue).sum();
     }

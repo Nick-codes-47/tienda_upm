@@ -10,13 +10,10 @@ import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;
 import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
-import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class App
