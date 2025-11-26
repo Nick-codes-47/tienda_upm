@@ -26,33 +26,6 @@ public class TicketBook {
     }
 
     /**
-     * Obtiene todos los TicketEntry asociados a un usuario específico.
-     * La clave del HashMap de retorno es el TicketId (String)
-     * para coincidir con el formato de ID de ticket (YY-MM-dd-HH:mm-XXXXX).
-     * @param userId El ID del cliente cuyos tickets se buscan.
-     * @return HashMap donde la clave es el TicketId (String) y el valor es el TicketEntry.
-     */
-    public HashMap<String, TicketEntry> getTicketsFromUsers(String userId) {
-        HashMap<String, TicketEntry> userTickets = new HashMap<>();
-
-        String[] ticketIds = userToTicket.get(userId);
-
-        if (ticketIds == null || ticketIds.length == 0) {
-            return userTickets;
-        }
-
-        for (String ticketId : ticketIds) {
-            TicketEntry entry = tickets.get(ticketId);
-
-            if (entry != null) {
-                userTickets.put(ticketId, entry);
-            }
-        }
-
-        return userTickets;
-    }
-
-    /**
      * Method to obtain all the tickets that had deleted a product
      * @param product the product to delete
      */
