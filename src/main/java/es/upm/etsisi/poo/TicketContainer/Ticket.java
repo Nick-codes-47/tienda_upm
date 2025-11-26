@@ -86,7 +86,6 @@ public class Ticket {
         }
 
         if (baseProduct instanceof Event event) {
-            // RESTRICCIÓN ADICIONAL: No se puede añadir si ya está en el ticket (aunque tenga cantidad 0)
             if (this.ticket.containsKey(event)) {
                 System.err.println("ERROR: Cannot add the same Event (meeting/meal) twice to the same ticket.");
                 return -5;
@@ -107,7 +106,6 @@ public class Ticket {
             }
         }
 
-        // El resto de la lógica de adición permanece igual
         int currentQuantity = ticket.getOrDefault(baseProduct, 0);
         ticket.put(baseProduct, currentQuantity + quantity);
 

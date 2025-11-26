@@ -12,7 +12,6 @@ public class AddProductToTicket extends Action {
 
     @Override
     public int execute(String[] args) {
-        // Formato: <ticketId> <cashId> <prodId> <amount> [--p ...]
         if (args.length < 4) {
             System.err.println("ERROR: At least four arguments are required: <ticketId> <cashId> <prodId> <amount> [personalizations].");
             return -1;
