@@ -25,11 +25,6 @@ public class Ticket {
 
     private static final DateTimeFormatter ID_CLOSING_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
-    enum TicketState {
-        ACTIVO,
-        CERRADO
-    }
-
     Ticket(App app) {
         this.app = app;
         this.ticket = new HashMap<>();
@@ -128,12 +123,7 @@ public class Ticket {
      * @return Código de resultado de addProduct.
      */
     public int addProduct(Product product, int quantity, int maxEditable, ArrayList<String> edits) {
-        // En un escenario real, aquí se verificaría y aplicaría la personalización.
-        // Por ahora, solo se llama al método base addProduct(BaseProduct, quantity).
-
-        // TODO: En un futuro, añadir aquí la lógica para validar edits vs maxEditable
-
-        int result = addProduct((BaseProduct) product, quantity);
+        int result = addProduct(product, quantity);
         return result;
     }
 
@@ -159,10 +149,6 @@ public class Ticket {
             return 0;
         }
         return -1;
-    }
-
-    public int deleteProduct(Product productToDelete) {
-        return deleteProduct((BaseProduct) productToDelete);
     }
 
     /**

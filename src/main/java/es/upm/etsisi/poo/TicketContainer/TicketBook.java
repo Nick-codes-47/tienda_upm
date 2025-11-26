@@ -189,7 +189,7 @@ public class TicketBook {
 
         int result;
         if (product instanceof Product productInstance) {
-            int maxEditable = 0; // Usamos 0 como placeholder
+            int maxEditable = 0;
 
             result = ticket.addProduct(productInstance, amount, maxEditable, personalizations);
         } else {
@@ -205,7 +205,6 @@ public class TicketBook {
         } else if (result == -5) {
             return -7;
         }
-
         return 0;
     }
 
