@@ -7,7 +7,7 @@ import java.util.regex.Pattern;
 public class Request {
     public String handlerId = "";
     public String actionId = "";
-    public String[] args;
+    public String[] args = {};
 
     public Request(String line)
     {
