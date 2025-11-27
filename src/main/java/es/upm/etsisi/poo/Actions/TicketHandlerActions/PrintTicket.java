@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 public class PrintTicket extends Action {
     public PrintTicket(App app) {
@@ -10,13 +11,30 @@ public class PrintTicket extends Action {
 
     @Override
     public int execute(String[] args) {
-        // TODO ALL
+        if (args.length != 2) {
+            System.err.println("ERROR: Two arguments are required: <ticketId> <cashId>.");
+            return -1;
+        }
+
+        String ticketId = args[0];
+        String cashId = args[1];
+
+        Ticket ticket = app.tickets.getTicketIfCashierMatches(ticketId, cashId);
+
+        if (ticket == null) {
+            System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", ticketId, cashId);
+            return -2;
+        }
+
+        System.out.println("--- TICKET: " + ticketId + " (CASHIER: " + cashId + ") ---");
+        ticket.printTicket();
+        System.out.println("----------------------------------------------");
+
         return 0;
     }
 
     @Override
     public String help() {
-        // TODO ALL
-        return "";
+        return "ticket print <ticketId> <cashId>: Shows the ticket related with a cashier .";
     }
 }

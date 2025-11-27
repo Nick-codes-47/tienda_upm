@@ -18,12 +18,12 @@ public class CustomProduct extends Product {
      * @param personalizations the personalizations to copy
      * @throws InvalidProductException controls that the personalizations are valid in the product
      */
-    public void setPersonalizations(String[] personalizations) throws InvalidProductException {
-        if (personalizations.length > this.maxPersonalization)
+    public void setPersonalizations(ArrayList<String> personalizations) throws InvalidProductException {
+        if (personalizations.size() > this.maxPersonalization)
             throw new InvalidProductException
                     ("ERROR: The product can't have more than: "+this.maxPersonalization+" personalizations.");
         // if we can add the personalizations we copy them
-        Collections.addAll(this.personalizations, personalizations);
+        this.personalizations = personalizations;
     }
 
     /**
@@ -63,5 +63,5 @@ public class CustomProduct extends Product {
 
 
     private final int maxPersonalization;
-    private final ArrayList<String> personalizations = new ArrayList<>();
+    private ArrayList<String> personalizations = new ArrayList<>();
 }

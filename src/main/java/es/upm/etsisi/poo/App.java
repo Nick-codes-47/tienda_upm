@@ -3,22 +3,18 @@ package es.upm.etsisi.poo;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
 import es.upm.etsisi.poo.ProductContainer.Category;
-import es.upm.etsisi.poo.ProductContainer.Product;
 import es.upm.etsisi.poo.Requests.Handlers.CashierHandler;
 import es.upm.etsisi.poo.Requests.Handlers.CustomerHandler;
 import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;
 import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
-import es.upm.etsisi.poo.TicketContainer.Ticket;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.Customer;
 import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.function.Consumer;
 
 public class App
@@ -30,7 +26,7 @@ public class App
 
     App(String[] args)
     {
-        catalog = new Catalog(this);
+        catalog = new Catalog();
         tickets = new TicketBook(this);
         cashiers = new UserRegister();
         customers = new UserRegister();

@@ -29,7 +29,7 @@ public enum Category {
                 result.append(", ");
             }
             int discountInt = (int) category.discount; // convert to int so we don't show decimals
-            result.append(category.name()).append(" ").append(discountInt).append("%)");
+            result.append(category.name()).append(" ").append(discountInt).append("%");
             coma = true;
         }
         return result.toString();

@@ -35,7 +35,7 @@ public class UpdateProduct extends Action {
         // if the number of arguments are correct we try to update
         try {
             int id = Integer.parseInt(args[0]);
-            BaseProduct product = app.catalog.getProduct(id);
+            BaseProduct product = (BaseProduct) app.catalog.getProduct(id);
             if (product == null) {
                 // Product does not exist
                 System.err.println("ERROR: Product with id " + id + " does not exist!");
@@ -43,31 +43,26 @@ public class UpdateProduct extends Action {
             }
 
             // We obtain the field to modify and the new value
-            String field = args[1];
-            String value = args[2];
+            String fieldName = args[1].toLowerCase();
+            String newValue = args[2];
 
-            // We only allow to modify the following fields
-            Set<String> allowedFields = Set.of("name", "price", "category");
-
-            if (!allowedFields.contains(field.toLowerCase())) {
-                System.err.println("ERROR: You can only modify 'NAME', 'PRICE' or 'CATEGORY'");
-                return 1;
+            String[] supportedFields = {"name","price","category"};
+            int i = 0;
+            while (i < supportedFields.length && supportedFields[i].equals(fieldName)) {
+                i++;
+            }
+            if (i >= supportedFields.length) {
+                System.err.println("ERROR: field " + fieldName + " not found!");
+                return 5;
             }
 
-            // We try to modify the field once we know it's valid
-            Field f = product.getClass().getDeclaredField(field); // TODO be careful if Products variables are written in camelCase
-            f.setAccessible(true);
+            // We look in the products class and its superclasses to get the field if it exists
+            Field field = getFieldFromHierarchy(product.getClass(), fieldName);
+            field.setAccessible(true);
 
-            if (f.getType().equals(double.class) || f.getType().equals(Double.class)) {
-                // The price is modified
-                f.set(product, Double.parseDouble(value));
-            } else if (f.getType().equals(Category.class)) {
-                // The category is modified
-                f.set(product, Category.valueOf(value));
-            } else {
-                // The name is modified
-                f.set(product, value);
-            }
+            // We convert
+            Object converted = convertValue(field, newValue);
+            field.set(product, converted);
 
             // We print the product updated
             System.out.println(product);
@@ -82,7 +77,7 @@ public class UpdateProduct extends Action {
                         System.out.println("The tickets with the following ids had the product and it was updated:");
                         anyOpen = true;
                     }
-                    System.out.println("- " + ticket.getId());
+                    System.out.println("- " + ticket.getTicketId());
                 }
             }
 
@@ -115,5 +110,39 @@ public class UpdateProduct extends Action {
     @Override
     public String help() {
         return "prod update <id> NAME|CATEGORY|PRICE <value>";
+    }
+
+    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+        // We get the current class of the object
+        Class<?> current = clazz;
+        while (current != null) {
+            try {
+                return current.getDeclaredField(fieldName);
+            } catch (NoSuchFieldException e) {
+                // if this class doesn't have this field we look in the super class
+                current = current.getSuperclass();
+            }
+        }
+        // If we didn't find the field we let it know with a new NoSuchFieldException
+        throw new NoSuchFieldException("Field '" + fieldName + "' not found");
+    }
+
+    private Object convertValue(Field field, String value) {
+        // We get the class of the field to be modified
+        Class<?> type = field.getType();
+
+        // We see which type is the field and return the value parsed
+        if (type.equals(String.class)) {
+            return value;
+        }
+        if (type.equals(int.class) || type.equals(Integer.class)) {
+            return Integer.parseInt(value);
+        }
+        if (type.equals(double.class) || type.equals(Double.class)) {
+            return Double.parseDouble(value);
+        }
+
+        // if we didn't manage to parse to one of the permitted classes we throw a new IllegalArgumentException
+        throw new IllegalArgumentException("Unsupported field type: " + type.getName());
     }
 }
