@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
+import java.sql.Array;
 import java.util.ArrayList;
 
 public class AddProductToTicket extends Action {
@@ -34,18 +35,16 @@ public class AddProductToTicket extends Action {
             return -2;
         }
 
-        ArrayList<String> personalizations = new ArrayList<>();
+        int numPersonalizations = args.length - 4;
+        ArrayList<String> personalizations = new ArrayList<>(numPersonalizations);
+
         for (int i = 4; i < args.length; i++) {
-            personalizations.add(args[i]);
+            personalizations.add(args[i].replace("--p", ""));
         }
 
         int result = app.tickets.addProductToTicket(ticketId, cashId, prodIdStr, amount, personalizations);
 
         if (result == 0) {
-            System.out.printf("Product '%s' (x%d) added successfully to ticket '%s'.\n", prodIdStr, amount, ticketId);
-            if (!personalizations.isEmpty()) {
-                System.out.printf("Personalizations applied: %s\n", personalizations);
-            }
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);

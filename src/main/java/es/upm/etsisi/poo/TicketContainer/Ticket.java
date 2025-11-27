@@ -1,11 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Category;
-import es.upm.etsisi.poo.ProductContainer.Product;
-import es.upm.etsisi.poo.ProductContainer.Event;
-import es.upm.etsisi.poo.ProductContainer.EventType;
+import es.upm.etsisi.poo.ProductContainer.*;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -17,21 +13,20 @@ public class Ticket {
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
     private final App app;
     private TicketState ticketState;
-    private HashMap<BaseProduct, Integer> ticket;
-    private HashMap<Category, Integer> categories;
-    private LocalDateTime creationDate;
+    private final HashMap<BaseProduct, Integer> ticket;
+    private final HashMap<Category, Integer> categories;
+    private final LocalDateTime creationDate;
     private LocalDateTime closingDate;
     public static final String COMMAND_PREFIX = "ticket";
     private String ticketId;
 
-    private static final DateTimeFormatter ID_CLOSING_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm-");
 
-    // Constructor Principal: usado internamente o cuando el ID se asigna después.
     Ticket(App app) {
         this.app = app;
         this.ticket = new HashMap<>();
         this.categories = new HashMap<>();
-        this.ticketState = TicketState.ACTIVO;
+        this.ticketState = TicketState.VACIO;
         this.creationDate = LocalDateTime.now();
 
         for (Category category : Category.values()) {
@@ -39,10 +34,9 @@ public class Ticket {
         }
     }
 
-    // Constructor Secundario: usado cuando se crea el ticket con un ID definido.
     public Ticket(App app, String ticketId) {
         this(app);
-        this.ticketId = ticketId;
+        this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + ticketId;
     }
 
     public boolean isClosed() {
@@ -78,6 +72,9 @@ public class Ticket {
             System.err.println("ERROR: Cannot add item. Ticket is closed (invoice printed).");
             return -3;
         }
+        if (this.ticketState == TicketState.VACIO) {
+            this.ticketState = TicketState.ACTIVO;
+        }
 
         int totalUnits = calculateTotalUnits();
 
@@ -101,8 +98,10 @@ public class Ticket {
             if (eventDate.isBefore(requiredDate)) {
                 String typeName = EventType.toSentenceCase(type);
 
-                System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s).\n",
-                        typeName, planningHours, requiredDate.format(DateTimeFormatter.ofPattern("dd/MM HH:mm")));
+                System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s). Event expiration is: (%s).\n",
+                        typeName, planningHours,
+                        requiredDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER))),
+                        eventDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER))));
                 return -4;
             }
         }
@@ -122,16 +121,12 @@ public class Ticket {
 
     /**
      * Variante para productos personalizables (que reciben personalizaciones y cantidad).
-     *
-     * @param product     Producto personalizable.
-     * @param quantity    Cantidad.
-     * @param maxEditable Personalizaciones máximas permitidas.
-     * @param edits       Lista de personalizaciones.
+     * @param edits       Array de personalizaciones.
      * @return Código de resultado de addProduct.
      */
-    public int addProduct(Product product, int quantity, int maxEditable, ArrayList<String> edits) {
-        int result = addProduct(product, quantity);
-        return result;
+    public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) throws BaseProduct.InvalidProductException {
+        product.setPersonalizations(edits);
+        return addProduct(product, quantity);
     }
 
     public int deleteProduct(BaseProduct productToDelete) {
@@ -167,7 +162,7 @@ public class Ticket {
             this.closingDate = LocalDateTime.now();
 
             if (this.ticketId != null) {
-                this.ticketId += "-" + this.closingDate.format(ID_CLOSING_FORMATTER);
+                this.ticketId += "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
             System.out.println(this);
         }
@@ -250,8 +245,7 @@ public class Ticket {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        String displayId = (this.ticketId == null || this.ticketId.isEmpty()) ? "ID NOT YET ASSIGNED" : this.ticketId;
-        sb.append("Ticket: ").append(displayId).append("\n");
+        sb.append("Ticket: ").append(this.ticketId).append("\n");
 
         if (this.ticket.isEmpty()) {
             sb.append("No products added yet.\n");
@@ -261,19 +255,7 @@ public class Ticket {
                 int quantity = entry.getValue();
 
                 if (product instanceof Event event) {
-
-                    double eventPriceTotal = event.getPrice() * quantity;
-
-                    sb.append(String.format("Event Added: %s\n", event.getClass().getSimpleName()));
-                    sb.append(String.format("  {class:%s, id:%s, name:'%s', price:%.1f, date of Event:%s, max people allowed:%d, actual people in event:%d}\n",
-                            event.getClass().getSimpleName(),
-                            event.getId(),
-                            event.getName(),
-                            eventPriceTotal,
-                            event.getExpireDate().format(DateTimeFormatter.ofPattern("yyyy-MM-dd")),
-                            100,
-                            quantity
-                    ));
+                    sb.append(event).append("\n");
 
                 } else {
                     double unitDiscount = getProductDiscountValue(product);

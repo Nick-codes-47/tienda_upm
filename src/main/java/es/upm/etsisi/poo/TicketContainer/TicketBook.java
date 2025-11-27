@@ -2,16 +2,13 @@ package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.ProductContainer.CustomProduct;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 public class TicketBook {
     private HashMap<String, TicketEntry> tickets;
     private HashMap<String, String[]> userToTicket;
-    private static final DateTimeFormatter ID_DATE_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm-");
     private final Random random = new Random();
     private final App app;
 
@@ -73,7 +70,7 @@ public class TicketBook {
                 }
             }
 
-            Ticket newTicket = new Ticket(app);
+            Ticket newTicket = new Ticket(app, finalTicketId);
             TicketEntry newEntry = new TicketEntry(cashId, customerId, newTicket);
 
             this.tickets.put(finalTicketId, newEntry);
@@ -92,13 +89,11 @@ public class TicketBook {
         }
 
     private String generateUniqueTicketId() {
-        String baseId;
         String fullId;
 
         do {
-            baseId = LocalDateTime.now().format(ID_DATE_FORMATTER);
             int randomPart = 10000 + random.nextInt(90000);
-            fullId = baseId + randomPart;
+            fullId = randomPart + "";
         } while (this.tickets.containsKey(fullId));
 
         return fullId;
@@ -163,12 +158,16 @@ public class TicketBook {
             return -3;
         }
 
-        int result;
-        if (product instanceof Product productInstance) {
-            int maxEditable = 0;
+        int result = 0;
 
-            result = ticket.addProduct(productInstance, amount, maxEditable, personalizations);
-        } else {
+        if (product instanceof CustomProduct customProduct){
+            try {
+                result = ticket.addProduct(customProduct, amount, personalizations);
+            } catch (BaseProduct.InvalidProductException e) {
+                System.err.println(e.getMessage());
+            }
+        }
+        else { // Normal product or event
             result = ticket.addProduct(product, amount);
         }
 
