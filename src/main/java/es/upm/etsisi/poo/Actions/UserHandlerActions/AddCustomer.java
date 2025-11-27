@@ -17,4 +17,9 @@ public class AddCustomer extends AddUser {
 
         return new Customer(args[0], new Email(args[2]), args[1], args[3]);
     }
+
+    @Override
+    public String help() {
+        return "client add \"<nombre>\" <DNI> <email> <cashId>";
+    }
 }

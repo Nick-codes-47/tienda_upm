@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.TicketContainer;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.CustomProduct;
+import es.upm.etsisi.poo.UserContainer.User;
 
 import java.util.*;
 
@@ -223,5 +224,20 @@ public class TicketBook {
         }
 
         return result;
+    }
+
+    public int removeTicketsFrom(User user)
+    {
+        if (user == null)
+            return 1;
+
+        String[] ticketIds = userToTicket.get(user.getId());
+        userToTicket.remove(user.getId());
+
+        for (String ticketId : ticketIds) {
+            tickets.remove(ticketId);
+        }
+
+        return 0;
     }
 }

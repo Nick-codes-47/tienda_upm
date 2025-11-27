@@ -19,8 +19,7 @@ public class AddUser extends UserAction {
 
     @Override
     public String help() {
-        // TODO: ALL
-        return "";
+        return "cash add [<id>] \"<nombre>\"<email>";
     }
 
     protected User createUser(String[] args) {

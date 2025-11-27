@@ -11,13 +11,12 @@ public class RemoveUser extends UserAction {
 
     @Override
     public int execute(String[] args) {
-        // TODO ALL
-        return 0;
+        String userId = args[0];
+        return userRegister.removeUser(userId);
     }
 
     @Override
     public String help() {
-        // TODO ALL
-        return "";
+        return "client remove <DNI>";
     }
 }

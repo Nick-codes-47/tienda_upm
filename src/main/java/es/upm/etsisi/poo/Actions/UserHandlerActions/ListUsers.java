@@ -19,7 +19,6 @@ public class ListUsers extends UserAction {
 
     @Override
     public String help() {
-        // TODO ALL
-        return "";
+        return "client list";
     }
 }

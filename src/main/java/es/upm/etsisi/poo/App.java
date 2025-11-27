@@ -162,9 +162,9 @@ public class App
     {
         // TODO change keys to something less magical
         modules.put("prod", new ProductHandler(this));
-       modules.put("ticket", new TicketHandler(this));
-       modules.put("client", new CustomerHandler(this));
-       modules.put("cash", new CashierHandler(this));
+        modules.put("ticket", new TicketHandler(this));
+        modules.put("client", new CustomerHandler(this));
+        modules.put("cash", new CashierHandler(this));
     }
 
     private InputDriver input;
