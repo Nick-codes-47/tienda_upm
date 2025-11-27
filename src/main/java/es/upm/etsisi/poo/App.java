@@ -27,7 +27,7 @@ public class App
     App(String[] args)
     {
         catalog = new Catalog();
-        tickets = new TicketBook(this);
+        tickets = new TicketBook();
         cashiers = new UserRegister();
         customers = new UserRegister();
 

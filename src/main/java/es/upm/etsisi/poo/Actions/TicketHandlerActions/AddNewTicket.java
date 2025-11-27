@@ -26,7 +26,7 @@ public class AddNewTicket extends Action {
             return -1;
         }
 
-        int result = app.tickets.addNewTicket(app, ticketId, cashId, customerId);
+        int result = app.tickets.addNewTicket(ticketId, cashId, customerId);
 
         if (result == 0) {
 

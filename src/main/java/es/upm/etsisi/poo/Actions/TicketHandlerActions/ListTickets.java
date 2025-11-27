@@ -28,9 +28,9 @@ public class ListTickets extends Action {
         System.out.println("--- Tickets sorted by CashID ---");
         for (TicketEntry entry : sortedTickets) {
             System.out.printf("Ticket ID: %s | Cash ID: %s | Customer ID: %s\n",
-                    entry.getTicket().getTicketId(),
-                    entry.getCashId(),
-                    entry.getCustomerId());
+                    entry.ticket.getTicketId(),
+                    entry.cashId,
+                    entry.customerId);
         }
 
         return 0;

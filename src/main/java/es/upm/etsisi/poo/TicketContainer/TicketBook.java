@@ -1,9 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 import es.upm.etsisi.poo.ProductContainer.CustomProduct;
-import es.upm.etsisi.poo.UserContainer.User;
 
 import java.util.*;
 
@@ -11,10 +9,8 @@ public class TicketBook {
     private HashMap<String, TicketEntry> tickets;
     private HashMap<String, String[]> userToTicket;
     private final Random random = new Random();
-    private final App app;
 
-    public TicketBook(App app) {
-        this.app = app;
+    public TicketBook() {
         this.tickets = new HashMap<>();
         this.userToTicket = new HashMap<>();
     }
@@ -25,14 +21,14 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that had deleted a product
-     * @param product the product to delete
+     * @param productId the productId of the product to delete
      */
-    public void deleteProdFromTickets(BaseProduct product) {
+    public void deleteProdFromTickets(int productId) {
         for (TicketEntry ticketEntry : tickets.values()) {
             Ticket ticket = ticketEntry.ticket;
             if (!ticket.isClosed())
                 // we only delete if the ticket is still open
-                ticket.deleteProduct(product);
+                ticket.deleteProduct(productId);
         }
     }
 
@@ -40,12 +36,12 @@ public class TicketBook {
      * Method to obtain all the tickets that contain a product
      * @return Tickets that contain the product
      */
-    public ArrayList<Ticket> getTicketsWithProd(BaseProduct product) {
+    public ArrayList<Ticket> getTicketsWithProd(int productId) {
         ArrayList<Ticket> ticketsWithProd = new ArrayList<>();
         // We look which tickets have the product and delete it from them
         for (TicketEntry ticketEntry : this.tickets.values()) {
-            if (ticketEntry.getTicket().hasProduct(product))
-                ticketsWithProd.add(ticketEntry.getTicket());
+            if (ticketEntry.ticket.hasProduct(productId))
+                ticketsWithProd.add(ticketEntry.ticket);
         }
         return ticketsWithProd;
     }
@@ -53,13 +49,12 @@ public class TicketBook {
     /**
      * Crea una nueva instancia de Ticket y su TicketEntry asociado, y la registra.
      * Genera un ID único si no se proporciona uno, o verifica la unicidad del proporcionado.
-     * @param app La instancia de la aplicación.
      * @param ticketId El ID único del nuevo ticket (puede ser null/vacío para generar uno).
      * @param cashId El ID del cajero asociado.
      * @param customerId El ID del cliente asociado.
      * @return 0 si es exitoso, -1 si el ticketId ya existe.
      */
-        public int addNewTicket(App app, String ticketId, String cashId, String customerId) {
+        public int addNewTicket(String ticketId, String cashId, String customerId) {
             String finalTicketId;
 
             if (ticketId == null || ticketId.isEmpty()) {
@@ -71,7 +66,7 @@ public class TicketBook {
                 }
             }
 
-            Ticket newTicket = new Ticket(app, finalTicketId);
+            Ticket newTicket = new Ticket(finalTicketId);
             TicketEntry newEntry = new TicketEntry(cashId, customerId, newTicket);
 
             this.tickets.put(finalTicketId, newEntry);
@@ -106,7 +101,7 @@ public class TicketBook {
      */
     public List<TicketEntry> listTicketsSortedByCashierId() {
         List<TicketEntry> allEntries = new ArrayList<>(tickets.values());
-        allEntries.sort(Comparator.comparing(TicketEntry::getCashId));
+        allEntries.sort(Comparator.comparing(e -> e.cashId));
         return allEntries;
     }
 
@@ -125,8 +120,8 @@ public class TicketBook {
             return null;
         }
 
-        if (entry.getCashId().equals(cashId)) {
-            return entry.getTicket();
+        if (entry.cashId.equals(cashId)) {
+            return entry.ticket;
         } else {
             return null;
         }
@@ -136,25 +131,17 @@ public class TicketBook {
      * Intenta añadir un producto a un ticket dado por su ID.
      * @param ticketId ID del ticket.
      * @param cashId ID del cajero autorizado.
-     * @param prodIdStr ID del producto (String).
+     * @param product product a añadir.
      * @param amount Cantidad (o número de personas).
      * @param personalizations Lista de strings de personalización.
      * @return 0 si es exitoso. Códigos de error remapeados para la acción.
      */
-    public int addProductToTicket(String ticketId, String cashId, String prodIdStr, int amount, ArrayList<String> personalizations) {
+    public int addProductToTicket(String ticketId, String cashId, BaseProduct product, int amount, ArrayList<String> personalizations) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
             return -1;
         }
 
-        int prodId;
-        try {
-            prodId = Integer.parseInt(prodIdStr);
-        } catch (NumberFormatException e) {
-            return -2;
-        }
-
-        BaseProduct product = this.app.catalog.getProduct(prodId);
         if (product == null) {
             return -3;
         }
@@ -189,7 +176,7 @@ public class TicketBook {
      * Requiere que el ticket exista y que el cajero esté autorizado.
      * @param ticketId El ID del ticket.
      * @param cashId El ID del cajero.
-     * @param prodIdStr El ID del producto a eliminar (como String desde el comando).
+     * @param prodId El ID del producto a eliminar.
      * @return 0 si es exitoso.
      * -1 si el ticket no existe o el cajero no coincide.
      * -2 si el ID del producto no es un número válido.
@@ -197,25 +184,13 @@ public class TicketBook {
      * -4 si el ticket está cerrado (delegate return from Ticket.deleteProduct, código -3).
      * -5 si el producto no se encuentra en el ticket (delegate return from Ticket.deleteProduct, código -1).
      */
-    public int removeProduct(String ticketId, String cashId, String prodIdStr) {
+    public int removeProduct(String ticketId, String cashId, int prodId) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
             return -1;
         }
 
-        int prodId;
-        try {
-            prodId = Integer.parseInt(prodIdStr);
-        } catch (NumberFormatException e) {
-            return -2;
-        }
-
-        BaseProduct product = this.app.catalog.getProduct(prodId);
-        if (product == null) {
-            return -3;
-        }
-
-        int result = ticket.deleteProduct(product);
+        int result = ticket.deleteProduct(prodId);
 
         if (result == -3) {
             return -4;
@@ -226,13 +201,13 @@ public class TicketBook {
         return result;
     }
 
-    public int removeTicketsFrom(User user)
+    public int removeTicketsFrom(String userId)
     {
-        if (user == null)
+        if (userId == null)
             return 1;
 
-        String[] ticketIds = userToTicket.get(user.getId());
-        userToTicket.remove(user.getId());
+        String[] ticketIds = userToTicket.get(userId);
+        userToTicket.remove(userId);
 
         for (String ticketId : ticketIds) {
             tickets.remove(ticketId);

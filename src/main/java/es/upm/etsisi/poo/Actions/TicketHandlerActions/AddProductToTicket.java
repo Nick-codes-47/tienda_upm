@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 
 import java.sql.Array;
 import java.util.ArrayList;
@@ -23,16 +24,29 @@ public class AddProductToTicket extends Action {
         String prodIdStr = args[2];
         String amountStr = args[3];
 
+        BaseProduct product;
+        try {
+            int productId = Integer.parseInt(amountStr);
+            product = app.catalog.getProduct(productId);
+            if (product == null) {
+                System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
+                return -2;
+            }
+        } catch (NumberFormatException e) {
+            System.err.println("ERROR: prodId must be an integer.");
+            return -2;
+        }
+
         int amount;
         try {
             amount = Integer.parseInt(amountStr);
             if (amount <= 0) {
                 System.err.println("ERROR: Amount must be a positive integer.");
-                return -2;
+                return -3;
             }
         } catch (NumberFormatException e) {
             System.err.println("ERROR: Amount must be an integer.");
-            return -2;
+            return -3;
         }
 
         int numPersonalizations = args.length - 4;
@@ -42,31 +56,25 @@ public class AddProductToTicket extends Action {
             personalizations.add(args[i].replace("--p", ""));
         }
 
-        int result = app.tickets.addProductToTicket(ticketId, cashId, prodIdStr, amount, personalizations);
+        int result = app.tickets.addProductToTicket(ticketId, cashId, product, amount, personalizations);
 
         if (result == 0) {
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);
-            return -3;
-        } else if (result == -2) {
-            System.err.printf("ERROR: Product ID '%s' is not a valid number.\n", prodIdStr);
             return -4;
-        } else if (result == -3) {
-            System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
-            return -5;
         } else if (result == -4) {
             System.err.printf("ERROR: Cannot add product. Ticket '%s' is closed (invoice printed).\n", ticketId);
-            return -6;
+            return -5;
         } else if (result == -5) {
             System.err.printf("ERROR: Maximum number of items reached in ticket '%s'.\n", ticketId);
-            return -7;
+            return -6;
         } else if (result == -6) {
             System.err.printf("ERROR: Event '%s' cannot be added. Requires longer planning time.\n", prodIdStr);
-            return -8;
+            return -7;
         } else if (result == -7) {
             System.err.printf("ERROR: Event (meeting/meal) '%s' is already in ticket '%s' and cannot be added again.\n", prodIdStr, ticketId);
-            return -9;
+            return -8;
         } else {
             System.err.println("ERROR: Unknown error occurred during product addition.");
             return -99;

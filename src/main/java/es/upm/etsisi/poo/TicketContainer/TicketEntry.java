@@ -10,16 +10,4 @@ public class TicketEntry {
         this.customerId = customerId;
         this.ticket = ticket;
     }
-
-    public Ticket getTicket() {
-        return this.ticket;
-    }
-
-    public String getCashId() {
-        return cashId;
-    }
-
-    public String getCustomerId() {
-        return customerId;
-    }
 }

@@ -68,7 +68,7 @@ public class UpdateProduct extends Action {
             System.out.println(product);
 
             // We look for tickets that had this product
-            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(product);
+            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
             // We show only the tickets that are open
             boolean anyOpen = false;
             for (Ticket ticket : tickets) {

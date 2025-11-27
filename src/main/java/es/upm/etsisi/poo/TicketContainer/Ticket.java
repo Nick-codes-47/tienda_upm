@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo.TicketContainer;
 
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.*;
 
 import java.time.LocalDateTime;
@@ -11,9 +10,8 @@ import java.util.Map;
 
 public class Ticket {
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
-    private final App app;
     private TicketState ticketState;
-    private final HashMap<BaseProduct, Integer> ticket;
+    private final HashMap<Integer, ProductEntry> entries;
     private final HashMap<Category, Integer> categories;
     private final LocalDateTime creationDate;
     private LocalDateTime closingDate;
@@ -22,9 +20,8 @@ public class Ticket {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm-");
 
-    Ticket(App app) {
-        this.app = app;
-        this.ticket = new HashMap<>();
+    Ticket() {
+        this.entries = new HashMap<>();
         this.categories = new HashMap<>();
         this.ticketState = TicketState.VACIO;
         this.creationDate = LocalDateTime.now();
@@ -34,8 +31,8 @@ public class Ticket {
         }
     }
 
-    public Ticket(App app, String ticketId) {
-        this(app);
+    public Ticket(String ticketId) {
+        this();
         this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + ticketId;
     }
 
@@ -45,17 +42,17 @@ public class Ticket {
 
 
     private int calculateTotalUnits() {
-        return ticket.values().stream().mapToInt(Integer::intValue).sum();
+        return entries.values().stream().mapToInt(e -> e.amount).sum();
     }
 
     /**
      * Verifica si el ticket contiene el producto base dado.
      *
-     * @param product el producto base a verificar.
+     * @param productId el producto base a verificar.
      * @return true si el producto se encuentra en el ticket, false en caso contrario.
      */
-    public boolean hasProduct(BaseProduct product) {
-        return this.ticket.containsKey(product);
+    public boolean hasProduct(int productId) {
+        return this.entries.containsKey(productId);
     }
 
     /**
@@ -84,7 +81,7 @@ public class Ticket {
         }
 
         if (baseProduct instanceof Event event) {
-            if (this.ticket.containsKey(event)) {
+            if (this.entries.containsKey(event)) {
                 System.err.println("ERROR: Cannot add the same Event (meeting/meal) twice to the same ticket.");
                 return -5;
             }
@@ -106,8 +103,9 @@ public class Ticket {
             }
         }
 
-        int currentQuantity = ticket.getOrDefault(baseProduct, 0);
-        ticket.put(baseProduct, currentQuantity + quantity);
+        ProductEntry e = entries.getOrDefault(baseProduct.getId(), null);
+        int currentQuantity = (e == null ? 0 : e.amount);
+        entries.put(baseProduct.getId(), new ProductEntry(baseProduct, currentQuantity + quantity));
 
         if (baseProduct instanceof Product product) {
             Category categoryKey = product.getCategory();
@@ -129,17 +127,17 @@ public class Ticket {
         return addProduct(product, quantity);
     }
 
-    public int deleteProduct(BaseProduct productToDelete) {
+    public int deleteProduct(int prodId) {
         if (this.ticketState == TicketState.CERRADO) {
             System.err.println("ERROR: Cannot delete product. Ticket is closed (invoice printed).");
             return -3;
         }
 
-        if (ticket.containsKey(productToDelete)) {
-            int quantity = ticket.get(productToDelete);
-            ticket.remove(productToDelete);
+        if (entries.containsKey(prodId)) {
+            int quantity = entries.get(prodId).amount;
+            entries.remove(prodId);
 
-            if (productToDelete instanceof Product product) {
+            if (entries.get(prodId).product instanceof Product product) {
                 Category categoryKey = product.getCategory();
                 int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
 
@@ -179,10 +177,9 @@ public class Ticket {
      */
     public double calculateTotalPrice() {
         double totalPrice = 0.0;
-        for (Map.Entry<BaseProduct, Integer> entry : ticket.entrySet()) {
-            BaseProduct product = entry.getKey();
-            int quantity = entry.getValue();
-            totalPrice += product.getPrice() * quantity;
+        for (ProductEntry entry : entries.values()) {
+            int quantity = entry.amount;
+            totalPrice += entry.product.getPrice() * quantity;
         }
         return totalPrice;
     }
@@ -216,9 +213,9 @@ public class Ticket {
     public double calculateTotalDiscount() {
         double totalDiscount = 0.0;
 
-        for (Map.Entry<BaseProduct, Integer> entry : ticket.entrySet()) {
-            BaseProduct baseProduct = entry.getKey();
-            int quantity = entry.getValue();
+        for (ProductEntry entry : entries.values()) {
+            BaseProduct baseProduct = entry.product;
+            int quantity = entry.amount;
 
             // Descuento unitario del producto (0 si no aplica)
             double unitDiscount = getProductDiscountValue(baseProduct);
@@ -247,12 +244,12 @@ public class Ticket {
 
         sb.append("Ticket: ").append(this.ticketId).append("\n");
 
-        if (this.ticket.isEmpty()) {
+        if (this.entries.isEmpty()) {
             sb.append("No products added yet.\n");
         } else {
-            for (Map.Entry<BaseProduct, Integer> entry : this.ticket.entrySet()) {
-                BaseProduct product = entry.getKey();
-                int quantity = entry.getValue();
+            for (ProductEntry entry : this.entries.values()) {
+                BaseProduct product = entry.product;
+                int quantity = entry.amount;
 
                 if (product instanceof Event event) {
                     sb.append(event).append("\n");
@@ -278,5 +275,15 @@ public class Ticket {
         sb.append(String.format("Final price: %.2f €\n", calculateFinalPrice()));
 
         return sb.toString();
+    }
+
+    private static class ProductEntry {
+        public BaseProduct product;
+        public int amount;
+
+        public ProductEntry(BaseProduct product, int amount) {
+            this.product = product;
+            this.amount = amount;
+        }
     }
 }

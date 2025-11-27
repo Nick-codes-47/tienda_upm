@@ -19,7 +19,7 @@ public class RemoveProductFromTicket extends Action {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int result = app.tickets.removeProduct(ticketId, cashId, prodIdStr);
+        int result = app.tickets.removeProduct(ticketId, cashId, Integer.parseInt(prodIdStr));
 
         if (result == 0) {
             System.out.printf("Product '%s' removed successfully from ticket '%s'.\n", prodIdStr, ticketId);

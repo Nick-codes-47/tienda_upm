@@ -10,7 +10,7 @@ public class RemoveCashier extends RemoveUser {
     @Override
     public int execute(String[] args) {
         String userId = args[0];
-        app.tickets.removeTicketsFrom(userRegister.getUser(userId));
+        app.tickets.removeTicketsFrom(userId);
         userRegister.removeUser(userId);
         return 0;
     }
