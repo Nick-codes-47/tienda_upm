@@ -4,7 +4,7 @@ import es.upm.etsisi.poo.App;
 
 public interface Action {
 
-    abstract public int execute(String[] args);
+    int execute(String[] args);
 
-    abstract public String help();
+    String help();
 }
