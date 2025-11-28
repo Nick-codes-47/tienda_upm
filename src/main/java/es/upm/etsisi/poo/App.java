@@ -22,10 +22,10 @@ public class App
 {
     private static App instance = null;
 
-    public Catalog catalog;
-    public TicketBook tickets;
-    public UserRegister<User> cashiers;
-    public UserRegister<Customer> customers;
+    public Catalog catalog = new Catalog();
+    public TicketBook tickets = new TicketBook();
+    public UserRegister<User> cashiers = new UserRegister<>();
+    public UserRegister<Customer> customers = new CustomerRegister();
 
     public static App getInstance() {
         if (instance == null)
@@ -34,12 +34,7 @@ public class App
         return instance;
     }
 
-    private App() {
-        catalog = new Catalog();
-        tickets = new TicketBook();
-        cashiers = new UserRegister<>();
-        customers = new CustomerRegister();
-    }
+    private App() {}
 
     public void init(String inputFile)
     {
@@ -49,8 +44,7 @@ public class App
         initInput(inputFile);
         printWelcome();
 
-        while (true)
-        {
+        while (true) {
             Request request = input.next();
             if (!request.handlerId.isEmpty())
             {
@@ -165,7 +159,7 @@ public class App
 
     // This is done with separate structures instaead of a single Hasmap<String, RequestHandler>
     // in order to maintain the order of RequetsHandlers so functions output like help respect the order in the
-    // HANDLERS array
+    // handlers array
     private RequestHandler[] handlers;
     private final HashMap<String, Integer> handlerIds = new HashMap<>();
     private void initModulesMap() {
