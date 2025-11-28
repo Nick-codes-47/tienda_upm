@@ -11,8 +11,9 @@ public class UserRegister<T extends User> {
     public int addUser(T user){
         if (user == null)
             return 1;
-        if (users.containsKey(user.getId()))
+        if (users.containsKey(user.getId())) {
             return 2;
+        }
 
         if (!isValidId(user.getId()))
             return 3;
@@ -51,6 +52,7 @@ public class UserRegister<T extends User> {
     }
 
     public boolean isValidId(String id) {
+        System.err.println("Por aqui");
         return id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W';
     }
 

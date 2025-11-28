@@ -29,11 +29,19 @@ public class AddCustomer extends AddUser {
             name = args[1];
             email = new Email(args[3]);
             cashId = args[4];
-            if (!Objects.equals(id, dni)) return null; // TODO: print error
-        } else return null; // TODO print error
-
-        if (app.cashiers.getUser(cashId) != null) // TODO: print error
+            if (!Objects.equals(id, dni)) {
+                System.err.printf("client id {%s} and dni {%s} must be the same\n", id, dni);
+                return null;
+            }
+        } else {
+            System.err.println("Wrong number of input args");
             return null;
+        }
+
+        if (app.cashiers.getUser(cashId) == null) {
+            System.err.printf("cashier {%s} does not exist\n", cashId);
+            return null;
+        }
 
         return new Customer(dni, name, email, cashId);
     }

@@ -11,6 +11,7 @@ import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
 import es.upm.etsisi.poo.UserContainer.Customer;
+import es.upm.etsisi.poo.UserContainer.CustomerRegister;
 import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
@@ -29,7 +30,7 @@ public class App
         catalog = new Catalog();
         tickets = new TicketBook();
         cashiers = new UserRegister();
-        customers = new UserRegister();
+        customers = new CustomerRegister();
 
         initCommandsMap();
         initModulesMap();

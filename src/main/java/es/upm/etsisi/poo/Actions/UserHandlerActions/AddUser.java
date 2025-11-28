@@ -14,7 +14,11 @@ public class AddUser extends UserAction {
     public int execute(String[] args) {
         User user = createUser(args);
         
-        return userRegister.addUser(user);
+        int ret = userRegister.addUser(user);
+        if (ret != 0) {
+            System.err.printf("Error addUser %d\n", ret);
+        }
+        return ret;
     }
 
     @Override
@@ -34,9 +38,14 @@ public class AddUser extends UserAction {
             id = args[0];
             nombre = args[1];
             email = new Email(args[2]);
-            if (userRegister.getUser(id) != null) //TODO: print errors
+            if (userRegister.getUser(id) != null) {
+                System.err.printf("cashier {%s} already exists\n", id);
                 return null;
-        } else return null;
+            }
+        } else {
+            System.err.println("Wrong number of input args");
+            return null;
+        }
         return new User(id, nombre, email);
     }
 }
