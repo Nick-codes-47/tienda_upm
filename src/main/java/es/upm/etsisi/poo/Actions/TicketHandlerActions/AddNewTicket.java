@@ -29,12 +29,12 @@ public class AddNewTicket extends Action {
         if(ticketId != null){
             if (!ticketId.matches("\\d+")) {
                 System.err.println("ERROR: Ticket ID must be numeric.");
-                return -6;
+                return -2;
             }
 
             if (ticketId.length() != 5) {
                 System.err.println("ERROR: Ticket ID has to be 5 digits.");
-                return -7;
+                return -3;
             }
         }
 
@@ -52,14 +52,13 @@ public class AddNewTicket extends Action {
         int result = app.tickets.addNewTicket(ticketId, cashId, customerId);
 
         if (result == 0) {
-            System.out.println("Ticket new: ok");
             return 0;
         } else if (result == -1) {
             System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
-            return -2;
+            return -6;
         } else {
             System.err.println("ERROR: Unknown error occurred.");
-            return -3;
+            return -7;
         }
     }
 

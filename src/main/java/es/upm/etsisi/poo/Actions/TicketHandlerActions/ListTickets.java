@@ -21,8 +21,8 @@ public class ListTickets extends Action {
         List<TicketEntry> sortedTickets = app.tickets.listTicketsSortedByCashierId();
 
         if (sortedTickets.isEmpty()) {
-            System.out.println("No tickets found.");
-            return 0;
+            System.err.println("No tickets found.");
+            return -2;
         }
 
         for (TicketEntry entry : sortedTickets) {
@@ -30,7 +30,6 @@ public class ListTickets extends Action {
                     entry.ticket.getTicketId(),
                     entry.ticket.getTicketState());
         }
-
         return 0;
     }
 
