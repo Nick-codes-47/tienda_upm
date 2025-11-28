@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
+import es.upm.etsisi.poo.ProductContainer.BaseProduct; // Necesario para el retorno del accessor
 
 public class PrintTicket extends Action {
     public PrintTicket(App app) {
@@ -26,8 +27,19 @@ public class PrintTicket extends Action {
             return -2;
         }
 
-        ticket.printTicket();
+        if (!ticket.isClosed()) {
 
+            Ticket.CatalogAccessor accessor = (productId) -> {
+                try {
+                    return app.catalog.getProduct(productId);
+                } catch (Exception e) {
+                    return null;
+                }
+            };
+
+            ticket.updatePrices(accessor);
+        }
+        ticket.printTicket();
         return 0;
     }
 
