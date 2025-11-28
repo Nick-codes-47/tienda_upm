@@ -61,7 +61,6 @@ public class Ticket {
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot add product. Ticket is closed (invoice printed).");
             return -3;
         }
         if (this.ticketState == TicketState.VACIO) {

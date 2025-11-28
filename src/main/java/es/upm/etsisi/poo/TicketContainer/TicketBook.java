@@ -155,7 +155,7 @@ public class TicketBook {
                 System.err.println(e.getMessage());
             }
         }
-        else { // Normal product or event
+        else {
             result = ticket.addProduct(product, amount);
         }
 
