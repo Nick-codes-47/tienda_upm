@@ -25,12 +25,10 @@ public class ListTickets extends Action {
             return 0;
         }
 
-        System.out.println("--- Tickets sorted by CashID ---");
         for (TicketEntry entry : sortedTickets) {
-            System.out.printf("Ticket ID: %s | Cash ID: %s | Customer ID: %s\n",
+            System.out.printf("%s - %s\n",
                     entry.ticket.getTicketId(),
-                    entry.cashId,
-                    entry.customerId);
+                    entry.ticket.getTicketState());
         }
 
         return 0;

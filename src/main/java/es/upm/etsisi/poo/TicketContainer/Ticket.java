@@ -55,6 +55,10 @@ public class Ticket {
         return this.entries.containsKey(productId);
     }
 
+    public TicketState getTicketState() {
+        return this.ticketState;
+    }
+
     /**
      * Añade un producto base al ticket con la cantidad especificada.
      * Implementa las restricciones de aforo, tiempo de planificación de eventos,
@@ -118,7 +122,7 @@ public class Ticket {
     }
 
     /**
-     * Variante para productos personalizables (que reciben personalizaciones y cantidad).
+     * Metodo sobrecargado para productos personalizables (que reciben personalizaciones y cantidad).
      *
      * @param edits Array de personalizaciones.
      * @return Código de resultado de addProduct.
@@ -185,8 +189,6 @@ public class Ticket {
         return totalPrice;
     }
 
-    // --- NUEVO MÉTODO AUXILIAR PARA CALCULAR EL DESCUENTO UNITARIO ---
-
     /**
      * Calcula el valor del descuento para una sola unidad de un producto dado.
      *
@@ -219,10 +221,8 @@ public class Ticket {
             BaseProduct baseProduct = entry.product;
             int quantity = entry.amount;
 
-            // Descuento unitario del producto (0 si no aplica)
             double unitDiscount = getProductDiscountValue(baseProduct);
 
-            // Descuento total de la línea (unitario * cantidad)
             totalDiscount += unitDiscount * quantity;
         }
 
