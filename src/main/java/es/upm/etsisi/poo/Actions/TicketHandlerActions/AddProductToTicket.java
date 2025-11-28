@@ -26,9 +26,10 @@ public class AddProductToTicket extends Action {
 
         BaseProduct product;
         try {
-            int productId = Integer.parseInt(amountStr);
+            int productId = Integer.parseInt(prodIdStr);
             product = app.catalog.getProduct(productId);
             if (product == null) {
+                System.out.println("Falla aqui");
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
                 return -2;
             }
