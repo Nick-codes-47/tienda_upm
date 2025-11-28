@@ -19,20 +19,22 @@ public class ListTickets implements Action {
         }
 
         // if cashierId is null, get all the tickets
-        printTickets(getCashierTickets(null));
+        List<TicketEntry> tickets = getCashierTickets(null);
+        if (tickets == null || tickets.isEmpty()) {
+            System.err.println("No tickets found.");
+            return -2;
+        }
+
+        printTickets(tickets);
         return 0;
     }
 
     public void printTickets(List<TicketEntry> sortedTickets) {
-        if (sortedTickets == null || sortedTickets.isEmpty()) {
-            System.out.println("No tickets found.");
+        for (TicketEntry entry : sortedTickets) {
+            System.out.printf("%s - %s\n",
+                entry.ticket.getTicketId(),
+                entry.ticket.getTicketState());
         }
-        else
-            for (TicketEntry entry : sortedTickets) {
-                System.out.printf("%s - %s\n",
-                    entry.ticket.getTicketId(),
-                    entry.ticket.getTicketState());
-            }
     }
 
     public List<TicketEntry> getCashierTickets(String cashierId) {

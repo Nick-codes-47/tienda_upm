@@ -18,6 +18,9 @@ public class Ticket {
     public static final String COMMAND_PREFIX = "ticket";
     private String ticketId;
 
+    // Cache para guardar la salida impresa una vez el ticket se cierra
+    private String printedOutput = null;
+
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     Ticket() {
@@ -45,12 +48,6 @@ public class Ticket {
         return entries.values().stream().mapToInt(e -> e.amount).sum();
     }
 
-    /**
-     * Verifica si el ticket contiene el producto base dado.
-     *
-     * @param productId el producto base a verificar.
-     * @return true si el producto se encuentra en el ticket, false en caso contrario.
-     */
     public boolean hasProduct(int productId) {
         return this.entries.containsKey(productId);
     }
@@ -61,16 +58,9 @@ public class Ticket {
 
     /**
      * Añade un producto base al ticket con la cantidad especificada.
-     * Implementa las restricciones de aforo, tiempo de planificación de eventos,
-     * y la restricción de que un Evento (reunión/comida) solo puede añadirse una vez.
-     *
-     * @param baseProduct Producto a añadir.
-     * @param quantity    Cantidad (o número de personas para eventos).
-     * @return 0 si es exitoso. Códigos de error: -1 (Max items), -3 (Cerrado), -4 (Planificación Evento), -5 (Evento ya añadido).
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot add item. Ticket is closed (invoice printed).");
             return -3;
         }
         if (this.ticketState == TicketState.VACIO) {
@@ -85,7 +75,7 @@ public class Ticket {
         }
 
         if (baseProduct instanceof Event event) {
-            if (this.entries.containsKey(event)) {
+            if (this.entries.containsKey(event.getId())) {
                 System.err.println("ERROR: Cannot add the same Event (meeting/meal) twice to the same ticket.");
                 return -5;
             }
@@ -109,7 +99,18 @@ public class Ticket {
 
         ProductEntry e = entries.getOrDefault(baseProduct.getId(), null);
         int currentQuantity = (e == null ? 0 : e.amount);
-        entries.put(baseProduct.getId(), new ProductEntry(baseProduct, currentQuantity + quantity));
+
+        if (e != null) {
+            ProductEntry updatedEntry = new ProductEntry(
+                    e.product,
+                    currentQuantity + quantity,
+                    e.unitPriceSnapshot,
+                    e.categorySnapshot
+            );
+            entries.put(baseProduct.getId(), updatedEntry);
+        } else {
+            entries.put(baseProduct.getId(), new ProductEntry(baseProduct, quantity));
+        }
 
         if (baseProduct instanceof Product product) {
             Category categoryKey = product.getCategory();
@@ -121,12 +122,6 @@ public class Ticket {
         return 0;
     }
 
-    /**
-     * Metodo sobrecargado para productos personalizables (que reciben personalizaciones y cantidad).
-     *
-     * @param edits Array de personalizaciones.
-     * @return Código de resultado de addProduct.
-     */
     public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) throws BaseProduct.InvalidProductException {
         product.setPersonalizations(edits);
         return addProduct(product, quantity);
@@ -139,10 +134,11 @@ public class Ticket {
         }
 
         if (entries.containsKey(prodId)) {
-            int quantity = entries.get(prodId).amount;
+            ProductEntry entryToRemove = entries.get(prodId);
+            int quantity = entryToRemove.amount;
             entries.remove(prodId);
 
-            if (entries.get(prodId).product instanceof Product product) {
+            if (entryToRemove.product instanceof Product product) {
                 Category categoryKey = product.getCategory();
                 int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
 
@@ -157,9 +153,15 @@ public class Ticket {
     }
 
     /**
-     * Cierra el ticket, establece la fecha de cierre y actualiza el ID.
+     * Cierra el ticket y lo imprime. Si ya está cerrado, imprime la versión cacheada.
+     * ASUME que los precios han sido actualizados por la acción externa si era necesario.
      */
     public void printTicket() {
+        if (this.printedOutput != null) {
+            System.out.println(this.printedOutput);
+            return;
+        }
+
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
             this.closingDate = LocalDateTime.now();
@@ -167,8 +169,11 @@ public class Ticket {
             if (this.ticketId != null) {
                 this.ticketId += "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
-            System.out.println(this);
         }
+
+        this.printedOutput = this.toString();
+
+        System.out.println(this.printedOutput);
     }
 
     public String getTicketId() {
@@ -177,31 +182,28 @@ public class Ticket {
 
     /**
      * Calcula el precio total sumando el precio (unitario * cantidad) de todos los productos.
-     *
-     * @return El precio total antes de descuentos.
+     * Usa unitPriceSnapshot.
      */
     public double calculateTotalPrice() {
         double totalPrice = 0.0;
         for (ProductEntry entry : entries.values()) {
             int quantity = entry.amount;
-            totalPrice += entry.product.getPrice() * quantity;
+            totalPrice += entry.unitPriceSnapshot * quantity;
         }
         return totalPrice;
     }
 
     /**
      * Calcula el valor del descuento para una sola unidad de un producto dado.
-     *
-     * @param product Producto base a evaluar.
-     * @return El valor del descuento (ej: 1.05) si aplica, 0.0 en caso contrario.
+     * Usa unitPriceSnapshot y categorySnapshot.
      */
-    private double getProductDiscountValue(BaseProduct product) {
-        if (product instanceof Product p) {
-            Category category = p.getCategory();
+    private double getProductDiscountValue(ProductEntry entry) {
+        Category category = entry.categorySnapshot;
+        if (category != null) {
             int totalCategoryUnits = categories.getOrDefault(category, 0);
 
             if (totalCategoryUnits >= 3) {
-                double unitPrice = p.getPrice();
+                double unitPrice = entry.unitPriceSnapshot;
                 double categoryDiscountRate = category.getDiscount() / 100.0;
                 return unitPrice * categoryDiscountRate;
             }
@@ -211,18 +213,13 @@ public class Ticket {
 
     /**
      * Calcula el descuento total.
-     *
-     * @return El descuento total.
      */
     public double calculateTotalDiscount() {
         double totalDiscount = 0.0;
 
         for (ProductEntry entry : entries.values()) {
-            BaseProduct baseProduct = entry.product;
             int quantity = entry.amount;
-
-            double unitDiscount = getProductDiscountValue(baseProduct);
-
+            double unitDiscount = getProductDiscountValue(entry);
             totalDiscount += unitDiscount * quantity;
         }
 
@@ -231,8 +228,6 @@ public class Ticket {
 
     /**
      * Calcula el precio final (Total Price - Total Discount).
-     *
-     * @return El precio final.
      */
     public double calculateFinalPrice() {
         return calculateTotalPrice() - calculateTotalDiscount();
@@ -240,6 +235,8 @@ public class Ticket {
 
     /**
      * Muestra el ID del ticket, los productos en detalle y el resumen de precios.
+     * ASUME que todos los atributos del BaseProduct referenciado (ID, Nombre) son correctos
+     * EN EL MOMENTO DE ESTA LLAMADA (porque la acción externa ya actualizó el ticket si era necesario).
      */
     @Override
     public String toString() {
@@ -258,15 +255,21 @@ public class Ticket {
                     sb.append(event).append("\n");
 
                 } else {
-                    double unitDiscount = getProductDiscountValue(product);
-                    String discountSuffix = "";
+                    double unitDiscount = getProductDiscountValue(entry);
 
+                    String discountSuffix = "";
                     if (unitDiscount > 0) {
                         discountSuffix = String.format(" **discount -%.2f", unitDiscount);
                     }
 
+                    Product p = (Product) product;
+
+                    String fixedProductString = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
+                            p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
+
+
                     for (int i = 0; i < quantity; i++) {
-                        sb.append(product.toString()).append(discountSuffix).append("\n");
+                        sb.append(fixedProductString).append(discountSuffix).append("\n");
                     }
                 }
             }
@@ -280,13 +283,34 @@ public class Ticket {
         return sb.toString();
     }
 
+    /**
+     * CLASE ANIDADA: Mantiene solo los Snapshots de Precio y Categoría,
+     * ya que el Output Cache manejará la inmutabilidad de la salida String.
+     */
     private static class ProductEntry {
-        public BaseProduct product;
-        public int amount;
+        public final BaseProduct product;
+        public final int amount;
+
+        public final double unitPriceSnapshot;
+        public final Category categorySnapshot;
 
         public ProductEntry(BaseProduct product, int amount) {
             this.product = product;
             this.amount = amount;
+            this.unitPriceSnapshot = product.getPrice();
+
+            if (product instanceof Product p) {
+                this.categorySnapshot = p.getCategory();
+            } else {
+                this.categorySnapshot = null;
+            }
+        }
+
+        public ProductEntry(BaseProduct product, int amount, double unitPriceSnapshot, Category categorySnapshot) {
+            this.product = product;
+            this.amount = amount;
+            this.unitPriceSnapshot = unitPriceSnapshot;
+            this.categorySnapshot = categorySnapshot;
         }
     }
 }

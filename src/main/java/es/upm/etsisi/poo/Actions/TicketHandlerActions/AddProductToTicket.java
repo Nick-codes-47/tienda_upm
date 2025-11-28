@@ -27,7 +27,6 @@ public class AddProductToTicket implements Action {
             int productId = Integer.parseInt(prodIdStr);
             product = App.getInstance().catalog.getProduct(productId);
             if (product == null) {
-                System.out.println("Falla aqui");
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
                 return -2;
             }
@@ -63,7 +62,7 @@ public class AddProductToTicket implements Action {
             System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);
             return -4;
         } else if (result == -4) {
-            System.err.printf("ERROR: Cannot add product. Ticket '%s' is closed (invoice printed).\n", ticketId);
+            System.err.printf("ERROR: Cannot add product. Ticket '%s' is closed.\n", ticketId);
             return -5;
         } else if (result == -5) {
             System.err.printf("ERROR: Maximum number of items reached in ticket '%s'.\n", ticketId);
