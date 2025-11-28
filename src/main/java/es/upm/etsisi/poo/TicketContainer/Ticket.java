@@ -70,7 +70,6 @@ public class Ticket {
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot add item. Ticket is closed (invoice printed).");
             return -3;
         }
         if (this.ticketState == TicketState.VACIO) {
@@ -167,8 +166,8 @@ public class Ticket {
             if (this.ticketId != null) {
                 this.ticketId += "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
-            System.out.println(this);
         }
+        System.out.println(this);
     }
 
     public String getTicketId() {
