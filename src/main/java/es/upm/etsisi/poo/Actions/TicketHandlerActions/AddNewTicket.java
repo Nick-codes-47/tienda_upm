@@ -26,6 +26,19 @@ public class AddNewTicket extends Action {
             return -1;
         }
 
+        if(ticketId != null){
+            if (!ticketId.matches("\\d+")) {
+                System.err.println("ERROR: Ticket ID must be numeric.");
+                return -6;
+            }
+
+            if (ticketId.length() != 5) {
+                System.err.println("ERROR: Ticket ID has to be 5 digits.");
+                return -7;
+            }
+        }
+
+
         if (app.cashiers.getUser(cashId) == null) {
             System.err.println("ERROR: Cashier with ID '" + cashId + "' not found.");
             return -4;
