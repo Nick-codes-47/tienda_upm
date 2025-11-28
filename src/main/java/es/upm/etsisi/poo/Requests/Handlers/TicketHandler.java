@@ -8,13 +8,14 @@ import es.upm.etsisi.poo.Requests.RequestHandler;
 import java.util.HashMap;
 
 public class TicketHandler extends RequestHandler {
-    public TicketHandler(App app) {
-        super();
-        HashMap<String,Action> actions = super.getActions();
-        actions.put("new", new AddNewTicket(app));
-        actions.put("add", new AddProductToTicket(app));
-        actions.put("remove", new RemoveProductFromTicket(app));
-        actions.put("print",new PrintTicket(app));
-        actions.put("list", new ListTickets(app));
+    public static String handler_id = "ticket";
+
+    public TicketHandler() {
+        super(handler_id);
+        actions.put("new", new AddNewTicket());
+        actions.put("add", new AddProductToTicket());
+        actions.put("remove", new RemoveProductFromTicket());
+        actions.put("print",new PrintTicket());
+        actions.put("list", new ListTickets());
     }
 }

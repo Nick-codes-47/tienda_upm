@@ -13,16 +13,16 @@ import es.upm.etsisi.poo.Requests.RequestHandler;
 import java.util.HashMap;
 
 public class ProductHandler extends RequestHandler {
-    public ProductHandler(App app) {
-        super();
-        // We obtain the map of actions
-        HashMap<String,Action> actions = super.getActions();
+    public static String handler_id = "prod";
+
+    public ProductHandler() {
+        super(handler_id);
         // We introduce all the actions that we'll need
-        actions.put("add", new AddProduct(app));
-        actions.put("addFood", new AddEvent(app, EventType.FOOD));
-        actions.put("addMeeting", new AddEvent(app, EventType.MEETING));
-        actions.put("update",new UpdateProduct(app));
-        actions.put("remove", new RemoveProduct(app));
-        actions.put("list", new ListProducts(app));
+        actions.put("add", new AddProduct());
+        actions.put("addFood", new AddEvent(EventType.FOOD));
+        actions.put("addMeeting", new AddEvent(EventType.MEETING));
+        actions.put("update",new UpdateProduct());
+        actions.put("remove", new RemoveProduct());
+        actions.put("list", new ListProducts());
     }
 }

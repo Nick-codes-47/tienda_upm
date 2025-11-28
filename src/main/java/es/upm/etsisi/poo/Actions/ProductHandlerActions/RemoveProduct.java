@@ -7,9 +7,8 @@ import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 import java.util.ArrayList;
 
-public class RemoveProduct extends Action {
-    public RemoveProduct(App app) {
-        super(app);
+public class RemoveProduct implements Action {
+    public RemoveProduct() {
     }
 
     /**
@@ -27,6 +26,7 @@ public class RemoveProduct extends Action {
             return 3;
         }
         try {
+            App app = App.getInstance();
             // We try to remove the product from the catalog
             int id = Integer.parseInt(args[0]);
             BaseProduct prod = app.catalog.deleteProduct(id);

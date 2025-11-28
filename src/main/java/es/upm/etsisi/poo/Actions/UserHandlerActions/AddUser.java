@@ -1,14 +1,13 @@
 package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.UserContainer.Email;
 import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 public class AddUser extends UserAction {
 
-    public AddUser(App app, UserRegister userRegister) {
-        super(app, userRegister);
+    public AddUser(UserRegister userRegister) {
+        super(userRegister);
     }
 
     public int execute(String[] args) {

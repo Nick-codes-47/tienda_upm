@@ -3,9 +3,8 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class AddNewTicket extends Action {
-    public AddNewTicket(App app) {
-        super(app);
+public class AddNewTicket implements Action {
+    public AddNewTicket() {
     }
 
     @Override
@@ -38,7 +37,7 @@ public class AddNewTicket extends Action {
             }
         }
 
-
+        App app = App.getInstance();
         if (app.cashiers.getUser(cashId) == null) {
             System.err.println("ERROR: Cashier with ID '" + cashId + "' not found.");
             return -4;

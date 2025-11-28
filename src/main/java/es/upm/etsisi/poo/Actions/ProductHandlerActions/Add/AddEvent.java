@@ -12,9 +12,8 @@ import java.time.format.DateTimeParseException;
 /**
  * Class to add an Event to the Catalog
  */
-public class AddEvent extends Action implements SupportMethods {
-    public AddEvent(App app, EventType eventType) {
-        super(app);
+public class AddEvent implements Action, SupportMethods {
+    public AddEvent(EventType eventType) {
         this.eventType = eventType;
     }
 
@@ -32,7 +31,7 @@ public class AddEvent extends Action implements SupportMethods {
     public int execute(String[] args) {
 
         // We obtain the final id depending on whether the user passed the id or not
-        ParsedIdResult parsed = parseOptionalId(args, app);
+        ParsedIdResult parsed = parseOptionalId(args);
         int finalId = parsed.id;
         int offset = parsed.offset; // used to get the right arguments
 
@@ -52,7 +51,7 @@ public class AddEvent extends Action implements SupportMethods {
                     this.eventType                                 // event type
             );
 
-            return addToCatalog(app, event);
+            return addToCatalog(event);
 
         } catch (NumberFormatException e) {
             System.err.println("ERROR: price and/or maxPers are not valid. " +

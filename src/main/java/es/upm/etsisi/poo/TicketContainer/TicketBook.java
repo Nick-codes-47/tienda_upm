@@ -201,6 +201,18 @@ public class TicketBook {
         return result;
     }
 
+    public List<TicketEntry> getTicketsFrom(String cashierId) {
+        if (!userToTicket.containsKey(cashierId))
+            return null;
+
+        List<TicketEntry> ticketsEntries = new ArrayList<>();
+        for (String ticketId : userToTicket.get(cashierId)) {
+            ticketsEntries.add(tickets.get(ticketId));
+        }
+
+        return ticketsEntries;
+    }
+
     public int removeTicketsFrom(String userId)
     {
         if (userId == null)

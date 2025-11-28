@@ -1,13 +1,11 @@
 package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
-import es.upm.etsisi.poo.Actions.Action;
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 public class ListUsers extends UserAction {
-    public ListUsers(App app, UserRegister userRegister) {
-        super(app, userRegister);
+    public ListUsers(UserRegister userRegister) {
+        super(userRegister);
     }
 
     @Override

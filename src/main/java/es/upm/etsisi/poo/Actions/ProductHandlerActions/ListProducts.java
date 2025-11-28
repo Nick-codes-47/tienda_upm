@@ -6,9 +6,8 @@ import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 
 import java.util.*;
 
-public class ListProducts extends Action {
-    public ListProducts(App app) {
-        super(app);
+public class ListProducts implements Action {
+    public ListProducts() {
     }
 
     /**
@@ -24,7 +23,7 @@ public class ListProducts extends Action {
         if (args.length != 0) return 3;
 
         // We obtain the map of products
-        HashMap<Integer, BaseProduct> products = app.catalog.getProducts();
+        HashMap<Integer, BaseProduct> products = App.getInstance().catalog.getProducts();
         // We check if the catalog is empty
         if (products.isEmpty()) {
             System.err.println("ERROR: There are no products in the catalog yet!");

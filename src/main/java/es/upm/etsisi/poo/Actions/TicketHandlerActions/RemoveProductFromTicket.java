@@ -3,9 +3,9 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
-public class RemoveProductFromTicket extends Action {
-    public RemoveProductFromTicket(App app) {
-        super(app);
+public class RemoveProductFromTicket implements Action {
+    public RemoveProductFromTicket() {
+
     }
 
     @Override
@@ -19,7 +19,7 @@ public class RemoveProductFromTicket extends Action {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int result = app.tickets.removeProduct(ticketId, cashId, Integer.parseInt(prodIdStr));
+        int result = App.getInstance().tickets.removeProduct(ticketId, cashId, Integer.parseInt(prodIdStr));
 
         if (result == 0) {
             System.out.printf("Product '%s' removed successfully from ticket '%s'.\n", prodIdStr, ticketId);

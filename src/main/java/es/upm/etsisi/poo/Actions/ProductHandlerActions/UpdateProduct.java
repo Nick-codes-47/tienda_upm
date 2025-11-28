@@ -10,9 +10,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Set;
 
-public class UpdateProduct extends Action {
-    public UpdateProduct(App app) {
-        super(app);
+public class UpdateProduct implements Action {
+    public UpdateProduct() {
     }
 
     /**
@@ -32,6 +31,7 @@ public class UpdateProduct extends Action {
             System.err.println("ERROR: wrong number of arguments");
             return 3;
         }
+        App app = App.getInstance();
         // if the number of arguments are correct we try to update
         try {
             int id = Integer.parseInt(args[0]);

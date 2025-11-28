@@ -10,11 +10,10 @@ public interface SupportMethods {
      * Otherwise, a new ID is generated.
      *
      * @param args the arguments passed to the action
-     * @param app the application object
      * @return a ParsedIdResult containing the ID, the argument offset, and
      *         whether the ID was provided manually
      */
-    default ParsedIdResult parseOptionalId(String[] args, App app) {
+    default ParsedIdResult parseOptionalId(String[] args) {
 
         boolean idProvided;
         int id = -1;
@@ -31,7 +30,7 @@ public interface SupportMethods {
         int offset = idProvided ? 1 : 0;
 
         // If the ID was not provided, generate a new one
-        int finalId = idProvided ? id : app.catalog.getNewId();
+        int finalId = idProvided ? id : App.getInstance().catalog.getNewId();
 
         return new ParsedIdResult(finalId, offset);
     }
@@ -51,15 +50,14 @@ public interface SupportMethods {
 
     /**
      * Method to handle the adding of a product to the catalog and the possible errors
-     * @param app The app to access the catalog
      * @param product The product to be added
      * @return 0 if all went well
      *         -1 if the product is null
      *         -2 if the catalog is full
      *         -3 if the product's id already exists
      */
-    default int addToCatalog(App app, BaseProduct product) {
-        int add = app.catalog.add(product);
+    default int addToCatalog(BaseProduct product) {
+        int add = App.getInstance().catalog.add(product);
         if (add == 0){
             // If the product was added we show it
             System.out.println(product);

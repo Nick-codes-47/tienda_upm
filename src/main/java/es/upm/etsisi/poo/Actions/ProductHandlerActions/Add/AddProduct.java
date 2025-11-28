@@ -9,9 +9,8 @@ import es.upm.etsisi.poo.ProductContainer.Product;
 /**
  * Class to add a Product or CustomProduct to the catalog
  */
-public class AddProduct extends Action implements SupportMethods {
-    public AddProduct(App app) {
-        super(app);
+public class AddProduct implements Action, SupportMethods {
+    public AddProduct() {
     }
 
     /**
@@ -28,7 +27,7 @@ public class AddProduct extends Action implements SupportMethods {
     public int execute(String[] args) {
 
         // We obtain the final id depending on whether the user passed the id or not
-        ParsedIdResult parsed = parseOptionalId(args, app);
+        ParsedIdResult parsed = parseOptionalId(args);
         int finalId = parsed.id;
         int offset = parsed.offset; // used to get the right arguments in the constructor
 
@@ -64,7 +63,7 @@ public class AddProduct extends Action implements SupportMethods {
                 );
             }
 
-            return addToCatalog(app, product);
+            return addToCatalog(product);
 
         } catch (NumberFormatException e) {
             System.err.println("ERROR: price and/or maxPers are not valid. " +

@@ -8,8 +8,8 @@ import es.upm.etsisi.poo.UserContainer.Customer;
 import java.util.Objects;
 
 public class AddCustomer extends AddUser {
-    public AddCustomer(App app) {
-        super(app, app.customers);
+    public AddCustomer() {
+        super(App.getInstance().customers);
     }
 
     @Override
@@ -38,7 +38,7 @@ public class AddCustomer extends AddUser {
             return null;
         }
 
-        if (app.cashiers.getUser(cashId) == null) {
+        if (App.getInstance().cashiers.getUser(cashId) == null) {
             System.err.printf("cashier {%s} does not exist\n", cashId);
             return null;
         }

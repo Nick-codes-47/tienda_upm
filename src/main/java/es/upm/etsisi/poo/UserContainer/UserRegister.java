@@ -52,7 +52,6 @@ public class UserRegister<T extends User> {
     }
 
     public boolean isValidId(String id) {
-        System.err.println("Por aqui");
         return id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W';
     }
 

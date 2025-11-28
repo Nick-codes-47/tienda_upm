@@ -4,9 +4,8 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 
-public class PrintTicket extends Action {
-    public PrintTicket(App app) {
-        super(app);
+public class PrintTicket implements Action {
+    public PrintTicket() {
     }
 
     @Override
@@ -19,7 +18,7 @@ public class PrintTicket extends Action {
         String ticketId = args[0];
         String cashId = args[1];
 
-        Ticket ticket = app.tickets.getTicketIfCashierMatches(ticketId, cashId);
+        Ticket ticket = App.getInstance().tickets.getTicketIfCashierMatches(ticketId, cashId);
 
         if (ticket == null) {
             System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", ticketId, cashId);

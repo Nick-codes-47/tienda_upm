@@ -20,24 +20,32 @@ import java.util.function.Consumer;
 
 public class App
 {
+    private static App instance = null;
+
     public Catalog catalog;
     public TicketBook tickets;
     public UserRegister<User> cashiers;
     public UserRegister<Customer> customers;
 
-    App(String[] args)
-    {
+    public static App getInstance() {
+        if (instance == null)
+            instance = new App();
+
+        return instance;
+    }
+
+    private App() {
         catalog = new Catalog();
         tickets = new TicketBook();
-        cashiers = new UserRegister();
+        cashiers = new UserRegister<>();
         customers = new CustomerRegister();
-
-        initCommandsMap();
-        initModulesMap();
     }
 
     public void init(String inputFile)
     {
+        initCommandsMap();
+        initModulesMap();
+
         initInput(inputFile);
         printWelcome();
 
@@ -59,8 +67,7 @@ public class App
     public static void main(String[] args) {
         try
         {
-            App app = new App(args);
-
+            App app = App.getInstance();
             if (args.length > 0)
             {
                 app.init(args[0]);
@@ -96,23 +103,25 @@ public class App
 
     private void handleRequest(Request request)
     {
-        if (modules.containsKey(request.handlerId))
-        {
-            Action action = modules.get(request.handlerId).getAction(request.actionId);
-            if (action != null)
-                action.execute(request.args);
+        if (handlerIds.containsKey(request.handlerId)) {
+            executeAction(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
         }
-        else if (commands.containsKey(request.handlerId))
-        {
+        else if (commands.containsKey(request.handlerId)) {
             commands.get(request.handlerId).accept(request);
         }
-        else
-        {
+        else {
             System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
     }
 
-    private void executeAction(Action action) {}
+    private void executeAction(Action action, Request request) {
+         if (action == null)
+            return;
+        
+        int retVal = action.execute(request.args);
+        if (retVal == 0)
+            System.out.printf("%s %s: ok\n", request.handlerId, request.actionId);
+    }
 
     /**
      * This method prints all the commands with its parameters
@@ -123,9 +132,9 @@ public class App
 
         // Show the commands
         output.append("Commands:\n");
-        for (RequestHandler requestHandler : modules.values()) {
+        for (RequestHandler requestHandler : handlers) {
             for (Action action : requestHandler.getActions().values()) {
-                output.append(action.help()).append("\n");
+                output.append("  ").append(action.help()).append("\n");
             }
         }
 
@@ -154,28 +163,30 @@ public class App
         System.out.println(request.handlerId + " " + request.actionId);
     }
 
-    private void initCommandsMap()
-    {
-        commands.put(BUILTIN_CMD_EXIT, (request) -> exit());
-        commands.put(BUILTIN_CMD_HELP, (request) -> help());
-        commands.put(BUILTIN_CMD_ECHO, this::echo);
+    // This is done with separate structures instaead of a single Hasmap<String, RequestHandler>
+    // in order to maintain the order of RequetsHandlers so functions output like help respect the order in the
+    // HANDLERS array
+    private RequestHandler[] handlers;
+    private final HashMap<String, Integer> handlerIds = new HashMap<>();
+    private void initModulesMap() {
+        handlers = new RequestHandler[] {
+                new CustomerHandler(),
+                new CashierHandler(),
+                new TicketHandler(),
+                new ProductHandler()
+        };
+
+        for (int i = 0; i < handlers.length; i++) {
+            handlerIds.put(handlers[i].HANDLER_ID, i);
+        }
     }
 
-    private void initModulesMap()
-    {
-        // TODO change keys to something less magical
-        modules.put("prod", new ProductHandler(this));
-        modules.put("ticket", new TicketHandler(this));
-        modules.put("client", new CustomerHandler(this));
-        modules.put("cash", new CashierHandler(this));
+    private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
+    private void initCommandsMap() {
+        commands.put("help", (request) -> help());
+        commands.put("echo", this::echo);
+        commands.put("exit", (request) -> exit());
     }
 
     private InputDriver input;
-
-    private final HashMap<String, RequestHandler> modules = new HashMap<>();
-    private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
-
-    private final String BUILTIN_CMD_EXIT = "exit";
-    private final String BUILTIN_CMD_HELP = "help";
-    private final String BUILTIN_CMD_ECHO = "echo";
 } // class App

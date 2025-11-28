@@ -4,12 +4,10 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.ProductContainer.BaseProduct;
 
-import java.sql.Array;
 import java.util.ArrayList;
 
-public class AddProductToTicket extends Action {
-    public AddProductToTicket(App app) {
-        super(app);
+public class AddProductToTicket implements Action {
+    public AddProductToTicket() {
     }
 
     @Override
@@ -27,7 +25,7 @@ public class AddProductToTicket extends Action {
         BaseProduct product;
         try {
             int productId = Integer.parseInt(prodIdStr);
-            product = app.catalog.getProduct(productId);
+            product = App.getInstance().catalog.getProduct(productId);
             if (product == null) {
                 System.out.println("Falla aqui");
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
@@ -57,7 +55,7 @@ public class AddProductToTicket extends Action {
             personalizations.add(args[i].replace("--p", ""));
         }
 
-        int result = app.tickets.addProductToTicket(ticketId, cashId, product, amount, personalizations);
+        int result = App.getInstance().tickets.addProductToTicket(ticketId, cashId, product, amount, personalizations);
 
         if (result == 0) {
             return 0;

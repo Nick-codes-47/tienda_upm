@@ -4,10 +4,11 @@ import es.upm.etsisi.poo.Actions.Action;
 
 import java.util.HashMap;
 
-public class RequestHandler {
-    private HashMap<String, Action> actions;
+public abstract class RequestHandler {
+    public final String HANDLER_ID;
 
-    public RequestHandler() {
+    public RequestHandler(String handlerId) {
+        HANDLER_ID = handlerId;
         actions = new HashMap<>();
     }
 
@@ -23,4 +24,6 @@ public class RequestHandler {
         }
         return actionToReturn;
     }
+
+    protected HashMap<String, Action> actions;
 }
