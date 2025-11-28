@@ -18,6 +18,9 @@ public class Ticket {
     public static final String COMMAND_PREFIX = "ticket";
     private String ticketId;
 
+    // Cache para guardar la salida impresa una vez el ticket se cierra
+    private String printedOutput = null;
+
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     Ticket() {
@@ -36,14 +39,6 @@ public class Ticket {
         this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + "-" + ticketId;
     }
 
-    /**
-     * Interfaz para que el código externo (la acción) proporcione acceso al catálogo.
-     * El ticket la usa para actualizar precios sin acoplarse directamente a App/Catalog.
-     */
-    public interface CatalogAccessor {
-        BaseProduct getProduct(int productId);
-    }
-
     public boolean isClosed() {
         return TicketState.CERRADO == this.ticketState;
     }
@@ -53,12 +48,6 @@ public class Ticket {
         return entries.values().stream().mapToInt(e -> e.amount).sum();
     }
 
-    /**
-     * Verifica si el ticket contiene el producto base dado.
-     *
-     * @param productId el producto base a verificar.
-     * @return true si el producto se encuentra en el ticket, false en caso contrario.
-     */
     public boolean hasProduct(int productId) {
         return this.entries.containsKey(productId);
     }
@@ -69,10 +58,6 @@ public class Ticket {
 
     /**
      * Añade un producto base al ticket con la cantidad especificada.
-     *
-     * @param baseProduct Producto a añadir.
-     * @param quantity    Cantidad (o número de personas para eventos).
-     * @return 0 si es exitoso. Códigos de error: -1 (Max items), -3 (Cerrado), -4 (Planificación Evento), -5 (Evento ya añadido).
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
@@ -121,9 +106,7 @@ public class Ticket {
                     e.product,
                     currentQuantity + quantity,
                     e.unitPriceSnapshot,
-                    e.categorySnapshot,
-                    e.productNameSnapshot,
-                    e.productIdSnapshot
+                    e.categorySnapshot
             );
             entries.put(baseProduct.getId(), updatedEntry);
         } else {
@@ -140,12 +123,6 @@ public class Ticket {
         return 0;
     }
 
-    /**
-     * Metodo sobrecargado para productos personalizables (que reciben personalizaciones y cantidad).
-     *
-     * @param edits Array de personalizaciones.
-     * @return Código de resultado de addProduct.
-     */
     public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) throws BaseProduct.InvalidProductException {
         product.setPersonalizations(edits);
         return addProduct(product, quantity);
@@ -177,51 +154,15 @@ public class Ticket {
     }
 
     /**
-     * Actualiza el unitPriceSnapshot de las entradas de producto con el precio actual del catálogo.
-     * Solo debe llamarse cuando el ticket está ABIERTO.
-     * @param accessor Objeto que permite acceder a los productos del catálogo.
+     * Cierra el ticket y lo imprime. Si ya está cerrado, imprime la versión cacheada.
+     * ASUME que los precios han sido actualizados por la acción externa si era necesario.
      */
-    public void updatePrices(CatalogAccessor accessor) {
-        if (this.ticketState == TicketState.CERRADO) {
+    public void printTicket() {
+        if (this.printedOutput != null) {
+            System.out.println(this.printedOutput);
             return;
         }
 
-        HashMap<Integer, ProductEntry> updatedEntries = new HashMap<>();
-
-        for (Map.Entry<Integer, ProductEntry> entry : entries.entrySet()) {
-            int productId = entry.getKey();
-            ProductEntry currentEntry = entry.getValue();
-
-            BaseProduct currentCatalogProduct = accessor.getProduct(productId);
-
-            if (currentCatalogProduct != null) {
-                if (currentCatalogProduct.getPrice() != currentEntry.unitPriceSnapshot) {
-
-                    ProductEntry updatedEntry = new ProductEntry(
-                            currentEntry.product,
-                            currentEntry.amount,
-                            currentCatalogProduct.getPrice(),
-                            currentEntry.categorySnapshot,
-                            currentEntry.productNameSnapshot,
-                            currentEntry.productIdSnapshot
-                    );
-                    updatedEntries.put(productId, updatedEntry);
-                    continue;
-                }
-            }
-
-            updatedEntries.put(productId, currentEntry);
-        }
-
-        this.entries.clear();
-        this.entries.putAll(updatedEntries);
-    }
-
-    /**
-     * Cierra el ticket, establece la fecha de cierre y actualiza el ID.
-     * Se permite la reimpresión sin modificar el estado/ID.
-     */
-    public void printTicket() {
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
             this.closingDate = LocalDateTime.now();
@@ -230,7 +171,10 @@ public class Ticket {
                 this.ticketId += "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
         }
-        System.out.println(this);
+
+        this.printedOutput = this.toString();
+
+        System.out.println(this.printedOutput);
     }
 
     public String getTicketId() {
@@ -240,8 +184,6 @@ public class Ticket {
     /**
      * Calcula el precio total sumando el precio (unitario * cantidad) de todos los productos.
      * Usa unitPriceSnapshot.
-     *
-     * @return El precio total antes de descuentos.
      */
     public double calculateTotalPrice() {
         double totalPrice = 0.0;
@@ -272,8 +214,6 @@ public class Ticket {
 
     /**
      * Calcula el descuento total.
-     *
-     * @return El descuento total.
      */
     public double calculateTotalDiscount() {
         double totalDiscount = 0.0;
@@ -289,8 +229,6 @@ public class Ticket {
 
     /**
      * Calcula el precio final (Total Price - Total Discount).
-     *
-     * @return El precio final.
      */
     public double calculateFinalPrice() {
         return calculateTotalPrice() - calculateTotalDiscount();
@@ -298,6 +236,8 @@ public class Ticket {
 
     /**
      * Muestra el ID del ticket, los productos en detalle y el resumen de precios.
+     * ASUME que todos los atributos del BaseProduct referenciado (ID, Nombre) son correctos
+     * EN EL MOMENTO DE ESTA LLAMADA (porque la acción externa ya actualizó el ticket si era necesario).
      */
     @Override
     public String toString() {
@@ -323,11 +263,10 @@ public class Ticket {
                         discountSuffix = String.format(" **discount -%.2f", unitDiscount);
                     }
 
+                    Product p = (Product) product;
+
                     String fixedProductString = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
-                            entry.productIdSnapshot,
-                            entry.productNameSnapshot,
-                            entry.categorySnapshot.name(),
-                            entry.unitPriceSnapshot);
+                            p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
 
 
                     for (int i = 0; i < quantity; i++) {
@@ -346,9 +285,8 @@ public class Ticket {
     }
 
     /**
-     * CLASE ANIDADA MODIFICADA: Almacena todos los atributos esenciales (ID, Nombre, Categoría, Precio)
-     * como snapshots para garantizar la inmutabilidad de la línea de ticket cuando se modifica
-     * un producto disponible en un ticket cuando previamente se ha cerrado.
+     * CLASE ANIDADA: Mantiene solo los Snapshots de Precio y Categoría,
+     * ya que el Output Cache manejará la inmutabilidad de la salida String.
      */
     private static class ProductEntry {
         public final BaseProduct product;
@@ -356,17 +294,11 @@ public class Ticket {
 
         public final double unitPriceSnapshot;
         public final Category categorySnapshot;
-        public final String productNameSnapshot;
-        public final int productIdSnapshot;
-
 
         public ProductEntry(BaseProduct product, int amount) {
             this.product = product;
             this.amount = amount;
-
             this.unitPriceSnapshot = product.getPrice();
-            this.productNameSnapshot = product.getName();
-            this.productIdSnapshot = product.getId();
 
             if (product instanceof Product p) {
                 this.categorySnapshot = p.getCategory();
@@ -375,14 +307,11 @@ public class Ticket {
             }
         }
 
-        public ProductEntry(BaseProduct product, int amount, double unitPriceSnapshot,
-                            Category categorySnapshot, String productNameSnapshot, int productIdSnapshot) {
+        public ProductEntry(BaseProduct product, int amount, double unitPriceSnapshot, Category categorySnapshot) {
             this.product = product;
             this.amount = amount;
             this.unitPriceSnapshot = unitPriceSnapshot;
             this.categorySnapshot = categorySnapshot;
-            this.productNameSnapshot = productNameSnapshot;
-            this.productIdSnapshot = productIdSnapshot;
         }
     }
 }
