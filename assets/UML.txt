@@ -8,41 +8,13 @@ class App {
 - input : InputDriver
 - config : Config
 + App()
-+ init() : void
-+ {static} main(args : String[]) : void
++ init()
++ {static} main(args : String[])
 - handleRequest(request : Request) : Action
-- exec(Action) : void
-- echo(request : Request) : void
-- help() : void
-- exit() : void
-}
-
-class Config {
-+ Config()
-+ getMaxProducts() : int
-+ getMaxProductsPerTicket() : int
-}
-
-App *-- Config
-
-enum EventType {
-FOOD(72)
-MEETING(12)
-- planningTime : int
-+ EventType(planningTime : int)
-+ getPlanTime() : int
-}
-
-enum Category {
-MERCH(0)
-STATIONERY(5)
-CLOTHES(7)
-BOOK(10)
-ELECTRONICS(3)
-- discount : double
-+ Category(discount : double)
-+ getDiscount() : double
-+ toSentenceCase(eventType : EventType) : String
+- exec(Action)
+- echo(request : Request
+- help()
+- exit()
 }
 
 class InputDriver {
@@ -53,6 +25,8 @@ class InputDriver {
 }
 
 App *-- InputDriver
+
+package Requests {
 
 class Request {
 + handlerId : String
@@ -70,17 +44,13 @@ class RequestHandler {
 + getActions() : HashMap<actionId : String, Action>
 }
 
+}
+' Requests
+
 App *-- "0...n" RequestHandler
 Action <-- App : Executes
 Action <-- RequestHandler : Sends To App
 Request <-- RequestHandler: Receives
-
-RequestHandler <|-- TicketHandler
-RequestHandler <|-- UserHandler
-RequestHandler <|-- ProductHandler
-
-UserHandler <|-- CashierHandler
-UserHandler <|-- CustomerHandler
 
 abstract Action {
 + Action(App)
@@ -88,57 +58,23 @@ abstract Action {
 + {abstract} help() : void
 }
 
-package TicketHandlerActions {
-Action <|.. AddTicket
-Action <|.. AddProductToTicket
-Action <|.. RemoveProductFromTicket
-Action <|.. PrintTicket
-Action <|.. ListTickets
-}
-
-note top of ListTickets: Also used by CashierHandler
-
-package ProductHandlerActions {
-Action <|.. AddProduct
-Action <|.. UpdateProduct
-Action <|.. AddEvent
-Action <|.. ListProducts
-Action <|.. RemoveProduct
-}
-
-package UserHandlerActions {
-Action <|.. AddUser
-Action <|.. RemoveUser
-Action <|.. ListUsers
-
-class AddUser {
-+ AddUser(userRegisterId : id)
-}
-
-class RemoveUser {
-+ RemoveUser(userRegisterId : id)
-}
-
-class ListUsers {
-+ ListUser(userRegisterId : id)
-}
-
-RemoveUser <|-- RemoveCashier
-}
-
+package ProductContainer {
 
 class Catalog {
-- products : HashMap<productId : int, ProductBase>
-+ getProduct(id : int) : Product
-+ getProducts() : HashMap<productId : int, ProductBase>
-+ add(ProductBase) : int
-# getNewId() : int
-+ deleteProduct(id : int) : int
+- products : HashMap<productId : int, BaseProduct>
+- MAX_PRODUCTS : int
++ Catalog()
++ getProduct(id : int) : BaseProduct
++ getProducts() : HashMap<productId : int, BaseProduct>
++ add(BaseProduct) : int
++ getNewId() : int
++ deleteProduct(id : int) : BaseProduct
++ existsId(id : int) : boolean
 }
 
 App *-- Catalog
-Category <-- Catalog : Checks
-EventType <-- Catalog : Checks
+
+package ProductTypes {
 
 abstract class BaseProduct {
 - id : int
@@ -147,9 +83,8 @@ abstract class BaseProduct {
 + BaseProduct(id : int, name : String, price : Double)
 + getId() : int
 + getPrice() : Double
-+ setPrice() : void
 + getName() : String
-+ setName : void
++ setName()
 }
 
 Catalog *-- "0...n" BaseProduct
@@ -163,7 +98,9 @@ BaseProduct <|-- Product
 
 class CustomProduct {
 - maxPers : int
-+ Personalizable(maxPers : int)
+- personalizations : ArrayList<String>
++ CustomProduct(maxPers : int)
++ setPersonalizations(personalizations : ArrayList<String>)
 + getMaxPers() : int
 }
 
@@ -172,14 +109,48 @@ Product <|-- CustomProduct
 class Event {
 - expireDate : LocalDate
 - maxPeople : int
+- actualPeople : int
+- MAX_PEOPLE_ALLOWED : int
 - type : EventType
 + Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
 + getExpireDate() : LocalDate
-+ getMaxPeople() : int
 + getType() : EventType
++ setActualPeople(actualPeople : int)
 }
 
 BaseProduct <|-- Event
+
+package ProductEnums {
+
+enum EventType {
+FOOD(72)
+MEETING(12)
+- planningTime : int
++ EventType(planningTime : int)
++ getPlanningTime() : int
+{static} + toSentenceCase() : String
+}
+
+enum Category {
+MERCH(0)
+STATIONERY(5)
+CLOTHES(7)
+BOOK(10)
+ELECTRONICS(3)
+- discount : double
++ Category(discount : double)
++ getDiscount() : double
++ getCategories() : String
++ getCategoriesWithDiscount() : String
+}
+
+}
+
+}
+
+}
+
+package UserContainer {
 
 class UserRegister {
 - users: HashMap<userId: String, User>
@@ -219,6 +190,10 @@ class Customer {
 
 User <|-- Customer
 
+}
+
+package TicketContainer {
+
 class TicketBook {
 - tickets : Hashmap<ticketId : int, ticketEntry : TicketEntry>
 - userToTicket : Hashmap<userId : String, ticketIds : String[]>
@@ -256,5 +231,7 @@ class Ticket {
 }
 
 TicketEntry *-- Ticket
+
+}
 
 @enduml
