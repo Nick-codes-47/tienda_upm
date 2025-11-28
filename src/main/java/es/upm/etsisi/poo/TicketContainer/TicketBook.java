@@ -54,35 +54,35 @@ public class TicketBook {
      * @param customerId El ID del cliente asociado.
      * @return 0 si es exitoso, -1 si el ticketId ya existe.
      */
-        public int addNewTicket(String ticketId, String cashId, String customerId) {
-            String finalTicketId;
+    public int addNewTicket(String ticketId, String cashId, String customerId) {
+        String finalTicketId;
 
-            if (ticketId == null || ticketId.isEmpty()) {
-                finalTicketId = generateUniqueTicketId();
-            } else {
-                finalTicketId = ticketId;
-                if (this.tickets.containsKey(finalTicketId)) {
-                    return -1;
-                }
+        if (ticketId == null || ticketId.isEmpty()) {
+            finalTicketId = generateUniqueTicketId();
+        } else {
+            finalTicketId = ticketId;
+            if (this.tickets.containsKey(finalTicketId)) {
+                return -1;
             }
-
-            Ticket newTicket = new Ticket(finalTicketId);
-            TicketEntry newEntry = new TicketEntry(cashId, customerId, newTicket);
-
-            this.tickets.put(finalTicketId, newEntry);
-
-            String[] existingTickets = this.userToTicket.getOrDefault(customerId, new String[0]);
-
-            String[] updatedTickets = Arrays.copyOf(existingTickets, existingTickets.length + 1);
-            updatedTickets[existingTickets.length] = finalTicketId;
-
-            this.userToTicket.put(customerId, updatedTickets);
-
-            Ticket t = getTicketIfCashierMatches(finalTicketId, cashId);
-            System.out.println(t.toString());
-
-            return 0;
         }
+
+        Ticket newTicket = new Ticket(finalTicketId);
+        TicketEntry newEntry = new TicketEntry(cashId, customerId, newTicket);
+
+        this.tickets.put(finalTicketId, newEntry);
+
+        String[] existingTickets = this.userToTicket.getOrDefault(customerId, new String[0]);
+
+        String[] updatedTickets = Arrays.copyOf(existingTickets, existingTickets.length + 1);
+        updatedTickets[existingTickets.length] = finalTicketId;
+
+        this.userToTicket.put(customerId, updatedTickets);
+
+        Ticket t = getTicketIfCashierMatches(finalTicketId, cashId);
+        System.out.println(t.toString());
+
+        return 0;
+    }
 
     private String generateUniqueTicketId() {
         String fullId;
