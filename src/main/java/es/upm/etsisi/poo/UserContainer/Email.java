@@ -21,6 +21,11 @@ public class Email {
         return domain;
     }
 
+    @Override
+    public String toString() {
+        return String.format("%s@%s", username, domain);
+    }
+
     private final String username;
     private final String domain;
 }

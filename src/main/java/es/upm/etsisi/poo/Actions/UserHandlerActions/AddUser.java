@@ -23,6 +23,20 @@ public class AddUser extends UserAction {
     }
 
     protected User createUser(String[] args) {
-        return new User(args[0], new Email(args[1]));
+        String id, nombre;
+        Email email;
+        if (args.length == 2) { // TODO: repeated code
+            id = userRegister.getNewId();
+            nombre = args[0];
+            email = new Email(args[1]);
+        }
+        else if (args.length == 3) {
+            id = args[0];
+            nombre = args[1];
+            email = new Email(args[2]);
+            if (userRegister.getUser(id) != null) //TODO: print errors
+                return null;
+        } else return null;
+        return new User(id, nombre, email);
     }
 }

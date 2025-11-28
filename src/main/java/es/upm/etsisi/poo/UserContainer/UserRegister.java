@@ -9,10 +9,13 @@ public class UserRegister<T extends User> {
     }
 
     public int addUser(T user){
-        if (user != null)
+        if (user == null)
             return 1;
         if (users.containsKey(user.getId()))
             return 2;
+
+        if (!isValidId(user.getId()))
+            return 3;
 
         users.put(user.getId(), user);
         return 0;
@@ -38,5 +41,19 @@ public class UserRegister<T extends User> {
         return users.size();
     }
 
+    public String getNewId() {
+        String id;
+        while (true) {
+            id = String.format("UW%07d", nextIdVal++);
+            if (getUser(id) == null)
+                return id;
+        }
+    }
+
+    public boolean isValidId(String id) {
+        return id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W';
+    }
+
     private final HashMap<String, T> users;
+    private static int nextIdVal = 0;
 }

@@ -1,11 +1,10 @@
 package es.upm.etsisi.poo.UserContainer;
 
 public class User {
-    public User(String name, Email email) {
+    public User(String id, String name, Email email) {
         this.name = name;
+        this.id = id;
         this.email = email;
-        this.id = String.format("UW%07d", user_count);
-        user_count++;
     }
 
     public String getName() {
@@ -19,9 +18,12 @@ public class User {
         return id;
     }
 
+    @Override
+    public String toString() {
+        return String.format("{identificador: %s, nombre: %s, email: %s}", id, name, email);
+    }
+
     protected final String name;
     protected final Email email;
-    protected String id; // TODO: make it a class and all identificable objects implement form identificable ?
-
-    private static int user_count = 0;
+    protected final String id; // TODO: make it a class and all identificable objects implement form identificable ?
 }

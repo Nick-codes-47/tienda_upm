@@ -97,7 +97,9 @@ public class App
     {
         if (modules.containsKey(request.handlerId))
         {
-            modules.get(request.handlerId).getAction(request.actionId).execute(request.args);
+            Action action = modules.get(request.handlerId).getAction(request.actionId);
+            if (action != null)
+                action.execute(request.args);
         }
         else if (commands.containsKey(request.handlerId))
         {

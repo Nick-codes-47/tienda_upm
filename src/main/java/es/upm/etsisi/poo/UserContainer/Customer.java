@@ -1,10 +1,9 @@
 package es.upm.etsisi.poo.UserContainer;
 
 public class Customer extends User {
-    public Customer(String name, Email email, String dni, String cashierId) {
-        super(name, email);
+    public Customer(String dni, String name, Email email, String cashierId) {
+        super(dni, name, email);
         this.cashierId = cashierId;
-        this.id = dni;
     }
     
     public String getCashierId() {
