@@ -2,13 +2,12 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Category;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
 import es.upm.etsisi.poo.TicketContainer.Ticket;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
-import java.util.Set;
 
 public class UpdateProduct extends Action {
     public UpdateProduct(App app) {

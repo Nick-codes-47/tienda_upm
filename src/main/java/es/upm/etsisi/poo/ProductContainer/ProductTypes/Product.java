@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo.ProductContainer;
+package es.upm.etsisi.poo.ProductContainer.ProductTypes;
+
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
@@ -22,7 +24,6 @@ public class Product extends BaseProduct {
     }
 
     public Category getCategory() { return this.category; }
-    public void setCategory(Category category) { this.category = category; }
 
     /**
      * Compares this product to another with the ID

@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.TicketContainer;
 
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.CustomProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.CustomProduct;
 
 import java.util.*;
 

@@ -1,9 +1,7 @@
 package es.upm.etsisi.poo.ProductContainer;
 
-import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.Requests.Request;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Set;
 
@@ -11,7 +9,6 @@ import java.util.Set;
  * Class that implements a HashMap to store all the products available in the store
  */
 public class Catalog {
-    public static final String COMMAND_PREFIX = "prod";
 
     public Catalog() {
         products = new HashMap<>();

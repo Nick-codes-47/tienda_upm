@@ -1,12 +1,16 @@
 package es.upm.etsisi.poo.TicketContainer;
 
-import es.upm.etsisi.poo.ProductContainer.*;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.CustomProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.Event;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.Product;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Map;
 
 public class Ticket {
     private static final int MAX_PRODUCTS_PER_TICKET = 100;

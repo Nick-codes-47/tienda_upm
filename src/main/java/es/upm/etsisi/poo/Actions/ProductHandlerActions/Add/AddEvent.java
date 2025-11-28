@@ -2,9 +2,9 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions.Add;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.Event;
-import es.upm.etsisi.poo.ProductContainer.EventType;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.Event;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeParseException;

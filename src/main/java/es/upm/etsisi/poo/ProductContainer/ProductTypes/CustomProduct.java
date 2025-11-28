@@ -1,8 +1,6 @@
-package es.upm.etsisi.poo.ProductContainer;
+package es.upm.etsisi.poo.ProductContainer.ProductTypes;
 
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class CustomProduct extends Product {
 

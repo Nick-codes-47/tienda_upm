@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo.ProductContainer;
+package es.upm.etsisi.poo.ProductContainer.ProductTypes;
+
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 
