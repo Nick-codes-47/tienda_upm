@@ -28,7 +28,6 @@ public class PrintTicket extends Action {
 
         System.out.println("--- TICKET: " + ticketId + " (CASHIER: " + cashId + ") ---");
         ticket.printTicket();
-        System.out.println("----------------------------------------------");
 
         return 0;
     }

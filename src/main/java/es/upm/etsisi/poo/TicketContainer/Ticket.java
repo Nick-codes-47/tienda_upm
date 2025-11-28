@@ -18,7 +18,7 @@ public class Ticket {
     public static final String COMMAND_PREFIX = "ticket";
     private String ticketId;
 
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm-");
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
     Ticket() {
         this.entries = new HashMap<>();
@@ -33,7 +33,7 @@ public class Ticket {
 
     public Ticket(String ticketId) {
         this();
-        this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + ticketId;
+        this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + "-" + ticketId;
     }
 
     public boolean isClosed() {
@@ -119,7 +119,8 @@ public class Ticket {
 
     /**
      * Variante para productos personalizables (que reciben personalizaciones y cantidad).
-     * @param edits       Array de personalizaciones.
+     *
+     * @param edits Array de personalizaciones.
      * @return Código de resultado de addProduct.
      */
     public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) throws BaseProduct.InvalidProductException {
@@ -208,6 +209,7 @@ public class Ticket {
 
     /**
      * Calcula el descuento total.
+     *
      * @return El descuento total.
      */
     public double calculateTotalDiscount() {
@@ -229,6 +231,7 @@ public class Ticket {
 
     /**
      * Calcula el precio final (Total Price - Total Discount).
+     *
      * @return El precio final.
      */
     public double calculateFinalPrice() {
