@@ -168,8 +168,7 @@ public class Ticket {
 
     public void updateProduct(BaseProduct product, Field field, Object newValueConverted)  throws IllegalAccessException{
         ProductEntry productEntry = this.entries.get(product.getId());
-        BaseProduct baseProduct = productEntry.product;
-        field.set(baseProduct, newValueConverted);
+        productEntry.updateField(field, newValueConverted);
     }
 
     /**
@@ -334,6 +333,10 @@ public class Ticket {
             this.amount = amount;
             this.unitPriceSnapshot = unitPriceSnapshot;
             this.categorySnapshot = categorySnapshot;
+        }
+
+        public void updateField(Field field, Object newValueConverted) throws IllegalAccessException{
+            field.set(this.product, newValueConverted);
         }
     }
 }
