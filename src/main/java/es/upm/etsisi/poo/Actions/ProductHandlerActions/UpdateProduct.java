@@ -34,7 +34,7 @@ public class UpdateProduct implements Action {
         // if the number of arguments are correct we try to update
         try {
             int id = Integer.parseInt(args[0]);
-            BaseProduct product = (BaseProduct) app.catalog.getProduct(id);
+            BaseProduct product = app.catalog.getProduct(id);
             if (product == null) {
                 // Product does not exist
                 System.err.println("ERROR: Product with id " + id + " does not exist!");
@@ -45,6 +45,7 @@ public class UpdateProduct implements Action {
             String fieldName = args[1].toLowerCase();
             String newValue = args[2];
 
+            // We check that the field the user wants to change is supported for a change
             String[] supportedFields = {"name","price","category"};
             int i = 0;
             while (i < supportedFields.length && supportedFields[i].equals(fieldName)) {
@@ -66,19 +67,19 @@ public class UpdateProduct implements Action {
             // We print the product updated
             System.out.println(product);
 
-            // We look for tickets that had this product
-            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
-            // We show only the tickets that are open
-            boolean anyOpen = false;
-            for (Ticket ticket : tickets) {
-                if (!ticket.isClosed()) {
-                    if (!anyOpen) {
-                        System.out.println("The tickets with the following ids had the product and it was updated:");
-                        anyOpen = true;
-                    }
+            // We look for tickets that had this product and are opened
+            ArrayList<Ticket> openedTicketsWithProd = app.tickets.getOpenedTicketsWithProd(id);
+
+            if (!openedTicketsWithProd.isEmpty()) {
+                System.out.println("The tickets with the following ids had the product and it was updated:");
+                for (Ticket ticket : openedTicketsWithProd) {
+                    // We update the product in the ticket too
+                    ticket.updateProduct(product, field);
+                    // We show the ticket that had the product and changed
                     System.out.println("- " + ticket.getTicketId());
                 }
             }
+
 
             return 0;
 

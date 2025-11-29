@@ -7,6 +7,7 @@ import es.upm.etsisi.poo.ProductContainer.ProductTypes.Product;
 import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
 import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
+import java.lang.reflect.Field;
 import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
@@ -164,6 +165,11 @@ public class Ticket {
             return 0;
         }
         return -1;
+    }
+
+    public int updateProduct(BaseProduct product, Field field) {
+
+        return 0;
     }
 
     /**

@@ -39,20 +39,16 @@ public class RemoveProduct implements Action {
                 return 4;
             }
             // We search for tickets with the product
-            ArrayList<Ticket> tickets = app.tickets.getTicketsWithProd(id);
-            boolean anyOpen = false;
-            if (!tickets.isEmpty()) {
-                // We delete the product from the tickets
-                app.tickets.deleteProdFromTickets(id);
+            ArrayList<Ticket> openedTicketsWithProd = app.tickets.getOpenedTicketsWithProd(id);
+
+            if (!openedTicketsWithProd.isEmpty()) {
                 // We show the tickets that had the product
-                for (Ticket ticket : tickets) {
-                    if (!ticket.isClosed()) {
-                        if (!anyOpen) {
-                            System.out.println("The tickets with the following ids had the product and it was deleted:");
-                            anyOpen = true;
-                        }
-                    }
-                    System.out.println("- "+ticket.getTicketId());
+                System.out.println("The tickets with the following ids had the product and it was deleted:");
+                for (Ticket ticket : openedTicketsWithProd) {
+                    // We remove the product from each ticket
+                    ticket.deleteProduct(prod.getId());
+
+                    System.out.println("- " + ticket.getTicketId());
                 }
             }
             // Since everything went well we return 0
