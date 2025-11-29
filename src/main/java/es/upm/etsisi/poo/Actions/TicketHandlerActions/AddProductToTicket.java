@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
 
 import java.util.ArrayList;
 

@@ -2,7 +2,7 @@ package es.upm.etsisi.poo;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.ProductContainer.Catalog;
-import es.upm.etsisi.poo.ProductContainer.Category;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
 import es.upm.etsisi.poo.Requests.Handlers.CashierHandler;
 import es.upm.etsisi.poo.Requests.Handlers.CustomerHandler;
 import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;

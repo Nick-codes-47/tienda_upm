@@ -2,9 +2,9 @@ package es.upm.etsisi.poo.Actions.ProductHandlerActions.Add;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.BaseProduct;
-import es.upm.etsisi.poo.ProductContainer.CustomProduct;
-import es.upm.etsisi.poo.ProductContainer.Product;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.CustomProduct;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.Product;
 
 /**
  * Class to add a Product or CustomProduct to the catalog

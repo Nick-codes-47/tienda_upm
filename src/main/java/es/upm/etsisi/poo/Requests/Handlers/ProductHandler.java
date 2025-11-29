@@ -7,7 +7,7 @@ import es.upm.etsisi.poo.Actions.ProductHandlerActions.ListProducts;
 import es.upm.etsisi.poo.Actions.ProductHandlerActions.RemoveProduct;
 import es.upm.etsisi.poo.Actions.ProductHandlerActions.UpdateProduct;
 import es.upm.etsisi.poo.App;
-import es.upm.etsisi.poo.ProductContainer.EventType;
+import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 
 import java.util.HashMap;
