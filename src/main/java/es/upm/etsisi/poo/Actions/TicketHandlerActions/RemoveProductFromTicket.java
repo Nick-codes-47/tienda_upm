@@ -22,6 +22,7 @@ public class RemoveProductFromTicket implements Action {
         int result = App.getInstance().tickets.removeProduct(ticketId, cashId, Integer.parseInt(prodIdStr));
 
         if (result == 0) {
+            System.out.println(App.getInstance().tickets.getTicketByTicketId(ticketId));
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);

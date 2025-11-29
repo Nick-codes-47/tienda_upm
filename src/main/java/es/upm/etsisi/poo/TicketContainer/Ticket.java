@@ -161,7 +161,6 @@ public class Ticket {
                 categories.put(categoryKey, newCount);
             }
 
-            System.out.println(this);
             return 0;
         }
         return -1;

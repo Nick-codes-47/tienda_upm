@@ -19,6 +19,10 @@ public class TicketBook {
         return tickets;
     }
 
+    public TicketEntry getTicketByTicketId(String ticketId) {
+        return tickets.get(ticketId);
+    }
+
     /**
      * Method to obtain all the tickets that had deleted a product
      *
