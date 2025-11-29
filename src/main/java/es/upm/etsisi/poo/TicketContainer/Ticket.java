@@ -28,6 +28,10 @@ public class Ticket {
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
+    // --- CADENA DE PATRÓN USADA COMO REFERENCIA ---
+    private static final String DATE_PATTERN_STRING = "yy-MM-dd-HH:mm";
+
+
     Ticket() {
         this.entries = new HashMap<>();
         this.categories = new HashMap<>();
@@ -41,6 +45,7 @@ public class Ticket {
 
     public Ticket(String ticketId) {
         this();
+        // --- CORRECCIÓN 1: Usar DATE_TIME_FORMATTER directamente ---
         this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + "-" + ticketId;
     }
 
@@ -96,8 +101,9 @@ public class Ticket {
 
                 System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s). Event expiration is: (%s).\n",
                         typeName, planningHours,
-                        requiredDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER))),
-                        eventDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER)))
+                        // --- CORRECCIÓN 2A: Usar el patrón string o el objeto estático ---
+                        requiredDate.format(DATE_TIME_FORMATTER),
+                        eventDate.format(DATE_TIME_FORMATTER)
                 );
                 return -4;
             }
@@ -164,15 +170,38 @@ public class Ticket {
         return -1;
     }
 
+    /**
+     * Permite modificar un atributo del objeto BaseProduct referenciado y,
+     * crucialmente, actualiza el snapshot del precio si el campo modificado es 'price'.
+     */
     public void updateProduct(BaseProduct product, Field field, Object newValueConverted)  throws IllegalAccessException{
+
+        if (this.ticketState == TicketState.CERRADO) {
+            System.err.println("ERROR: Cannot update product details. Ticket is closed (invoice printed).");
+            return;
+        }
+
         ProductEntry productEntry = this.entries.get(product.getId());
-        BaseProduct baseProduct = productEntry.product;
-        field.set(baseProduct, newValueConverted);
+
+        if (productEntry != null) {
+            BaseProduct baseProduct = productEntry.product;
+            field.set(baseProduct, newValueConverted); // Actualiza la referencia del producto
+
+            if (field.getName().toLowerCase().equals("price")) {
+
+                ProductEntry updatedEntry = new ProductEntry(
+                        productEntry.product,
+                        productEntry.amount,
+                        baseProduct.getPrice(),
+                        productEntry.categorySnapshot
+                );
+                this.entries.put(product.getId(), updatedEntry);
+            }
+        }
     }
 
     /**
      * Cierra el ticket y lo imprime. Si ya está cerrado, imprime la versión cacheada.
-     * ASUME que los precios han sido actualizados por la acción externa si era necesario.
      */
     public void printTicket() {
         if (this.printedOutput != null) {
@@ -185,6 +214,7 @@ public class Ticket {
             this.closingDate = LocalDateTime.now();
 
             if (this.ticketId != null) {
+                // --- CORRECCIÓN 3: Usar DATE_TIME_FORMATTER directamente ---
                 this.ticketId = this.ticketId.substring(this.ticketId.length()-5) + "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
         }
@@ -253,8 +283,6 @@ public class Ticket {
 
     /**
      * Muestra el ID del ticket, los productos en detalle y el resumen de precios.
-     * ASUME que todos los atributos del BaseProduct referenciado (ID, Nombre) son correctos
-     * EN EL MOMENTO DE ESTA LLAMADA (porque la acción externa ya actualizó el ticket si era necesario).
      */
     @Override
     public String toString() {
@@ -305,8 +333,7 @@ public class Ticket {
     }
 
     /**
-     * CLASE ANIDADA: Mantiene solo los Snapshots de Precio y Categoría,
-     * ya que el Output Cache manejará la inmutabilidad de la salida String.
+     * CLASE ANIDADA: Mantiene solo los Snapshots de Precio y Categoría.
      */
     private static class ProductEntry {
         public final BaseProduct product;

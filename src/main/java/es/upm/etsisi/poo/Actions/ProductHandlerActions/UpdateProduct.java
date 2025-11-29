@@ -17,12 +17,12 @@ public class UpdateProduct implements Action {
      * Method to update the fields of a product (NAME, CATEGORY, PRICE)
      * @param args the parameters to update the product
      * @return 0 if it was successful
-     *         1 if one of the number arguments is invalid
-     *         3 if the number of arguments is wrong
-     *         4 if the product is not in the catalog
-     *         5 if the field is invalid
-     *         6 if the user doesn't have access to change the specified field
-     *         8 if the category introduced is invalid
+     * 1 if one of the number arguments is invalid
+     * 3 if the number of arguments is wrong
+     * 4 if the product is not in the catalog
+     * 5 if the field is invalid
+     * 6 if the user doesn't have access to change the specified field
+     * 8 if the category introduced is invalid
      */
     @Override
     public int execute(String[] args) {
@@ -48,7 +48,7 @@ public class UpdateProduct implements Action {
             // We check that the field the user wants to change is supported for a change
             String[] supportedFields = {"name","price","category"};
             int i = 0;
-            while (i < supportedFields.length && supportedFields[i].equals(fieldName)) {
+            while (i < supportedFields.length && !supportedFields[i].equals(fieldName)) {
                 i++;
             }
             if (i >= supportedFields.length) {
@@ -62,19 +62,20 @@ public class UpdateProduct implements Action {
 
             // We convert
             Object converted = convertValue(field, newValue);
+
             field.set(product, converted);
 
             // We print the product updated
             System.out.println(product);
 
-            // We look for tickets that had this product and are opened
             ArrayList<Ticket> openedTicketsWithProd = app.tickets.getOpenedTicketsWithProd(id);
 
             if (!openedTicketsWithProd.isEmpty()) {
                 System.out.println("The tickets with the following ids had the product and it was updated:");
                 for (Ticket ticket : openedTicketsWithProd) {
-                    // We update the product in the ticket too
+
                     ticket.updateProduct(product, field, converted);
+
                     // We show the ticket that had the product and changed
                     System.out.println("- " + ticket.getTicketId());
                 }
