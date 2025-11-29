@@ -144,7 +144,6 @@ public class Ticket {
 
     public int deleteProduct(int prodId) {
         if (this.ticketState == TicketState.CERRADO) {
-            System.err.println("ERROR: Cannot delete product. Ticket is closed (invoice printed).");
             return -3;
         }
 
@@ -160,7 +159,6 @@ public class Ticket {
                 int newCount = Math.max(0, currentCategoryCount - quantity);
                 categories.put(categoryKey, newCount);
             }
-
             return 0;
         }
         return -1;

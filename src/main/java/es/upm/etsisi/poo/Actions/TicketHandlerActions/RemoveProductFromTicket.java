@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
 import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.TicketContainer.TicketEntry; // Necesitas importar TicketEntry
 
 public class RemoveProductFromTicket implements Action {
     public RemoveProductFromTicket() {
@@ -19,10 +20,25 @@ public class RemoveProductFromTicket implements Action {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int result = App.getInstance().tickets.removeProduct(ticketId, cashId, Integer.parseInt(prodIdStr));
+        int prodId;
+        try {
+            prodId = Integer.parseInt(prodIdStr);
+        } catch (NumberFormatException e) {
+            System.err.printf("ERROR: Product ID '%s' is not a valid number.\n", prodIdStr);
+            return -3;
+        }
+
+        int result = App.getInstance().tickets.removeProduct(ticketId, cashId, prodId);
 
         if (result == 0) {
-            System.out.println(App.getInstance().tickets.getTicketByTicketId(ticketId));
+            TicketEntry ticketEntry = App.getInstance().tickets.getTicketByTicketId(ticketId);
+
+            if (ticketEntry != null && ticketEntry.ticket != null) {
+                System.out.println(ticketEntry.ticket.toString());
+            } else {
+                System.out.println("Ticket modified: ok (Note: could not retrieve ticket details).");
+            }
+
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);
