@@ -297,28 +297,27 @@ public class Ticket {
                 BaseProduct product = entry.product;
                 int quantity = entry.amount;
 
-                if (product instanceof CustomProduct) {
-                    sb.append(product).append("\n");
-                }
-
                 if (product instanceof Event event) {
                     sb.append(event).append("\n");
                 } else {
                     double unitDiscount = getProductDiscountValue(entry);
-
                     String discountSuffix = "";
                     if (unitDiscount > 0) {
                         discountSuffix = String.format(" **discount -%.2f", unitDiscount);
                     }
 
-                    Product p = (Product) product;
+                    String productLine;
 
-                    String fixedProductString = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
-                            p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
-
+                    if (product instanceof CustomProduct customProduct) {
+                        productLine = customProduct.toString();
+                    } else {
+                        Product p = (Product) product;
+                        productLine = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
+                                p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
+                    }
 
                     for (int i = 0; i < quantity; i++) {
-                        sb.append(fixedProductString).append(discountSuffix).append("\n");
+                        sb.append(productLine).append(discountSuffix).append("\n");
                     }
                 }
             }
