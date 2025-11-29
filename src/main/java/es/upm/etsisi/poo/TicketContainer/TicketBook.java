@@ -155,11 +155,7 @@ public class TicketBook {
         int result = 0;
 
         if (product instanceof CustomProduct customProduct) {
-            try {
-                result = ticket.addProduct(customProduct, amount, personalizations);
-            } catch (BaseProduct.InvalidProductException e) {
-                System.err.println(e.getMessage());
-            }
+            result = ticket.addProduct(customProduct, amount, personalizations);
         } else {
             result = ticket.addProduct(product, amount);
         }

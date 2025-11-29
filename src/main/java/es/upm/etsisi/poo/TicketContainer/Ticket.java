@@ -129,8 +129,12 @@ public class Ticket {
         return 0;
     }
 
-    public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) throws BaseProduct.InvalidProductException {
-        product.setPersonalizations(edits);
+    public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) {
+        try {
+            product.setPersonalizations(edits);
+        } catch (BaseProduct.InvalidProductException e) {
+            return -1;
+        }
         return addProduct(product, quantity);
     }
 
@@ -258,9 +262,12 @@ public class Ticket {
                 BaseProduct product = entry.product;
                 int quantity = entry.amount;
 
+                if (product instanceof CustomProduct) {
+                    sb.append(product).append("\n");
+                }
+
                 if (product instanceof Event event) {
                     sb.append(event).append("\n");
-
                 } else {
                     double unitDiscount = getProductDiscountValue(entry);
 
