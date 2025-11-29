@@ -21,6 +21,7 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that had deleted a product
+     *
      * @param productId the productId of the product to delete
      */
     public void deleteProdFromTickets(int productId) {
@@ -34,6 +35,7 @@ public class TicketBook {
 
     /**
      * Method to obtain all the tickets that contain a product
+     *
      * @return Tickets that contain the product
      */
     public ArrayList<Ticket> getTicketsWithProd(int productId) {
@@ -49,8 +51,9 @@ public class TicketBook {
     /**
      * Crea una nueva instancia de Ticket y su TicketEntry asociado, y la registra.
      * Genera un ID único si no se proporciona uno, o verifica la unicidad del proporcionado.
-     * @param ticketId El ID único del nuevo ticket (puede ser null/vacío para generar uno).
-     * @param cashId El ID del cajero asociado.
+     *
+     * @param ticketId   El ID único del nuevo ticket (puede ser null/vacío para generar uno).
+     * @param cashId     El ID del cajero asociado.
      * @param customerId El ID del cliente asociado.
      * @return 0 si es exitoso, -1 si el ticketId ya existe.
      */
@@ -97,6 +100,7 @@ public class TicketBook {
 
     /**
      * Obtiene una lista de entradas de tickets ordenadas por ID de Cajero.
+     *
      * @return Lista de entradas de tickets.
      */
     public List<TicketEntry> listTicketsSortedByCashierId() {
@@ -109,8 +113,9 @@ public class TicketBook {
      * Obtiene un Ticket si su ID existe y el ID del cajero asociado coincide.
      * Este método se utiliza para acciones que requieren que el cajero esté
      * autorizado para manipular el ticket (como imprimirlo).
+     *
      * @param ticketId El ID único del ticket.
-     * @param cashId El ID del cajero que intenta acceder al ticket.
+     * @param cashId   El ID del cajero que intenta acceder al ticket.
      * @return El objeto Ticket si se encuentra y el cajero coincide, de lo contrario null.
      */
     public Ticket getTicketIfCashierMatches(String ticketId, String cashId) {
@@ -129,10 +134,11 @@ public class TicketBook {
 
     /**
      * Intenta añadir un producto a un ticket dado por su ID.
-     * @param ticketId ID del ticket.
-     * @param cashId ID del cajero autorizado.
-     * @param product product a añadir.
-     * @param amount Cantidad (o número de personas).
+     *
+     * @param ticketId         ID del ticket.
+     * @param cashId           ID del cajero autorizado.
+     * @param product          product a añadir.
+     * @param amount           Cantidad (o número de personas).
      * @param personalizations Lista de strings de personalización.
      * @return 0 si es exitoso. Códigos de error remapeados para la acción.
      */
@@ -148,14 +154,13 @@ public class TicketBook {
 
         int result = 0;
 
-        if (product instanceof CustomProduct customProduct){
+        if (product instanceof CustomProduct customProduct) {
             try {
                 result = ticket.addProduct(customProduct, amount, personalizations);
             } catch (BaseProduct.InvalidProductException e) {
                 System.err.println(e.getMessage());
             }
-        }
-        else {
+        } else {
             result = ticket.addProduct(product, amount);
         }
 
@@ -167,6 +172,8 @@ public class TicketBook {
             return -6;
         } else if (result == -5) {
             return -7;
+        } else if (result == -8) {
+            return -8;
         }
         return 0;
     }
@@ -174,9 +181,10 @@ public class TicketBook {
     /**
      * Intenta eliminar un producto de un ticket dado por su ID.
      * Requiere que el ticket exista y que el cajero esté autorizado.
+     *
      * @param ticketId El ID del ticket.
-     * @param cashId El ID del cajero.
-     * @param prodId El ID del producto a eliminar.
+     * @param cashId   El ID del cajero.
+     * @param prodId   El ID del producto a eliminar.
      * @return 0 si es exitoso.
      * -1 si el ticket no existe o el cajero no coincide.
      * -2 si el ID del producto no es un número válido.
@@ -213,8 +221,7 @@ public class TicketBook {
         return ticketsEntries;
     }
 
-    public int removeTicketsFrom(String userId)
-    {
+    public int removeTicketsFrom(String userId) {
         if (userId == null)
             return 1;
 

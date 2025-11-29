@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.TicketContainer;
 
 import es.upm.etsisi.poo.ProductContainer.*;
 
+import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -92,8 +93,14 @@ public class Ticket {
                 System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s). Event expiration is: (%s).\n",
                         typeName, planningHours,
                         requiredDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER))),
-                        eventDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER))));
+                        eventDate.format(DateTimeFormatter.ofPattern(String.valueOf(DATE_TIME_FORMATTER)))
+                );
                 return -4;
+            }
+            try {
+                event.setActualPeople(quantity);
+            } catch (BaseProduct.InvalidProductException e) {
+                return -8;
             }
         }
 

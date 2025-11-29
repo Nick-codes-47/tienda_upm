@@ -73,10 +73,13 @@ public class AddProductToTicket implements Action {
         } else if (result == -7) {
             System.err.printf("ERROR: Event (meeting/meal) '%s' is already in ticket '%s' and cannot be added again.\n", prodIdStr, ticketId);
             return -8;
+        } else if (result == -8) {
+            System.err.printf("ERROR: Event '%s' cannot be added. Maximum number of people reached.\n", prodIdStr);
         } else {
             System.err.println("ERROR: Unknown error occurred during product addition.");
             return -99;
         }
+        return 0;
     }
 
     @Override
