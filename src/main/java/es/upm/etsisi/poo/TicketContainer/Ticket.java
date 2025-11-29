@@ -185,7 +185,7 @@ public class Ticket {
             this.closingDate = LocalDateTime.now();
 
             if (this.ticketId != null) {
-                this.ticketId += "-" + this.closingDate.format(DATE_TIME_FORMATTER);
+                this.ticketId = this.ticketId.substring(this.ticketId.length()-5) + "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
         }
 
