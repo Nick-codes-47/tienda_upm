@@ -8,7 +8,6 @@ import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
 import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
 import java.lang.reflect.Field;
-import java.sql.SQLOutput;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -167,9 +166,10 @@ public class Ticket {
         return -1;
     }
 
-    public int updateProduct(BaseProduct product, Field field) {
-
-        return 0;
+    public void updateProduct(BaseProduct product, Field field, Object newValueConverted)  throws IllegalAccessException{
+        ProductEntry productEntry = this.entries.get(product.getId());
+        BaseProduct baseProduct = productEntry.product;
+        field.set(baseProduct, newValueConverted);
     }
 
     /**

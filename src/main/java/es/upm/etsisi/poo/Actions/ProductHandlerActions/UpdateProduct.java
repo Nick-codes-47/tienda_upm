@@ -74,7 +74,7 @@ public class UpdateProduct implements Action {
                 System.out.println("The tickets with the following ids had the product and it was updated:");
                 for (Ticket ticket : openedTicketsWithProd) {
                     // We update the product in the ticket too
-                    ticket.updateProduct(product, field);
+                    ticket.updateProduct(product, field, converted);
                     // We show the ticket that had the product and changed
                     System.out.println("- " + ticket.getTicketId());
                 }
