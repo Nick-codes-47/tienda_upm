@@ -33,7 +33,7 @@ public class ListTickets implements Action {
 
     public void printTickets(List<TicketEntry> tickets) {
         for (TicketEntry entry : tickets) {
-            System.out.printf("%s - %s\n",
+            System.out.printf("  %s - %s\n",
                 entry.ticket.getTicketId(),
                 entry.ticket.getTicketState());
         }

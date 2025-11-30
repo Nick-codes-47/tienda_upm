@@ -2,10 +2,11 @@ package es.upm.etsisi.poo.UserContainer;
 
 import java.util.HashMap;
 
-public class UserRegister<T extends User> {
+public abstract class UserRegister<T extends User> {
 
-    public UserRegister() {
+    public UserRegister(String userType) {
         users = new HashMap<String, T>();
+        this.USER_TYPE = userType;
     }
 
     public int addUser(T user){
@@ -42,19 +43,10 @@ public class UserRegister<T extends User> {
         return users.size();
     }
 
-    public String getNewId() {
-        String id;
-        while (true) {
-            id = String.format("UW%07d", nextIdVal++);
-            if (getUser(id) == null)
-                return id;
-        }
-    }
 
-    public boolean isValidId(String id) {
-        return id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W';
-    }
+    public String getNewId() { return null; };
+    public abstract boolean isValidId(String id);
 
+    public final String USER_TYPE;
     private final HashMap<String, T> users;
-    private static int nextIdVal = 0;
 }

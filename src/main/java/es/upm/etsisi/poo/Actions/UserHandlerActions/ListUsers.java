@@ -13,8 +13,9 @@ public class ListUsers extends UserAction {
     @Override
     public int execute(String[] args) {
         User[] users = userRegister.getUsers();
+        System.out.println(userRegister.USER_TYPE + ":");
         for (User user : users)
-            System.out.println(user);
+            System.out.println("  " + user);
         return 0;
     }
 

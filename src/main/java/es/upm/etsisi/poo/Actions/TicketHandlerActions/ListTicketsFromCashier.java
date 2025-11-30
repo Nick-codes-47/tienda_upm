@@ -25,13 +25,11 @@ public class ListTicketsFromCashier extends ListTickets {
             return 2;
         }
 
+        System.out.println("Tickets:");
         List<TicketEntry> tickets = getCashierTickets(cashierId);
-        if (tickets == null || tickets.isEmpty()) {
-            System.err.println("No tickets found.");
-            return -2;
-        }
+        if (tickets != null )
+            printTickets(tickets);
 
-        printTickets(tickets);
         return 0;
     }
 

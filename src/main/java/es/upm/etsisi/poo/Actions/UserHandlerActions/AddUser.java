@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Actions.UserHandlerActions;
 
+import es.upm.etsisi.poo.UserContainer.Cashier;
 import es.upm.etsisi.poo.UserContainer.Email;
 import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
@@ -15,9 +16,11 @@ public class AddUser extends UserAction {
         User user = createUser(args);
         
         int ret = userRegister.addUser(user);
-        if (ret != 0) {
+        if (ret != 0)
             System.err.printf("Error addUser %d\n", ret);
-        }
+        else
+            System.out.println(user);
+
         return ret;
     }
 
@@ -41,7 +44,7 @@ public class AddUser extends UserAction {
             System.err.println("Wrong number of input args");
             return null;
         }
-        return new User(id, nombre, email);
+        return new Cashier(id, nombre, email);
     }
 
     @Override

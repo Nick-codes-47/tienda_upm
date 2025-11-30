@@ -10,10 +10,7 @@ import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
-import es.upm.etsisi.poo.UserContainer.Customer;
-import es.upm.etsisi.poo.UserContainer.CustomerRegister;
-import es.upm.etsisi.poo.UserContainer.User;
-import es.upm.etsisi.poo.UserContainer.UserRegister;
+import es.upm.etsisi.poo.UserContainer.*;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -24,8 +21,8 @@ public class App
 
     public Catalog catalog = new Catalog();
     public TicketBook tickets = new TicketBook();
-    public UserRegister<User> cashiers = new UserRegister<>();
-    public UserRegister<Customer> customers = new CustomerRegister();
+    public CashierRegister cashiers = new CashierRegister();
+    public CustomerRegister customers = new CustomerRegister();
 
     public static App getInstance() {
         if (instance == null)
