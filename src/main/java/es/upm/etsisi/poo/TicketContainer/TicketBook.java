@@ -165,34 +165,31 @@ public class TicketBook {
     }
 
     /**
-     * Intenta eliminar un producto de un ticket dado por su ID.
-     * Requiere que el ticket exista y que el cajero esté autorizado.
+     * Method to remove a product from a ticket
      *
-     * @param ticketId El ID del ticket.
-     * @param cashId   El ID del cajero.
-     * @param prodId   El ID del producto a eliminar.
-     * @return 0 si es exitoso.
-     * -1 si el ticket no existe o el cajero no coincide.
-     * -2 si el ID del producto no es un número válido.
-     * -3 si el producto con ese ID no se encuentra en el Catalog.
-     * -4 si el ticket está cerrado (delegate return from Ticket.deleteProduct, código -3).
-     * -5 si el producto no se encuentra en el ticket (delegate return from Ticket.deleteProduct, código -1).
+     * @param ticketId ticket id
+     * @param cashId   cash id
+     * @param prodId   product id to be removed
+     * @return 0 product removed successfully from ticket
+     *        -1 ticket state is closed
+     *        -2 product not found in ticket
+     *        -3 ticket not found
      */
     public int removeProduct(String ticketId, String cashId, int prodId) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
-            return -1;
+            return -3;
         }
 
-        int result = ticket.deleteProduct(prodId);
+//        int result = ticket.deleteProduct(prodId);
+//
+//        if (result == -3) {
+//            return -4;
+//        } else if (result == -1) {
+//            return -5;
+//        }
 
-        if (result == -3) {
-            return -4;
-        } else if (result == -1) {
-            return -5;
-        }
-
-        return result;
+        return ticket.deleteProduct(prodId);
     }
 
     public List<TicketEntry> getTicketsFrom(String cashierId) {
