@@ -68,7 +68,7 @@ public class App
                 app.init(null);
             }
         }
-        catch (RuntimeException exception) // TODO create AppException?
+        catch (RuntimeException exception)
         {
             System.err.printf("ERROR::main> " + exception);
         }
