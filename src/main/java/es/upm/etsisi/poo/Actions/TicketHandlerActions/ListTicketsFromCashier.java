@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 
 import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.TicketContainer.TicketEntry;
+
+import java.util.List;
 
 public class ListTicketsFromCashier extends ListTickets {
     public static final String ID = "tickets";
@@ -22,7 +25,13 @@ public class ListTicketsFromCashier extends ListTickets {
             return 2;
         }
 
-        printTickets(getCashierTickets(cashierId));
+        List<TicketEntry> tickets = getCashierTickets(cashierId);
+        if (tickets == null || tickets.isEmpty()) {
+            System.err.println("No tickets found.");
+            return -2;
+        }
+
+        printTickets(tickets);
         return 0;
     }
 

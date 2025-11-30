@@ -7,7 +7,7 @@ import java.util.*;
 
 public class TicketBook {
     private HashMap<String, TicketEntry> tickets;
-    private HashMap<String, String[]> userToTicket;
+    private HashMap<String, ArrayList<String>> userToTicket;
     private final Random random = new Random();
 
     public TicketBook() {
@@ -64,12 +64,12 @@ public class TicketBook {
 
         this.tickets.put(finalTicketId, newEntry);
 
-        String[] existingTickets = this.userToTicket.getOrDefault(customerId, new String[0]);
+        userToTicket.computeIfAbsent(cashId, k -> new ArrayList<>());
+        userToTicket.computeIfAbsent(customerId, k -> new ArrayList<>());
 
-        String[] updatedTickets = Arrays.copyOf(existingTickets, existingTickets.length + 1);
-        updatedTickets[existingTickets.length] = finalTicketId;
 
-        this.userToTicket.put(customerId, updatedTickets);
+        this.userToTicket.get(cashId).add(finalTicketId);
+        this.userToTicket.get(customerId).add(finalTicketId);
 
         Ticket t = getTicketIfCashierMatches(finalTicketId, cashId);
         System.out.println(t.toString());
@@ -211,12 +211,14 @@ public class TicketBook {
         if (userId == null)
             return 1;
 
-        String[] ticketIds = userToTicket.get(userId);
+        ArrayList<String> ticketIds = userToTicket.get(userId);
         userToTicket.remove(userId);
 
-        for (String ticketId : ticketIds) {
-            tickets.remove(ticketId);
-        }
+        if (ticketIds != null)
+            for (String ticketId : ticketIds) {
+                TicketEntry ticket = tickets.get(ticketId);
+                userToTicket.get(ticket.customerId).remove(ticketId);
+            }
 
         return 0;
     }

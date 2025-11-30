@@ -31,8 +31,8 @@ public class ListTickets implements Action {
         return 0;
     }
 
-    public void printTickets(List<TicketEntry> sortedTickets) {
-        for (TicketEntry entry : sortedTickets) {
+    public void printTickets(List<TicketEntry> tickets) {
+        for (TicketEntry entry : tickets) {
             System.out.printf("%s - %s\n",
                 entry.ticket.getTicketId(),
                 entry.ticket.getTicketState());
