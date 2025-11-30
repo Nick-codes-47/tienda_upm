@@ -128,7 +128,7 @@ public class App
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
             for (Action action : requestHandler.getActions().values()) {
-                output.append("  ").append(action.help()).append("\n");
+                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, action.help()));
             }
         }
 

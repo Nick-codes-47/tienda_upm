@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.UserContainer.Customer;
 import java.util.Objects;
 
 public class AddCustomer extends AddUser {
+    public static final String ID = "add";
+
     public AddCustomer() {
         super(App.getInstance().customers);
     }
@@ -48,6 +50,6 @@ public class AddCustomer extends AddUser {
 
     @Override
     public String help() {
-        return "client add \"<nombre>\" <DNI> <email> <cashId>";
+        return ID +" \"<nombre>\" <DNI> <email> <cashId>";
     }
 }

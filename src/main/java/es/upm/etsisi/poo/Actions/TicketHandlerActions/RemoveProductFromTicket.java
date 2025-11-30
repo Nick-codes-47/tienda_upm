@@ -5,6 +5,8 @@ import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.TicketContainer.TicketEntry; // Necesitas importar TicketEntry
 
 public class RemoveProductFromTicket implements Action {
+    public static final String ID = "remove";
+
     public RemoveProductFromTicket() {
 
     }
@@ -63,6 +65,6 @@ public class RemoveProductFromTicket implements Action {
 
     @Override
     public String help() {
-        return "ticket remove <ticketId> <cashId> <prodId>: Removes a product from a specific open ticket, if the cashier is authorized.";
+        return ID +" <ticketId> <cashId> <prodId>";
     }
 }

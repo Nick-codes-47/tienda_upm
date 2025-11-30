@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.TicketContainer.TicketEntry;
 import java.util.List;
 
 public class ListTickets implements Action {
+    public static final String ID = "list";
+
     public ListTickets() {
     }
 
@@ -49,6 +51,6 @@ public class ListTickets implements Action {
 
     @Override
     public String help() {
-        return "ticket list: Show every ticket in the list sorted by CashID.";
+        return ID;
     }
 }

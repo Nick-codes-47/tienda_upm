@@ -10,6 +10,8 @@ import java.lang.reflect.Field;
 import java.util.ArrayList;
 
 public class UpdateProduct implements Action {
+    public static final String ID = "update";
+
     public UpdateProduct() {
     }
 
@@ -110,7 +112,7 @@ public class UpdateProduct implements Action {
      */
     @Override
     public String help() {
-        return "prod update <id> NAME|CATEGORY|PRICE <value>";
+        return ID + " <id> NAME|CATEGORY|PRICE <value>";
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {

@@ -5,6 +5,7 @@ import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 public class AddUser extends UserAction {
+    public static final String ID = "add";
 
     public AddUser(UserRegister userRegister) {
         super(userRegister);
@@ -18,11 +19,6 @@ public class AddUser extends UserAction {
             System.err.printf("Error addUser %d\n", ret);
         }
         return ret;
-    }
-
-    @Override
-    public String help() {
-        return "cash add [<id>] \"<nombre>\"<email>";
     }
 
     protected User createUser(String[] args) {
@@ -46,5 +42,10 @@ public class AddUser extends UserAction {
             return null;
         }
         return new User(id, nombre, email);
+    }
+
+    @Override
+    public String help() {
+        return ID + " [<id>] \"<nombre>\"<email>";
     }
 }

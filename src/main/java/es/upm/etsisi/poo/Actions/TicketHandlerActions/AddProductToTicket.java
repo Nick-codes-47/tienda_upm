@@ -7,6 +7,8 @@ import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
 import java.util.ArrayList;
 
 public class AddProductToTicket implements Action {
+    public static final String ID = "add";
+
     public AddProductToTicket() {
     }
 
@@ -84,9 +86,6 @@ public class AddProductToTicket implements Action {
 
     @Override
     public String help() {
-        return "ticket add <ticketId> <cashId> <prodId> <amount> [--p --p]: Adds a product to an open ticket.\n" +
-                "\t- [--p --p] are optional personalizations for custom products.\n" +
-                "\t- Amount is units for products or people for events/meals.\n" +
-                "\t- Events (meetings/meals) cannot be added if already present in the ticket.";
+        return ID + " <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]";
     }
 }

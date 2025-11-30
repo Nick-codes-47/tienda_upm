@@ -3,6 +3,8 @@ package es.upm.etsisi.poo.Actions.TicketHandlerActions;
 import es.upm.etsisi.poo.App;
 
 public class ListTicketsFromCashier extends ListTickets {
+    public static final String ID = "tickets";
+
     public ListTicketsFromCashier() {
         super();
     }
@@ -26,6 +28,6 @@ public class ListTicketsFromCashier extends ListTickets {
 
     @Override
     public String help() {
-        return "cash tickets <id>";
+        return ID + " <id>";
     }
 }

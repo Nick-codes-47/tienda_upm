@@ -4,6 +4,8 @@ import es.upm.etsisi.poo.Actions.Action;
 import es.upm.etsisi.poo.App;
 
 public class AddNewTicket implements Action {
+    public static final String ID = "new";
+
     public AddNewTicket() {
     }
 
@@ -63,6 +65,6 @@ public class AddNewTicket implements Action {
 
     @Override
     public String help() {
-        return "ticket new [<ticketId>] <cashId> <customerId>: Creates a new ticket associated with a cashier and a customer. <ticketId> is optional.";
+        return ID +" [<ticketId>] <cashId> <customerId>";
     }
 }

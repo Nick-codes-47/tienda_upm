@@ -3,6 +3,8 @@ package es.upm.etsisi.poo.Actions.UserHandlerActions;
 import es.upm.etsisi.poo.App;
 
 public class RemoveCashier extends RemoveUser {
+    public static final String ID = "remove";
+
     public RemoveCashier() {
         super(App.getInstance().cashiers);
     }
@@ -17,6 +19,6 @@ public class RemoveCashier extends RemoveUser {
 
     @Override
     public String help() {
-        return "cash remove <id>";
+        return ID + " <id>";
     }
 }

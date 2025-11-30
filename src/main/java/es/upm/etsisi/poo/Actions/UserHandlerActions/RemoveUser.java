@@ -3,6 +3,9 @@ package es.upm.etsisi.poo.Actions.UserHandlerActions;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 public class RemoveUser extends UserAction {
+
+    public static final String ID = "remove";
+
     public RemoveUser(UserRegister userRegister) {
         super(userRegister);
     }
@@ -15,6 +18,6 @@ public class RemoveUser extends UserAction {
 
     @Override
     public String help() {
-        return "client remove <DNI>";
+        return ID + " <DNI>";
     }
 }

@@ -4,6 +4,8 @@ import es.upm.etsisi.poo.UserContainer.User;
 import es.upm.etsisi.poo.UserContainer.UserRegister;
 
 public class ListUsers extends UserAction {
+    public static final String ID = "list";
+
     public ListUsers(UserRegister userRegister) {
         super(userRegister);
     }
@@ -18,6 +20,6 @@ public class ListUsers extends UserAction {
 
     @Override
     public String help() {
-        return "client list";
+        return ID;
     }
 }
