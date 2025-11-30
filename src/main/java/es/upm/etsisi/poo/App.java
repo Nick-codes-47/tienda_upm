@@ -154,7 +154,7 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.handlerId + " " + request.actionId);
+        System.out.println(request.actionId);
     }
 
     // This is done with separate structures instaead of a single Hasmap<String, RequestHandler>
