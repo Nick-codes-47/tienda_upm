@@ -123,45 +123,37 @@ public class TicketBook {
     }
 
     /**
-     * Intenta añadir un producto a un ticket dado por su ID.
+     * Method to add a product/event to a ticket.
      *
      * @param ticketId         ID del ticket.
      * @param cashId           ID del cajero autorizado.
-     * @param product          product a añadir.
+     * @param product          Product a añadir.
      * @param amount           Cantidad (o número de personas).
      * @param personalizations Lista de strings de personalización.
-     * @return 0 si es exitoso. Códigos de error remapeados para la acción.
+     * @return 0 if product is added correctly
+     *        -1 ticket state is closed
+     *        -2 maximum number of items reached
+     *        -3 Cannot add the same Event (meeting/meal) twice to the same ticket
+     *        -4 Event requires minimum time to be planned
+     *        -5 Error in the number of people in event
+     *        -6 Maximum product customizations reached
+     *        -7 Ticket does not exist
+     *        -8 Product does not exist
      */
     public int addProductToTicket(String ticketId, String cashId, BaseProduct product, int amount, ArrayList<String> personalizations) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
-            return -1;
-        }
-
-        if (product == null) {
-            return -3;
-        }
-
-        int result = 0;
-
-        if (product instanceof CustomProduct customProduct) {
-            result = ticket.addProduct(customProduct, amount, personalizations);
-        } else {
-            result = ticket.addProduct(product, amount);
-        }
-
-        if (result == -3) {
-            return -4;
-        } else if (result == -1) {
-            return -5;
-        } else if (result == -4) {
-            return -6;
-        } else if (result == -5) {
             return -7;
-        } else if (result == -8) {
+        }
+        if (product == null) {
             return -8;
         }
-        return 0;
+
+        if (product instanceof CustomProduct customProduct) {
+            return ticket.addProduct(customProduct, amount, personalizations);
+        } else {
+            return ticket.addProduct(product, amount);
+        }
     }
 
     /**
@@ -180,14 +172,6 @@ public class TicketBook {
         if (ticket == null) {
             return -3;
         }
-
-//        int result = ticket.deleteProduct(prodId);
-//
-//        if (result == -3) {
-//            return -4;
-//        } else if (result == -1) {
-//            return -5;
-//        }
 
         return ticket.deleteProduct(prodId);
     }

@@ -30,11 +30,11 @@ public class AddProductToTicket implements Action {
             product = App.getInstance().catalog.getProduct(productId);
             if (product == null) {
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
-                return -2;
+                return -1;
             }
         } catch (NumberFormatException e) {
             System.err.println("ERROR: prodId must be an integer.");
-            return -2;
+            return -1;
         }
 
         int amount;
@@ -42,11 +42,11 @@ public class AddProductToTicket implements Action {
             amount = Integer.parseInt(amountStr);
             if (amount <= 0) {
                 System.err.println("ERROR: Amount must be a positive integer.");
-                return -3;
+                return -1;
             }
         } catch (NumberFormatException e) {
-            System.err.println("ERROR: Amount must be an integer.");
-            return -3;
+            System.err.println("ERROR: Amount must be a positive integer.");
+            return -1;
         }
 
         int numPersonalizations = args.length - 4;
@@ -58,30 +58,26 @@ public class AddProductToTicket implements Action {
 
         int result = App.getInstance().tickets.addProductToTicket(ticketId, cashId, product, amount, personalizations);
 
-        if (result == 0) {
-            return 0;
-        } else if (result == -1) {
-            System.err.printf("ERROR: Ticket with ID '%s' not found or cashier '%s' is not authorized.\n", ticketId, cashId);
-            return -4;
+        if (result == -1) {
+            System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
+        } else if (result == -2) {
+            System.err.print("ERROR: Maximum number of products reached.\n");
+        } else if (result == -3) {
+            System.err.print("ERROR: Cannot add the same event/meal to the same ticket\n");
         } else if (result == -4) {
-            System.err.printf("ERROR: Cannot add product. Ticket '%s' is closed.\n", ticketId);
-            return -5;
+            System.err.print("ERROR: Event requires minimum time to be planned.\n");
         } else if (result == -5) {
-            System.err.printf("ERROR: Maximum number of items reached in ticket '%s'.\n", ticketId);
-            return -6;
+            System.err.print("ERROR: Error in the number of people in event.\n");
         } else if (result == -6) {
-            System.err.printf("ERROR: Event '%s' cannot be added. Requires longer planning time.\n", prodIdStr);
-            return -7;
+            System.err.print("ERROR: Maximum product customizations reached.\n");
         } else if (result == -7) {
-            System.err.printf("ERROR: Event (meeting/meal) '%s' is already in ticket '%s' and cannot be added again.\n", prodIdStr, ticketId);
-            return -8;
+            System.err.print("ERROR: Ticket does not exist.\n");
         } else if (result == -8) {
-            System.err.printf("ERROR: Event '%s' cannot be added. Maximum number of people reached.\n", prodIdStr);
+            System.err.print("ERROR: Product does not exist.\n");
         } else {
             System.err.println("ERROR: Unknown error occurred during product addition.");
-            return -99;
         }
-        return 0;
+        return result;
     }
 
     @Override
