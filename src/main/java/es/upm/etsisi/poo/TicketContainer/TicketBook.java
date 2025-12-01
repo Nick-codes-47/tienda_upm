@@ -43,9 +43,10 @@ public class TicketBook {
      * Genera un ID único si no se proporciona uno, o verifica la unicidad del proporcionado.
      *
      * @param ticketId   El ID único del nuevo ticket (puede ser null/vacío para generar uno).
-     * @param cashId     El ID del cajero asociado.
-     * @param customerId El ID del cliente asociado.
-     * @return 0 si es exitoso, -1 si el ticketId ya existe.
+     * @param cashId     El ID del cajero.
+     * @param customerId El ID del cliente.
+     * @return 0 ticket added successfully
+     *        -1 Ticket id already exists.
      */
     public int addNewTicket(String ticketId, String cashId, String customerId) {
         String finalTicketId;
