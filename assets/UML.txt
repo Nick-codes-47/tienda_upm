@@ -149,6 +149,9 @@ ELECTRONICS(3)
 
 }
 
+EventType <-- Event
+Category <-- Product
+
 }
 
 }
@@ -228,6 +231,12 @@ struct TicketEntry {
 
 TicketBook *-- "0...n" TicketEntry
 
+enum TicketState {
+    VACIO,
+    ACTIVO,
+    CERRADO
+}
+
 class Ticket {
 - {static} MAX_PRODUCTS_PER_TICKET : int
 - ticketState : TicketState
@@ -249,6 +258,7 @@ class Ticket {
 + isClosed() : boolean
 }
 
+TicketState <-- Ticket
 TicketEntry *-- Ticket
 
 struct ProductEntry {
