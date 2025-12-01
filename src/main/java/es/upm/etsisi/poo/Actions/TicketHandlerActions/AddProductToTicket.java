@@ -74,8 +74,8 @@ public class AddProductToTicket implements Action {
             System.err.print("ERROR: Ticket does not exist.\n");
         } else if (result == -8) {
             System.err.print("ERROR: Product does not exist.\n");
-        } else {
-            System.err.println("ERROR: Unknown error occurred during product addition.");
+        } else if (result != 0){
+            System.err.println("ERROR: Unknown error occurred during product addition.\n");
         }
         return result;
     }

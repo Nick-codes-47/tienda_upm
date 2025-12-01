@@ -16,9 +16,7 @@ public class AddUser extends UserAction {
         User user = createUser(args);
         
         int ret = userRegister.addUser(user);
-        if (ret != 0)
-            System.err.printf("Error addUser %d\n", ret);
-        else
+        if (ret == 0)
             System.out.println(user);
 
         return ret;
