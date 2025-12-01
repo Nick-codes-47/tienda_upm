@@ -39,17 +39,14 @@ public class RemoveProductFromTicket implements Action {
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
-            return -1;
         } else if (result == -2) {
             System.err.printf("ERROR: Product with ID '%s' is not in the ticket.\n", prodIdStr);
-            return -2;
         } else if (result == -3) {
             System.err.printf("ERROR: Ticket with ID '%s' does not exist.\n", ticketId);
-            return -3;
         } else {
             System.err.println("ERROR: Unknown error occurred during product removal.");
-            return -99;
         }
+        return result;
     }
 
     @Override
