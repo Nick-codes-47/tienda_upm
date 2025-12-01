@@ -249,7 +249,7 @@ public class Ticket {
      * Calcula el precio total sumando el precio (unitario * cantidad) de todos los productos.
      * Usa unitPriceSnapshot.
      */
-    public double calculateTotalPrice() {
+    private double calculateTotalPrice() {
         double totalPrice = 0.0;
         for (ProductEntry entry : entries.values()) {
             int quantity = entry.amount;
@@ -279,7 +279,7 @@ public class Ticket {
     /**
      * Calcula el descuento total.
      */
-    public double calculateTotalDiscount() {
+    private double calculateTotalDiscount() {
         double totalDiscount = 0.0;
 
         for (ProductEntry entry : entries.values()) {
@@ -294,7 +294,7 @@ public class Ticket {
     /**
      * Calcula el precio final (Total Price - Total Discount).
      */
-    public double calculateFinalPrice() {
+    private double calculateFinalPrice() {
         return calculateTotalPrice() - calculateTotalDiscount();
     }
 
