@@ -24,7 +24,7 @@ public class PrintTicket implements Action {
 
         if (ticket == null) {
             System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", ticketId, cashId);
-            return -2;
+            return -1;
         }
 
         ticket.printTicket();
