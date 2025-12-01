@@ -16,13 +16,13 @@ public class ListTicketsFromCashier extends ListTickets {
     public int execute(String[] args) {
         if (args.length != 1) {
             System.err.println("ERROR: Wrong number of input args.");
-            return 1;
+            return -1;
         }
 
         String cashierId = args[0];
         if (App.getInstance().cashiers.getUser(cashierId) == null) {
             System.err.printf("Error: cashier {%s} does not exist\n", cashierId);
-            return 2;
+            return -1;
         }
 
         System.out.println("Tickets:");

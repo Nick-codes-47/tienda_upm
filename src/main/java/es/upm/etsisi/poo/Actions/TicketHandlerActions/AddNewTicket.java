@@ -54,8 +54,6 @@ public class AddNewTicket implements Action {
 
         if (result == -1) {
             System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
-        } else {
-            System.err.println("ERROR: Unknown error occurred.");
         }
         return result;
     }
