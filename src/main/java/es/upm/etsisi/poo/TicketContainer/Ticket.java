@@ -22,13 +22,10 @@ public class Ticket {
     private LocalDateTime closingDate;
     public static final String COMMAND_PREFIX = "ticket";
     private String ticketId;
-
-    // Cache para guardar la salida impresa una vez el ticket se cierra
     private String printedOutput = null;
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
 
-    // --- CADENA DE PATRÓN USADA COMO REFERENCIA ---
     private static final String DATE_PATTERN_STRING = "yy-MM-dd-HH:mm";
 
 
@@ -45,7 +42,6 @@ public class Ticket {
 
     public Ticket(String ticketId) {
         this();
-        // --- CORRECCIÓN 1: Usar DATE_TIME_FORMATTER directamente ---
         this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + "-" + ticketId;
     }
 
@@ -67,11 +63,19 @@ public class Ticket {
     }
 
     /**
-     * Añade un producto base al ticket con la cantidad especificada.
+     * Add a product to the ticket with the quantity introduced
+     * @param baseProduct product to be added
+     * @param quantity how many products to be added
+     * @return  0 if product is added correctly
+     * -1 ticket state is closed
+     * -2 maximum number of items reached
+     * -3 Cannot add the same Event (meeting/meal) twice to the same ticket
+     * -4 Event requires minimum time to be planned
+     * -5 Error in the number of people in event
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
-            return -3;
+            return -1;
         }
         if (this.ticketState == TicketState.VACIO) {
             this.ticketState = TicketState.ACTIVO;
@@ -81,36 +85,36 @@ public class Ticket {
 
         if ((totalUnits + quantity) > MAX_PRODUCTS_PER_TICKET) {
             System.err.println("ERROR: maximum number of items reached.");
-            return -1;
+            return -2;
         }
 
         if (baseProduct instanceof Event event) {
             if (this.entries.containsKey(event.getId())) {
                 System.err.println("ERROR: Cannot add the same Event (meeting/meal) twice to the same ticket.");
-                return -5;
+                return -3;
             }
 
             EventType type = event.getType();
-            int planningHours = type.getPlanningTime();
 
-            LocalDateTime requiredDate = LocalDateTime.now().plusHours(planningHours);
+            int requiredHours;
+            if (type == EventType.FOOD) {
+                requiredHours = 72;
+            } else if (type == EventType.MEETING) {
+                requiredHours = 12;
+            } else {
+                requiredHours = type.getPlanningTime();
+            }
+
+            LocalDateTime requiredDate = LocalDateTime.now().plusHours(requiredHours);
             LocalDateTime eventDate = event.getExpireDate();
 
             if (eventDate.isBefore(requiredDate)) {
-                String typeName = EventType.toSentenceCase(type);
-
-                System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s). Event expiration is: (%s).\n",
-                        typeName, planningHours,
-                        // --- CORRECCIÓN 2A: Usar el patrón string o el objeto estático ---
-                        requiredDate.format(DATE_TIME_FORMATTER),
-                        eventDate.format(DATE_TIME_FORMATTER)
-                );
                 return -4;
             }
             try {
                 event.setActualPeople(quantity);
             } catch (BaseProduct.InvalidProductException e) {
-                return -8;
+                return -5;
             }
         }
 
@@ -139,18 +143,32 @@ public class Ticket {
         return 0;
     }
 
+    /**
+     * Override method needed to add a custom product into the ticket
+     * @param product custom product to be added
+     * @param quantity quantity of products to be added
+     * @param edits customizations for the product
+     * @return -6 Maximum product customizations reached
+     */
     public int addProduct(CustomProduct product, int quantity, ArrayList<String> edits) {
         try {
             product.setPersonalizations(edits);
         } catch (BaseProduct.InvalidProductException e) {
-            return -1;
+            return -6;
         }
         return addProduct(product, quantity);
     }
 
+    /**
+     * Method to delete a product with the product id
+     * @param prodId id of the product to be removed from ticket
+     * @return 0 product removed successfully from ticket
+     * -1 ticket state is closed
+     * -2 product not found in ticket
+     */
     public int deleteProduct(int prodId) {
         if (this.ticketState == TicketState.CERRADO) {
-            return -3;
+            return -1;
         }
 
         if (entries.containsKey(prodId)) {
@@ -167,7 +185,7 @@ public class Ticket {
             }
             return 0;
         }
-        return -1;
+        return -2;
     }
 
     /**
@@ -214,7 +232,6 @@ public class Ticket {
             this.closingDate = LocalDateTime.now();
 
             if (this.ticketId != null) {
-                // --- CORRECCIÓN 3: Usar DATE_TIME_FORMATTER directamente ---
                 this.ticketId = this.ticketId.substring(this.ticketId.length()-5) + "-" + this.closingDate.format(DATE_TIME_FORMATTER);
             }
         }
@@ -282,7 +299,7 @@ public class Ticket {
     }
 
     /**
-     * Muestra el ID del ticket, los productos en detalle y el resumen de precios.
+     * Shows ticket id, with product details and price summary
      */
     @Override
     public String toString() {

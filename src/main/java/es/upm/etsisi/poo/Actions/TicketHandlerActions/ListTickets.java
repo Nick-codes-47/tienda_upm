@@ -23,8 +23,8 @@ public class ListTickets implements Action {
         // if cashierId is null, get all the tickets
         List<TicketEntry> tickets = getCashierTickets(null);
         if (tickets == null || tickets.isEmpty()) {
-            System.err.println("No tickets found.");
-            return -2;
+            System.err.println("ERROR: No tickets found.");
+            return -1;
         }
 
         printTickets(tickets);

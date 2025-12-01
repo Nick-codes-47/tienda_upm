@@ -30,37 +30,32 @@ public class AddNewTicket implements Action {
         if(ticketId != null){
             if (!ticketId.matches("\\d+")) {
                 System.err.println("ERROR: Ticket ID must be numeric.");
-                return -2;
+                return -1;
             }
 
             if (ticketId.length() != 5) {
                 System.err.println("ERROR: Ticket ID has to be 5 digits.");
-                return -3;
+                return -1;
             }
         }
 
         App app = App.getInstance();
         if (app.cashiers.getUser(cashId) == null) {
             System.err.println("ERROR: Cashier with ID '" + cashId + "' not found.");
-            return -4;
+            return -1;
         }
 
         if (app.customers.getUser(customerId) == null) {
             System.err.println("ERROR: Customer with ID '" + customerId + "' not found.");
-            return -5;
+            return -1;
         }
 
         int result = app.tickets.addNewTicket(ticketId, cashId, customerId);
 
-        if (result == 0) {
-            return 0;
-        } else if (result == -1) {
+        if (result == -1) {
             System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
-            return -6;
-        } else {
-            System.err.println("ERROR: Unknown error occurred.");
-            return -7;
         }
+        return result;
     }
 
     @Override
