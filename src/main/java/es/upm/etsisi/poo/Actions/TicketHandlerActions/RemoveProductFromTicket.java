@@ -33,7 +33,7 @@ public class RemoveProductFromTicket implements Action {
         int result = App.getInstance().tickets.removeProduct(ticketId, cashId, prodId);
 
         if (result == 0) {
-            TicketEntry ticketEntry = App.getInstance().tickets.getTicketByTicketId(ticketId);
+            TicketEntry ticketEntry = App.getInstance().tickets.getTicket(ticketId);
 
             if (ticketEntry != null && ticketEntry.ticket != null) {
                 System.out.println(ticketEntry.ticket.toString());

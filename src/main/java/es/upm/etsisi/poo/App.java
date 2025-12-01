@@ -95,7 +95,7 @@ public class App
     private void handleRequest(Request request)
     {
         if (handlerIds.containsKey(request.handlerId)) {
-            executeAction(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
+            execute(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
         }
         else if (commands.containsKey(request.handlerId)) {
             commands.get(request.handlerId).accept(request);
@@ -105,7 +105,7 @@ public class App
         }
     }
 
-    private void executeAction(Action action, Request request) {
+    private void execute(Action action, Request request) {
          if (action == null)
             return;
         

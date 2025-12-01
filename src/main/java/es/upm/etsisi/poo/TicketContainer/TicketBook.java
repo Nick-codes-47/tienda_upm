@@ -15,11 +15,7 @@ public class TicketBook {
         this.userToTicket = new HashMap<>();
     }
 
-    public HashMap<String, TicketEntry> getTickets() {
-        return tickets;
-    }
-
-    public TicketEntry getTicketByTicketId(String ticketId) {
+    public TicketEntry getTicket(String ticketId) {
         return tickets.get(ticketId);
     }
 
