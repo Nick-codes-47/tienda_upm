@@ -65,7 +65,7 @@ public class AddProductToTicket implements Action {
         } else if (result == -3) {
             System.err.print("ERROR: Cannot add the same event/meal to the same ticket\n");
         } else if (result == -4) {
-            System.err.print("ERROR: Event requires minimum time to be planned.\n");
+            System.err.print("ERROR: Event requires minimum time to be planned (72h for meals and 12h for meetings).\n");
         } else if (result == -5) {
             System.err.print("ERROR: Error in the number of people in event.\n");
         } else if (result == -6) {

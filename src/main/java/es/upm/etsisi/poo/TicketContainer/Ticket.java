@@ -67,11 +67,11 @@ public class Ticket {
      * @param baseProduct product to be added
      * @param quantity how many products to be added
      * @return  0 if product is added correctly
-     *         -1 ticket state is closed
-     *         -2 maximum number of items reached
-     *         -3 Cannot add the same Event (meeting/meal) twice to the same ticket
-     *         -4 Event requires minimum time to be planned
-     *         -5 Error in the number of people in event
+     * -1 ticket state is closed
+     * -2 maximum number of items reached
+     * -3 Cannot add the same Event (meeting/meal) twice to the same ticket
+     * -4 Event requires minimum time to be planned
+     * -5 Error in the number of people in event
      */
     public int addProduct(BaseProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
@@ -95,19 +95,20 @@ public class Ticket {
             }
 
             EventType type = event.getType();
-            int planningHours = type.getPlanningTime();
 
-            LocalDateTime requiredDate = LocalDateTime.now().plusHours(planningHours);
+            int requiredHours;
+            if (type == EventType.FOOD) {
+                requiredHours = 72;
+            } else if (type == EventType.MEETING) {
+                requiredHours = 12;
+            } else {
+                requiredHours = type.getPlanningTime();
+            }
+
+            LocalDateTime requiredDate = LocalDateTime.now().plusHours(requiredHours);
             LocalDateTime eventDate = event.getExpireDate();
 
             if (eventDate.isBefore(requiredDate)) {
-                String typeName = EventType.toSentenceCase(type);
-
-                System.err.printf("ERROR: Cannot add %s event. Requires a minimum planning time of %d hours before expiration (%s). Event expiration is: (%s).\n",
-                        typeName, planningHours,
-                        requiredDate.format(DATE_TIME_FORMATTER),
-                        eventDate.format(DATE_TIME_FORMATTER)
-                );
                 return -4;
             }
             try {
@@ -162,8 +163,8 @@ public class Ticket {
      * Method to delete a product with the product id
      * @param prodId id of the product to be removed from ticket
      * @return 0 product removed successfully from ticket
-     *        -1 ticket state is closed
-     *        -2 product not found in ticket
+     * -1 ticket state is closed
+     * -2 product not found in ticket
      */
     public int deleteProduct(int prodId) {
         if (this.ticketState == TicketState.CERRADO) {
