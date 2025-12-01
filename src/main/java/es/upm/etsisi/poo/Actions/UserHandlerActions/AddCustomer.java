@@ -22,14 +22,14 @@ public class AddCustomer extends AddUser {
             id = args[1];
             dni = id;
             name = args[0];
-            email = new Email(args[2]);
+            email = parseEmail(args[2]);
             cashId = args[3];
         }
         else if (args.length == 5) {
             id = args[0];
             dni = args[2];
             name = args[1];
-            email = new Email(args[3]);
+            email = parseEmail(args[3]);
             cashId = args[4];
             if (!Objects.equals(id, dni)) {
                 System.err.printf("client id {%s} and dni {%s} must be the same\n", id, dni);
@@ -42,6 +42,9 @@ public class AddCustomer extends AddUser {
 
         if (App.getInstance().cashiers.getUser(cashId) == null) {
             System.err.printf("cashier {%s} does not exist\n", cashId);
+            return null;
+        } else if (email == null) {
+            System.err.println("Invalid email");
             return null;
         }
 
