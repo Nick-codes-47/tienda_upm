@@ -10,10 +10,7 @@ import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Requests.Request;
 import es.upm.etsisi.poo.Requests.RequestHandler;
 import es.upm.etsisi.poo.TicketContainer.TicketBook;
-import es.upm.etsisi.poo.UserContainer.Customer;
-import es.upm.etsisi.poo.UserContainer.CustomerRegister;
-import es.upm.etsisi.poo.UserContainer.User;
-import es.upm.etsisi.poo.UserContainer.UserRegister;
+import es.upm.etsisi.poo.UserContainer.*;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
@@ -24,8 +21,8 @@ public class App
 
     public Catalog catalog = new Catalog();
     public TicketBook tickets = new TicketBook();
-    public UserRegister<User> cashiers = new UserRegister<>();
-    public UserRegister<Customer> customers = new CustomerRegister();
+    public CashierRegister cashiers = new CashierRegister();
+    public CustomerRegister customers = new CustomerRegister();
 
     public static App getInstance() {
         if (instance == null)
@@ -71,7 +68,7 @@ public class App
                 app.init(null);
             }
         }
-        catch (RuntimeException exception) // TODO create AppException?
+        catch (RuntimeException exception)
         {
             System.err.printf("ERROR::main> " + exception);
         }
@@ -98,7 +95,7 @@ public class App
     private void handleRequest(Request request)
     {
         if (handlerIds.containsKey(request.handlerId)) {
-            executeAction(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
+            execute(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
         }
         else if (commands.containsKey(request.handlerId)) {
             commands.get(request.handlerId).accept(request);
@@ -108,7 +105,7 @@ public class App
         }
     }
 
-    private void executeAction(Action action, Request request) {
+    private void execute(Action action, Request request) {
          if (action == null)
             return;
         
@@ -128,7 +125,7 @@ public class App
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
             for (Action action : requestHandler.getActions().values()) {
-                output.append("  ").append(action.help()).append("\n");
+                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, action.help()));
             }
         }
 
@@ -154,7 +151,7 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.handlerId + " " + request.actionId);
+        System.out.println(request.actionId);
     }
 
     // This is done with separate structures instaead of a single Hasmap<String, RequestHandler>

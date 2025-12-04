@@ -7,6 +7,8 @@ import es.upm.etsisi.poo.ProductContainer.ProductTypes.BaseProduct;
 import java.util.*;
 
 public class ListProducts implements Action {
+    public static final String ID = "list";
+
     public ListProducts() {
     }
 
@@ -48,6 +50,6 @@ public class ListProducts implements Action {
      */
     @Override
     public String help() {
-        return "prod list";
+        return ID;
     }
 }

@@ -10,6 +10,8 @@ import es.upm.etsisi.poo.ProductContainer.ProductTypes.Product;
  * Class to add a Product or CustomProduct to the catalog
  */
 public class AddProduct implements Action, SupportMethods {
+    public static final String ID = "add";
+
     public AddProduct() {
     }
 
@@ -83,6 +85,6 @@ public class AddProduct implements Action, SupportMethods {
      */
     @Override
     public String help() {
-        return "prod add [id] \"<name>\" <category> <price> [<maxPers>]";
+        return ID + " [id] \"<name>\" <category> <price> [<maxPers>]";
     }
 }

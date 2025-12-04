@@ -12,9 +12,12 @@ import java.time.format.DateTimeParseException;
 /**
  * Class to add an Event to the Catalog
  */
-public class AddEvent implements Action, SupportMethods {
-    public AddEvent(EventType eventType) {
+public abstract class AddEvent implements Action, SupportMethods {
+    public final String ID;
+
+    public AddEvent(EventType eventType, String id) {
         this.eventType = eventType;
+        ID = id;
     }
 
     /**
@@ -73,8 +76,7 @@ public class AddEvent implements Action, SupportMethods {
      */
     @Override
     public String help() {
-        return "add" + EventType.toSentenceCase(eventType) +
-                " [id] \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>";
+        return ID + " [id] \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>";
     }
 
     private final EventType eventType;

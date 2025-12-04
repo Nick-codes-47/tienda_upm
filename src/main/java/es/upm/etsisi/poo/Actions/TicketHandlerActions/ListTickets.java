@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.TicketContainer.TicketEntry;
 import java.util.List;
 
 public class ListTickets implements Action {
+    public static final String ID = "list";
+
     public ListTickets() {
     }
 
@@ -21,17 +23,17 @@ public class ListTickets implements Action {
         // if cashierId is null, get all the tickets
         List<TicketEntry> tickets = getCashierTickets(null);
         if (tickets == null || tickets.isEmpty()) {
-            System.err.println("No tickets found.");
-            return -2;
+            System.err.println("ERROR: No tickets found.");
+            return -1;
         }
 
         printTickets(tickets);
         return 0;
     }
 
-    public void printTickets(List<TicketEntry> sortedTickets) {
-        for (TicketEntry entry : sortedTickets) {
-            System.out.printf("%s - %s\n",
+    public void printTickets(List<TicketEntry> tickets) {
+        for (TicketEntry entry : tickets) {
+            System.out.printf("  %s - %s\n",
                 entry.ticket.getTicketId(),
                 entry.ticket.getTicketState());
         }
@@ -49,6 +51,6 @@ public class ListTickets implements Action {
 
     @Override
     public String help() {
-        return "ticket list: Show every ticket in the list sorted by CashID.";
+        return ID;
     }
 }

@@ -7,7 +7,7 @@
 
   <groupId>es.upm.etsisi.poo</groupId>
   <artifactId>tienda_upm</artifactId>
-  <version>1.0.0</version>
+  <version>2.0.0</version>
   <packaging>jar</packaging>
 
   <name>tienda_upm</name>

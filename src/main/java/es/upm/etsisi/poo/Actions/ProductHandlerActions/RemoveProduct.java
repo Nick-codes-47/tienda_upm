@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.TicketContainer.Ticket;
 import java.util.ArrayList;
 
 public class RemoveProduct implements Action {
+    public static final String ID = "remove";
+
     public RemoveProduct() {
     }
 
@@ -66,6 +68,6 @@ public class RemoveProduct implements Action {
      */
     @Override
     public String help() {
-        return "prod remove <id>";
+        return ID + " <id>";
     }
 }

@@ -7,7 +7,7 @@ import java.util.*;
 
 public class TicketBook {
     private HashMap<String, TicketEntry> tickets;
-    private HashMap<String, String[]> userToTicket;
+    private HashMap<String, ArrayList<String>> userToTicket;
     private final Random random = new Random();
 
     public TicketBook() {
@@ -15,11 +15,7 @@ public class TicketBook {
         this.userToTicket = new HashMap<>();
     }
 
-    public HashMap<String, TicketEntry> getTickets() {
-        return tickets;
-    }
-
-    public TicketEntry getTicketByTicketId(String ticketId) {
+    public TicketEntry getTicket(String ticketId) {
         return tickets.get(ticketId);
     }
 
@@ -43,9 +39,10 @@ public class TicketBook {
      * Genera un ID único si no se proporciona uno, o verifica la unicidad del proporcionado.
      *
      * @param ticketId   El ID único del nuevo ticket (puede ser null/vacío para generar uno).
-     * @param cashId     El ID del cajero asociado.
-     * @param customerId El ID del cliente asociado.
-     * @return 0 si es exitoso, -1 si el ticketId ya existe.
+     * @param cashId     El ID del cajero.
+     * @param customerId El ID del cliente.
+     * @return 0 ticket added successfully
+     *        -1 Ticket id already exists.
      */
     public int addNewTicket(String ticketId, String cashId, String customerId) {
         String finalTicketId;
@@ -64,12 +61,12 @@ public class TicketBook {
 
         this.tickets.put(finalTicketId, newEntry);
 
-        String[] existingTickets = this.userToTicket.getOrDefault(customerId, new String[0]);
+        userToTicket.computeIfAbsent(cashId, k -> new ArrayList<>());
+        userToTicket.computeIfAbsent(customerId, k -> new ArrayList<>());
 
-        String[] updatedTickets = Arrays.copyOf(existingTickets, existingTickets.length + 1);
-        updatedTickets[existingTickets.length] = finalTicketId;
 
-        this.userToTicket.put(customerId, updatedTickets);
+        this.userToTicket.get(cashId).add(finalTicketId);
+        this.userToTicket.get(customerId).add(finalTicketId);
 
         Ticket t = getTicketIfCashierMatches(finalTicketId, cashId);
         System.out.println(t.toString());
@@ -123,76 +120,57 @@ public class TicketBook {
     }
 
     /**
-     * Intenta añadir un producto a un ticket dado por su ID.
+     * Method to add a product/event to a ticket.
      *
      * @param ticketId         ID del ticket.
      * @param cashId           ID del cajero autorizado.
-     * @param product          product a añadir.
+     * @param product          Product a añadir.
      * @param amount           Cantidad (o número de personas).
      * @param personalizations Lista de strings de personalización.
-     * @return 0 si es exitoso. Códigos de error remapeados para la acción.
+     * @return 0 if product is added correctly
+     *        -1 ticket state is closed
+     *        -2 maximum number of items reached
+     *        -3 Cannot add the same Event (meeting/meal) twice to the same ticket
+     *        -4 Event requires minimum time to be planned
+     *        -5 Error in the number of people in event
+     *        -6 Maximum product customizations reached
+     *        -7 Ticket does not exist
+     *        -8 Product does not exist
      */
     public int addProductToTicket(String ticketId, String cashId, BaseProduct product, int amount, ArrayList<String> personalizations) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
-            return -1;
-        }
-
-        if (product == null) {
-            return -3;
-        }
-
-        int result = 0;
-
-        if (product instanceof CustomProduct customProduct) {
-            result = ticket.addProduct(customProduct, amount, personalizations);
-        } else {
-            result = ticket.addProduct(product, amount);
-        }
-
-        if (result == -3) {
-            return -4;
-        } else if (result == -1) {
-            return -5;
-        } else if (result == -4) {
-            return -6;
-        } else if (result == -5) {
             return -7;
-        } else if (result == -8) {
+        }
+        if (product == null) {
             return -8;
         }
-        return 0;
+
+        if (product instanceof CustomProduct customProduct) {
+            return ticket.addProduct(customProduct, amount, personalizations);
+        } else {
+            return ticket.addProduct(product, amount);
+        }
     }
 
     /**
-     * Intenta eliminar un producto de un ticket dado por su ID.
-     * Requiere que el ticket exista y que el cajero esté autorizado.
+     * Method to remove a product from a ticket
      *
-     * @param ticketId El ID del ticket.
-     * @param cashId   El ID del cajero.
-     * @param prodId   El ID del producto a eliminar.
-     * @return 0 si es exitoso.
-     * -1 si el ticket no existe o el cajero no coincide.
-     * -2 si el ID del producto no es un número válido.
-     * -3 si el producto con ese ID no se encuentra en el Catalog.
-     * -4 si el ticket está cerrado (delegate return from Ticket.deleteProduct, código -3).
-     * -5 si el producto no se encuentra en el ticket (delegate return from Ticket.deleteProduct, código -1).
+     * @param ticketId ticket id
+     * @param cashId   cash id
+     * @param prodId   product id to be removed
+     * @return 0 product removed successfully from ticket
+     *        -1 ticket state is closed
+     *        -2 product not found in ticket
+     *        -3 ticket not found
      */
     public int removeProduct(String ticketId, String cashId, int prodId) {
         Ticket ticket = getTicketIfCashierMatches(ticketId, cashId);
         if (ticket == null) {
-            return -1;
+            return -3;
         }
 
-        int result = ticket.deleteProduct(prodId);
-
-        if (result == -3) {
-            return -4;
-        } else if (result == -1) {
-            return -5;
-        }
-
-        return result;
+        return ticket.deleteProduct(prodId);
     }
 
     public List<TicketEntry> getTicketsFrom(String cashierId) {
@@ -211,12 +189,14 @@ public class TicketBook {
         if (userId == null)
             return 1;
 
-        String[] ticketIds = userToTicket.get(userId);
+        ArrayList<String> ticketIds = userToTicket.get(userId);
         userToTicket.remove(userId);
 
-        for (String ticketId : ticketIds) {
-            tickets.remove(ticketId);
-        }
+        if (ticketIds != null)
+            for (String ticketId : ticketIds) {
+                TicketEntry ticket = tickets.get(ticketId);
+                userToTicket.get(ticket.customerId).remove(ticketId);
+            }
 
         return 0;
     }

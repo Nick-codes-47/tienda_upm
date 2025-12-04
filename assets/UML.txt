@@ -1,18 +1,21 @@
 @startuml
 class App {
+- {static} instance : App
 + catalog : Catalog
 + tickets : TicketBook
-+ cashiers : UserRegister
-+ customers : UserRegister
-- modules : HashMap<handlerId : String, RequestHandler>
++ cashiers : CashierRegister
++ customers : CustomerRegister
+- handlers : RequestHandler[]
+- commands : HashMap<String, Consumer<Request>>
 - input : InputDriver
 - config : Config
-+ App()
-+ init()
-+ {static} main(args : String[])
-- handleRequest(request : Request) : Action
-- exec(Action)
-- echo(request : Request
+- App()
++ {static} getInstance() : App
++ init(inputFile : String)
++ {static} main(String[])
+- handleRequest(request : Request)
+- execute(Action, Request)
+- echo(Request)
 - help()
 - exit()
 }
@@ -31,31 +34,40 @@ package Requests {
 class Request {
 + handlerId : String
 + actionId : String
-+ args : ArrayList<String>
++ args : String[]
 + Request(line : String)
 - tokenize(line : String) : ArrayList<String>
 }
 
 Request <-- InputDriver : Creates
 
-class RequestHandler {
+abstract RequestHandler {
++ HANDLER_ID : String
 - actions : HashMap<actionId : String, Action>
-+ getAction(request : Request) : Action
++ RequestHandler(handlerId)
++ getAction(Request) : Action
 + getActions() : HashMap<actionId : String, Action>
 }
+
+RequestHandler <|-- CustomerHandler
+RequestHandler <|-- CashierHandler
+RequestHandler <|-- TicketHandler
+RequestHandler <|-- ProductHandler
 
 }
 ' Requests
 
 App *-- "0...n" RequestHandler
+
 Action <-- App : Executes
-Action <-- RequestHandler : Sends To App
+RequestHandler *-- "0..n" Action
 Request <-- RequestHandler: Receives
 
-abstract Action {
-+ Action(App)
-+ {abstract} exec(args : String[]) : int
-+ {abstract} help() : void
+note left of Action : Several classes implement Action,\nthese are the ones with the code that\nexecutes the orders of the user
+interface Action {
++ Action()
++ {abstract} exec(String[]) : int
++ {abstract} help()
 }
 
 package ProductContainer {
@@ -64,12 +76,12 @@ class Catalog {
 - products : HashMap<productId : int, BaseProduct>
 - MAX_PRODUCTS : int
 + Catalog()
-+ getProduct(id : int) : BaseProduct
++ getProduct(id) : BaseProduct
 + getProducts() : HashMap<productId : int, BaseProduct>
 + add(BaseProduct) : int
 + getNewId() : int
-+ deleteProduct(id : int) : BaseProduct
-+ existsId(id : int) : boolean
++ deleteProduct(id) : BaseProduct
++ existsId(id) : boolean
 }
 
 App *-- Catalog
@@ -80,18 +92,14 @@ abstract class BaseProduct {
 - id : int
 - name : String
 - price : double
-+ BaseProduct(id : int, name : String, price : Double)
-+ getId() : int
-+ getPrice() : Double
-+ getName() : String
-+ setName()
++ BaseProduct(id, name, price)
 }
 
-Catalog *-- "0...n" BaseProduct
+Catalog o-- "0...n" BaseProduct
 
 class Product {
 - category : Category
-+ Product(category : String)
++ Product(category)
 }
 
 BaseProduct <|-- Product
@@ -99,9 +107,7 @@ BaseProduct <|-- Product
 class CustomProduct {
 - maxPers : int
 - personalizations : ArrayList<String>
-+ CustomProduct(maxPers : int)
-+ setPersonalizations(personalizations : ArrayList<String>)
-+ getMaxPers() : int
++ CustomProduct(maxPers)
 }
 
 Product <|-- CustomProduct
@@ -112,10 +118,7 @@ class Event {
 - actualPeople : int
 - MAX_PEOPLE_ALLOWED : int
 - type : EventType
-+ Event(expireDate : LocalDate, maxPeople : int, eventType : EventType)
-+ getExpireDate() : LocalDate
-+ getType() : EventType
-+ setActualPeople(actualPeople : int)
++ Event(expireDate, maxPeople, eventType)
 }
 
 BaseProduct <|-- Event
@@ -146,49 +149,56 @@ ELECTRONICS(3)
 
 }
 
+EventType <-- Event
+Category <-- Product
+
 }
 
 }
 
 package UserContainer {
 
-class UserRegister {
-- users: HashMap<userId: String, User>
-+ UserRegister()
-+ getUser(userId : String) : User
+abstract UserRegister <T extends User> {
++ USER_TYPE : String
+- users: HashMap<userId: String, T>
++ UserRegister(userType)
++ getUser(userId) : User
 + add(User) : int
-+ removeUser(userId : String) : int
-+ listUsers() : int
++ removeUser(userId) : int
++ getUsers() : User[]
 }
 
-App *-- "2" UserRegister
+UserRegister <|-- CashierRegister
+UserRegister <|-- CustomerRegister
 
-class User {
+App *-- CustomerRegister
+App *-- CashierRegister
+
+abstract User {
++ TYPE : String
+- id : String
 - name : String
 - email : Email
-+ User(name : String, email : String)
-+ getName() : String
-+ getEmail() : Email
++ User(name, email)
 }
 
-UserRegister *-- "0...n" User
+UserRegister o-- "0...n" User
 
 class Email {
 - username : String
 - domain : String
-+ Email(username : String, domain : String)
-+ getUsername() : String
-+ getDomain() : String
++ Email(username, domain)
 }
 
 User *-- Email
 
 class Customer {
-+ Customer(cashierId : int)
-+ getCashId() : int
+- cashId : String
++ Customer(cashierId)
 }
 
 User <|-- Customer
+User <|-- Cashier
 
 }
 
@@ -198,12 +208,17 @@ class TicketBook {
 - tickets : Hashmap<ticketId : int, ticketEntry : TicketEntry>
 - userToTicket : Hashmap<userId : String, ticketIds : String[]>
 + TicketBook()
-+ getTicket(ticketId: int) : Ticket
-+ add(Ticket) : int
++ getTicket(ticketId) : Ticket
++ addNewTicket(ticketId, cashId, customerId) : int
 + getTickets() : Hashmap<ticketId : int, TicketEntry>
-+ getTicketsFromUser(userId : String) : Hashmap<ticketId : int, TicketEntry>
-+ getTicketsWithProd(prodId : int) : ArrayList<Ticket>
-+ deleteProdFromTickets(ticketsDelete : ArrayList<Ticket>, prodId : int) : void
++ getTicketsFromUser(userId) : Hashmap<ticketId : int, TicketEntry>
++ getOpenedTicketsWithProd(prodId) : ArrayList<Ticket>
++ listTicketsSortedByCashierId(cashId) : List<TicketEntry>
++ getTicketIfCashierMatches(tickedId : String, cashId : String) : Ticket
++ addProductToTicket(ticketId, cashId, BaseProduct, amount, personalizations : ArrayList<String>) : int
++ removeProduct(ticketId, cashId, prodId) : int
++ getTicketsFrom(userId) : List<TicketEntry>
++ removeTicketsFrom(userId) : int
 }
 
 App *-- TicketBook
@@ -216,21 +231,45 @@ struct TicketEntry {
 
 TicketBook *-- "0...n" TicketEntry
 
+enum TicketState {
+    VACIO,
+    ACTIVO,
+    CERRADO
+}
+
 class Ticket {
-- products: HashMap<productId : int, amount: int>
+- {static} MAX_PRODUCTS_PER_TICKET : int
+- ticketState : TicketState
+- entries: HashMap<productId : int, ProductEntry>
 - categories : HashMap<Category, amount: int>
 - creationDate : LocalDateTime
-- id : int
 - closingDate : LocalDateTime
+- ticketId : String
+- printedOutput : String
 + Ticket()
-+ add(Product, amount: int) : int
-+ removeProduct(prodId: int) : int
++ Ticket(ticketId)
++ addProduct(BaseProduct, amount) : int
++ addProduct(CustomProduct, amount, edits ArrayList<String>) : int
++ deleteProduct(prodId) : int
++ updateProduct(prodId) : int
 + printTicket() : void
-+ hasProduct(prodId : int) : boolean
++ 
++ hasProduct(prodId) : boolean
 + isClosed() : boolean
 }
 
+TicketState <-- Ticket
 TicketEntry *-- Ticket
+
+struct ProductEntry {
++ product : BaseProduct
++ amount : int;
++ unitPriceSnapshot : double;
++ categorySnapshot : Category;
+}
+
+Ticket o-- ProductEntry
+ProductEntry o-- BaseProduct
 
 }
 
