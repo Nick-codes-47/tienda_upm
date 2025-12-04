@@ -14,20 +14,6 @@ public class Event extends BaseProduct {
             throw new InvalidProductException("ERROR: Events must have between 1 and 100 people");
         if (expireDate == null || expireDate.isBefore(LocalDateTime.now()))
             throw new InvalidProductException("ERROR: ExpireDate can't be null or before now");
-//
-//        if (type == EventType.FOOD) {
-//            LocalDateTime minFoodPlanning = LocalDateTime.now().plusDays(3);
-//            if (expireDate.isBefore(minFoodPlanning)) {
-//                long hoursRemainingFOOD = ChronoUnit.HOURS.between(LocalDateTime.now(), expireDate);
-//                throw new InvalidProductException("ERROR: Food Events require a minimum planning of 3 days (72 hours). Current planning: " + hoursRemainingFOOD + " hours.");
-//            }
-//        } else if (type == EventType.MEETING) {
-//            LocalDateTime minMeetingPlanning = LocalDateTime.now().plusHours(12);
-//            if (expireDate.isBefore(minMeetingPlanning)) {
-//                long hoursRemainingMEETING = ChronoUnit.HOURS.between(LocalDateTime.now(), expireDate);
-//                throw new InvalidProductException("ERROR: Meeting Events require a minimum planning of 12 hours. Current planning: " + hoursRemainingMEETING + " hours.");
-//            }
-//        }
         this.expireDate = expireDate;
         this.maxPeople = maxPeople;
         this.type = type;
@@ -85,7 +71,7 @@ public class Event extends BaseProduct {
                 .append(", max people allowed:")
                 .append(this.maxPeople);
         if (actualPeople != -1)
-            sb.append(", actual People in Event:").append(actualPeople);
+            sb.append(", actual People in Event:").append(actualPeople).append("}");
 
         return sb.toString();
     }
