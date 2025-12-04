@@ -205,13 +205,25 @@ public class Ticket {
             BaseProduct baseProduct = productEntry.product;
             field.set(baseProduct, newValueConverted); // Actualiza la referencia del producto
 
-            if (field.getName().toLowerCase().equals("price")) {
+            if (field.getName().equalsIgnoreCase("price")) {
 
                 ProductEntry updatedEntry = new ProductEntry(
                         productEntry.product,
                         productEntry.amount,
                         baseProduct.getPrice(),
                         productEntry.categorySnapshot
+                );
+                this.entries.put(product.getId(), updatedEntry);
+            }
+
+            if (field.getName().equalsIgnoreCase("category")) {
+                Product p = (Product) baseProduct;
+
+                ProductEntry updatedEntry = new ProductEntry(
+                        productEntry.product,
+                        productEntry.amount,
+                        productEntry.unitPriceSnapshot,
+                        p.getCategory()
                 );
                 this.entries.put(product.getId(), updatedEntry);
             }
