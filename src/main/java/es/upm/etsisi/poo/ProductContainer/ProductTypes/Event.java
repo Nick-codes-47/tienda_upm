@@ -3,7 +3,6 @@ package es.upm.etsisi.poo.ProductContainer.ProductTypes;
 import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
-import java.time.temporal.ChronoUnit;
 
 public class Event extends BaseProduct {
 
