@@ -279,7 +279,7 @@ public class Ticket {
         if (category != null) {
             int totalCategoryUnits = categories.getOrDefault(category, 0);
 
-            if (totalCategoryUnits >= 3) {
+            if (totalCategoryUnits >= 2) {
                 double unitPrice = entry.unitPriceSnapshot;
                 double categoryDiscountRate = category.getDiscount() / 100.0;
                 return unitPrice * categoryDiscountRate;
