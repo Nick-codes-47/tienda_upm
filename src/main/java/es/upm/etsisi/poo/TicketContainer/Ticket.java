@@ -343,7 +343,7 @@ public class Ticket {
                         Product p = (Product) product;
                         productLine = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
                                 p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
-                    }
+                    } // TODO show the product's price and category when ticket is open. Snapshot only when it's closed
 
                     for (int i = 0; i < quantity; i++) {
                         sb.append(productLine).append(discountSuffix).append("\n");
