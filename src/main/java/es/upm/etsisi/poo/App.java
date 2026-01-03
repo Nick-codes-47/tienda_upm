@@ -1,50 +1,41 @@
 package es.upm.etsisi.poo;
 
-import es.upm.etsisi.poo.Actions.Action;
-import es.upm.etsisi.poo.ProductContainer.Catalog;
-import es.upm.etsisi.poo.ProductContainer.ProductTypes.ProductEnums.Category;
-import es.upm.etsisi.poo.Requests.Handlers.CashierHandler;
-import es.upm.etsisi.poo.Requests.Handlers.CustomerHandler;
-import es.upm.etsisi.poo.Requests.Handlers.ProductHandler;
-import es.upm.etsisi.poo.Requests.Handlers.TicketHandler;
-import es.upm.etsisi.poo.Requests.Request;
-import es.upm.etsisi.poo.Requests.RequestHandler;
-import es.upm.etsisi.poo.TicketContainer.TicketBook;
-import es.upm.etsisi.poo.UserContainer.*;
+import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Containers.Product.Catalog;
+import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.Category;
+import es.upm.etsisi.poo.Containers.User.CashierRegister;
+import es.upm.etsisi.poo.Containers.User.CustomerRegister;
+import es.upm.etsisi.poo.Handlers.CashierHandler;
+import es.upm.etsisi.poo.Handlers.CustomerHandler;
+import es.upm.etsisi.poo.Handlers.ProductHandler;
+import es.upm.etsisi.poo.Handlers.TicketHandler;
+import es.upm.etsisi.poo.Handlers.Request;
+import es.upm.etsisi.poo.Handlers.RequestHandler;
+import es.upm.etsisi.poo.Services.TicketService;
 
 import java.util.HashMap;
 import java.util.function.Consumer;
 
-public class App
-{
-    private static App instance = null;
+public class App {
 
-    public Catalog catalog = new Catalog();
-    public TicketBook tickets = new TicketBook();
-    public CashierRegister cashiers = new CashierRegister();
-    public CustomerRegister customers = new CustomerRegister();
+    public final Catalog catalog = new Catalog();
+    public final CashierRegister cashiers = new CashierRegister();
+    public final CustomerRegister customers = new CustomerRegister();
 
-    public static App getInstance() {
-        if (instance == null)
-            instance = new App();
+    public final TicketService ticketService = new TicketService(cashiers);
 
-        return instance;
-    }
+    public App() {}
 
-    private App() {}
-
-    public void init(String inputFile)
-    {
-        initCommandsMap();
-        initModulesMap();
+    public void init(String inputFile) {
+        initBuiltinCommandsMap();
+        initHandlersMap();
 
         initInput(inputFile);
         printWelcome();
 
         while (true) {
             Request request = input.next();
-            if (!request.handlerId.isEmpty())
-            {
+            if (!request.handlerId.isEmpty()) {
                 handleRequest(request);
                 System.out.println();
             }
@@ -56,62 +47,54 @@ public class App
      *      args[1] - input file path
      */
     public static void main(String[] args) {
-        try
-        {
-            App app = App.getInstance();
-            if (args.length > 0)
-            {
+        try {
+            App app = new App();
+
+            if (args.length > 0) {
                 app.init(args[0]);
             }
-            else
-            {
+            else {
                 app.init(null);
             }
         }
-        catch (RuntimeException exception)
-        {
+        catch (RuntimeException exception) {
             System.err.printf("ERROR::main> " + exception);
         }
     }
 
-    private void printWelcome()
-    {
+    private void printWelcome() {
         System.out.println("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.");
     }
 
-    private void initInput(String inputFile)
-    {
-        if (inputFile != null)
-        {
+    private void initInput(String inputFile) {
+        if (inputFile != null) {
             input = new InputDriver(inputFile);
         }
-        else
-        {
+        else {
             input = new InputDriver();
         }
     }
 
-    private void handleRequest(Request request)
-    {
+    private void handleRequest(Request request) {
         if (handlerIds.containsKey(request.handlerId)) {
-            execute(handlers[handlerIds.get(request.handlerId)].getAction(request.actionId), request);
+            execute(handlers[handlerIds.get(request.handlerId)].getAction(request.commandId), request);
         }
-        else if (commands.containsKey(request.handlerId)) {
-            commands.get(request.handlerId).accept(request);
+        else if (builtinCommands.containsKey(request.handlerId)) {
+            builtinCommands.get(request.handlerId).accept(request);
         }
         else {
             System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
     }
 
-    private void execute(Action action, Request request) {
-         if (action == null)
+    private void execute(Command command, Request request) {
+         if (command == null)
             return;
         
-        int retVal = action.execute(request.args);
+        int retVal = command.execute(request.args);
         if (retVal == 0)
-            System.out.printf("%s %s: ok\n", request.handlerId, request.actionId);
+            System.out.printf("%s %s: ok\n", request.handlerId, request.commandId);
     }
 
     /**
@@ -124,9 +107,9 @@ public class App
         // Show the commands
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
-            for (Action action : requestHandler.getActions().values()) {
-                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, action.help()));
-            }
+//            for (Command command : requestHandler.getCommand().values()) {
+//                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, command.help()));
+//            } // TODO
         }
 
         // Show the categories
@@ -151,20 +134,15 @@ public class App
 
     private void echo(Request request)
     {
-        System.out.println(request.actionId);
+        System.out.println(request.commandId);
     }
 
-    // This is done with separate structures instaead of a single Hasmap<String, RequestHandler>
-    // in order to maintain the order of RequetsHandlers so functions output like help respect the order in the
-    // handlers array
-    private RequestHandler[] handlers;
-    private final HashMap<String, Integer> handlerIds = new HashMap<>();
-    private void initModulesMap() {
+    private void initHandlersMap() {
         handlers = new RequestHandler[] {
-                new CustomerHandler(),
-                new CashierHandler(),
-                new TicketHandler(),
-                new ProductHandler()
+                new CustomerHandler(this),
+                new CashierHandler(this),
+                new TicketHandler(this),
+                new ProductHandler(this)
         };
 
         for (int i = 0; i < handlers.length; i++) {
@@ -172,12 +150,19 @@ public class App
         }
     }
 
-    private final HashMap<String, Consumer<Request>> commands = new HashMap<>();
-    private void initCommandsMap() {
-        commands.put("help", (request) -> help());
-        commands.put("echo", this::echo);
-        commands.put("exit", (request) -> exit());
+    private void initBuiltinCommandsMap() {
+        builtinCommands.put("help", (request) -> help());
+        builtinCommands.put("echo", this::echo);
+        builtinCommands.put("exit", (request) -> exit());
     }
+
+    // This is done with separate structures instead of a single Hashmap<String, RequestHandler>
+    // in order to maintain the order of RequestsHandlers so functions output like help respect the order in the
+    // handlers array
+    private RequestHandler[] handlers;
+    private final HashMap<String, Integer> handlerIds = new HashMap<>();
+
+    private final HashMap<String, Consumer<Request>> builtinCommands = new HashMap<>();
 
     private InputDriver input;
 } // class App
