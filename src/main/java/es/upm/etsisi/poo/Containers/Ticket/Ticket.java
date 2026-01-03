@@ -207,13 +207,25 @@ public class Ticket {
             BaseProduct baseProduct = productEntry.product;
             field.set(baseProduct, newValueConverted); // Actualiza la referencia del producto
 
-            if (field.getName().toLowerCase().equals("price")) {
+            if (field.getName().equalsIgnoreCase("price")) {
 
                 ProductEntry updatedEntry = new ProductEntry(
                         productEntry.product,
                         productEntry.amount,
                         baseProduct.getPrice(),
                         productEntry.categorySnapshot
+                );
+                this.entries.put(product.getId(), updatedEntry);
+            }
+
+            if (field.getName().equalsIgnoreCase("category")) {
+                Product p = (Product) baseProduct;
+
+                ProductEntry updatedEntry = new ProductEntry(
+                        productEntry.product,
+                        productEntry.amount,
+                        productEntry.unitPriceSnapshot,
+                        p.getCategory()
                 );
                 this.entries.put(product.getId(), updatedEntry);
             }
@@ -270,7 +282,7 @@ public class Ticket {
         if (category != null) {
             int totalCategoryUnits = categories.getOrDefault(category, 0);
 
-            if (totalCategoryUnits >= 3) {
+            if (totalCategoryUnits >= 2) {
                 double unitPrice = entry.unitPriceSnapshot;
                 double categoryDiscountRate = category.getDiscount() / 100.0;
                 return unitPrice * categoryDiscountRate;
@@ -334,7 +346,7 @@ public class Ticket {
                         Product p = (Product) product;
                         productLine = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
                                 p.getId(), p.getName(), entry.categorySnapshot.name(), entry.unitPriceSnapshot);
-                    }
+                    } // TODO show the product's price and category when ticket is open. Snapshot only when it's closed
 
                     for (int i = 0; i < quantity; i++) {
                         sb.append(productLine).append(discountSuffix).append("\n");
