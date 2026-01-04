@@ -1,12 +1,10 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.Containers.User.Cashier;
 import es.upm.etsisi.poo.Containers.User.Email;
 import es.upm.etsisi.poo.Containers.User.User;
 import es.upm.etsisi.poo.Containers.User.UserRegister;
 
 public abstract class AddUser<T extends User> extends UserCommand<T> {
-    public static final String ID = "add";
 
     public AddUser(UserRegister<T> userRegister) {
         super(userRegister);

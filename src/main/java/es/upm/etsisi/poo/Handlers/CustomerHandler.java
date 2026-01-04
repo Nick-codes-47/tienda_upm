@@ -2,7 +2,6 @@ package es.upm.etsisi.poo.Handlers;
 
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.Commands.User.AddCustomer;
-import es.upm.etsisi.poo.Commands.User.AddUser;
 import es.upm.etsisi.poo.Commands.User.ListUsers;
 import es.upm.etsisi.poo.Commands.User.RemoveUser;
 import es.upm.etsisi.poo.Containers.User.Customer;
@@ -12,8 +11,8 @@ public class CustomerHandler extends RequestHandler {
 
     public CustomerHandler(App app) {
         super(handler_id);
-        commands.put(AddUser.ID, () -> new AddCustomer(app.customers, app.cashiers));
-        commands.put(RemoveUser.ID, () -> new RemoveUser<Customer>(app.customers));
-        commands.put(ListUsers.ID, () -> new ListUsers<Customer>(app.customers));
+        commands.put(AddCustomer.ID, () -> new AddCustomer(app.customers, app.cashiers));
+        commands.put(RemoveUser.ID, () -> new RemoveUser<>(app.customers));
+        commands.put(ListUsers.ID, () -> new ListUsers<>(app.customers));
     }
 }

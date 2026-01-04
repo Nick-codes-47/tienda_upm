@@ -2,7 +2,9 @@ package es.upm.etsisi.poo.Handlers;
 
 import es.upm.etsisi.poo.Commands.Command;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.function.Supplier;
 
 public abstract class RequestHandler {
@@ -13,17 +15,24 @@ public abstract class RequestHandler {
         commands = new HashMap<>();
     }
 
-    public HashMap<String, Supplier<Command>> getCommand() {
+    public List<Command> getCommands() {
+        List<Command> commands = new ArrayList<>();
+
+        for (Supplier<Command> command : this.commands.values()) {
+            commands.add(command.get());
+        }
+
         return commands;
     }
 
-    public Command getAction(String commandID) {
+    public Command getCommand(String commandID) {
         // We look if we have that action in the map
-        Command command = this.commands.get(commandID).get();
+        Supplier<Command> command = this.commands.get(commandID);
         if (command == null) {
             System.err.println("ERROR: No such action: " + commandID);
+            return null;
         }
-        return command;
+        return command.get();
     }
 
     protected HashMap<String, Supplier<Command>> commands;

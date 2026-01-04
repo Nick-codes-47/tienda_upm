@@ -78,7 +78,7 @@ public class App {
 
     private void handleRequest(Request request) {
         if (handlerIds.containsKey(request.handlerId)) {
-            execute(handlers[handlerIds.get(request.handlerId)].getAction(request.commandId), request);
+            execute(handlers[handlerIds.get(request.handlerId)].getCommand(request.commandId), request);
         }
         else if (builtinCommands.containsKey(request.handlerId)) {
             builtinCommands.get(request.handlerId).accept(request);
@@ -107,9 +107,9 @@ public class App {
         // Show the commands
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
-//            for (Command command : requestHandler.getCommand().values()) {
-//                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, command.help()));
-//            } // TODO
+            for (Command command : requestHandler.getCommands()) {
+                output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, command.help()));
+            }
         }
 
         // Show the categories
