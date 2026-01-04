@@ -1,6 +1,6 @@
-package es.upm.etsisi.poo.Containers.User;
+package es.upm.etsisi.poo.Models.User.Users;
 
-import es.upm.etsisi.poo.Containers.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
 
 import java.util.HashMap;
 
@@ -16,7 +16,7 @@ public class Cashier extends User {
         return TYPE;
     }
 
-    public int addTicket(String ticketID, User customer) {
+    public int addTicket(String ticketID) {
         if (tickets.containsKey(ticketID)) {
             return -1; // TODO: exception
         }

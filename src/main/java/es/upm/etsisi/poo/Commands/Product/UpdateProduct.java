@@ -1,14 +1,13 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.Category;
-import es.upm.etsisi.poo.Containers.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
 
 import java.lang.reflect.Field;
-import java.util.ArrayList;
 import java.util.List;
 
 public class UpdateProduct implements Command {

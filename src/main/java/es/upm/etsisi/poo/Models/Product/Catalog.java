@@ -1,6 +1,6 @@
-package es.upm.etsisi.poo.Containers.Product;
+package es.upm.etsisi.poo.Models.Product;
 
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
 import java.util.HashMap;
 import java.util.Set;

@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums;
+package es.upm.etsisi.poo.Models.Product.Products.ProductEnums;
 
 public enum Category {
     MERCH(0), STATIONERY(5), CLOTHES(7), BOOK(10), ELECTRONICS(3);

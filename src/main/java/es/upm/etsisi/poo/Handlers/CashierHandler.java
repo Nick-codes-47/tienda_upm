@@ -5,7 +5,6 @@ import es.upm.etsisi.poo.Commands.Ticket.ListTicketsFromCashier;
 import es.upm.etsisi.poo.Commands.User.AddCashier;
 import es.upm.etsisi.poo.Commands.User.ListUsers;
 import es.upm.etsisi.poo.Commands.User.RemoveCashier;
-import es.upm.etsisi.poo.Containers.User.Cashier;
 
 public class CashierHandler extends RequestHandler {
     public static String handler_id = "cash";

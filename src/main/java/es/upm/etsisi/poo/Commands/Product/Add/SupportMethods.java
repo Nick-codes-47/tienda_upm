@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
-public interface SupportMethods {
+public class SupportMethods {
     /**
      * Parses an optional ID from the first argument.
      * If the first argument is an integer, it is treated as the product ID.
@@ -19,12 +19,14 @@ public interface SupportMethods {
         int id = -1;
 
         // Try to parse the first argument as an ID
-        try {
-            id = Integer.parseInt(args[0]);
-            idProvided = true;
-        } catch (NumberFormatException e) {
-            idProvided = false;
-        }
+        if (args.length != 0)
+            try {
+                id = Integer.parseInt(args[0]);
+                idProvided = true;
+            } catch (NumberFormatException e) {
+                idProvided = false;
+            }
+        else idProvided = false;
 
         // If an ID is provided, shift the parameters by one
         int offset = idProvided ? 1 : 0;
@@ -38,7 +40,7 @@ public interface SupportMethods {
     /**
      * A small container class storing the result of parsing an optional ID.
      */
-    class ParsedIdResult {
+    static class ParsedIdResult {
         public final int id;
         public final int offset;
 

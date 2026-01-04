@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.Product.ProductTypes;
+package es.upm.etsisi.poo.Models.Product.Products;
 
 import java.util.ArrayList;
 

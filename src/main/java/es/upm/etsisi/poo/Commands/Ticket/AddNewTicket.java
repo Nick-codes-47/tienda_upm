@@ -1,10 +1,10 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.User.Cashier;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
-import es.upm.etsisi.poo.Containers.User.Customer;
-import es.upm.etsisi.poo.Containers.User.CustomerRegister;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Users.Customer;
+import es.upm.etsisi.poo.Models.User.CustomerRegister;
 
 public class AddNewTicket implements Command {
     public static final String ID = "new";
@@ -56,7 +56,7 @@ public class AddNewTicket implements Command {
             return -1;
         }
 
-        int result = cashier.addTicket(ticketId, customer);
+        int result = cashier.addTicket(ticketId);
         if (result == -1) {
             System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
         }

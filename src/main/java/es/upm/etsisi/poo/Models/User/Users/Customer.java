@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.User;
+package es.upm.etsisi.poo.Models.User.Users;
 
 import java.util.ArrayList;
 
@@ -30,7 +30,7 @@ public class Customer extends User {
     @Override // TODO explain
     protected String addVarToPrint() {
         return ", cash='" + cashierId + "'";
-    };
+    }
 
     private final String cashierId;
 

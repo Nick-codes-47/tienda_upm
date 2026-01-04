@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.Ticket;
+package es.upm.etsisi.poo.Models.Ticket;
 
 public enum TicketState {
     VACIO,

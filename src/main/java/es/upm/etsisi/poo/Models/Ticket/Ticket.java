@@ -1,11 +1,11 @@
-package es.upm.etsisi.poo.Containers.Ticket;
+package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.CustomProduct;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.Event;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.Product;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.Category;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.CustomProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Event;
+import es.upm.etsisi.poo.Models.Product.Products.Product;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.lang.reflect.Field;
 import java.time.LocalDateTime;
@@ -151,7 +151,7 @@ public class Ticket {
      */
     public int addProduct(BaseProduct product, int quantity, ArrayList<String> edits) {
         if (edits == null) {
-            addProduct(product, quantity);
+            return addProduct(product, quantity);
         }
         try {
             CustomProduct custom = (CustomProduct) product;

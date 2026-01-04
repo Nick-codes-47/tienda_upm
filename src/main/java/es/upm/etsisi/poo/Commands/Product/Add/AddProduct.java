@@ -1,10 +1,10 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.CustomProduct;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.Product;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.CustomProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Product;
 
 /**
  * Class to add a Product or CustomProduct to the catalog

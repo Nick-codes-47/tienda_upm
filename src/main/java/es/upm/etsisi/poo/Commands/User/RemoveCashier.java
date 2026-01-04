@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.Containers.User.Cashier;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
 
 public class RemoveCashier extends RemoveUser<Cashier> {
     public static final String ID = "remove";

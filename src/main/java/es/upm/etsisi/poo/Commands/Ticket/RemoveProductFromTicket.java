@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Ticket.Ticket;
-import es.upm.etsisi.poo.Containers.User.Cashier;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
 
 public class RemoveProductFromTicket implements Command {
     public static final String ID = "remove";

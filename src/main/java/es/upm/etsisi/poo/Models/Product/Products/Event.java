@@ -1,7 +1,7 @@
-package es.upm.etsisi.poo.Containers.Product.ProductTypes;
+package es.upm.etsisi.poo.Models.Product.Products;
 
 
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 

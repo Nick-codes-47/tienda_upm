@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
 import java.util.*;
 

@@ -1,6 +1,6 @@
-package es.upm.etsisi.poo.Containers.Product.ProductTypes;
+package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 
 /**
  * This class is used to create objects with the characteristics we need for our products

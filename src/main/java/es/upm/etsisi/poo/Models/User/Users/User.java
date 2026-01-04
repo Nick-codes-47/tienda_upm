@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.User;
+package es.upm.etsisi.poo.Models.User.Users;
 
 public abstract class User {
     public static final String TYPE = "User"; // TODO: should be an enum

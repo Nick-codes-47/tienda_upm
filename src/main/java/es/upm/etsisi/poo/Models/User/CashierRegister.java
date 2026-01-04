@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo.Containers.User;
+package es.upm.etsisi.poo.Models.User;
+
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
 
 public class CashierRegister extends UserRegister<Cashier> {
 

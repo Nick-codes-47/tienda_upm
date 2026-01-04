@@ -1,10 +1,10 @@
 package es.upm.etsisi.poo;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums.Category;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
-import es.upm.etsisi.poo.Containers.User.CustomerRegister;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.CustomerRegister;
 import es.upm.etsisi.poo.Handlers.CashierHandler;
 import es.upm.etsisi.poo.Handlers.CustomerHandler;
 import es.upm.etsisi.poo.Handlers.ProductHandler;

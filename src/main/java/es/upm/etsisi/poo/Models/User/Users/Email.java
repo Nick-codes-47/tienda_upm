@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.User;
+package es.upm.etsisi.poo.Models.User.Users;
 
 public class Email {
 

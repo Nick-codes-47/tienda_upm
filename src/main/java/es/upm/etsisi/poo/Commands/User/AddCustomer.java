@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.Containers.User.*;
+import es.upm.etsisi.poo.Models.User.*;
+import es.upm.etsisi.poo.Models.User.Users.Customer;
+import es.upm.etsisi.poo.Models.User.Users.Email;
 
 import java.util.Objects;
 

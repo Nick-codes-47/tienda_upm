@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.Containers.User.User;
-import es.upm.etsisi.poo.Containers.User.UserRegister;
+import es.upm.etsisi.poo.Models.User.Users.User;
+import es.upm.etsisi.poo.Models.User.UserRegister;
 
 public class RemoveUser<T extends User> extends UserCommand<T> {
 

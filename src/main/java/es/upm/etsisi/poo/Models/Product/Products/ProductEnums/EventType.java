@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Containers.Product.ProductTypes.ProductEnums;
+package es.upm.etsisi.poo.Models.Product.Products.ProductEnums;
 
 public enum EventType {
     FOOD(72), MEETING(12);

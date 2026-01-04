@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Services;
 
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
-import es.upm.etsisi.poo.Containers.Ticket.Ticket;
-import es.upm.etsisi.poo.Containers.User.Cashier;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -1,11 +1,11 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Containers.Product.Catalog;
-import es.upm.etsisi.poo.Containers.Product.ProductTypes.BaseProduct;
-import es.upm.etsisi.poo.Containers.Ticket.Ticket;
-import es.upm.etsisi.poo.Containers.User.Cashier;
-import es.upm.etsisi.poo.Containers.User.CashierRegister;
+import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.CashierRegister;
 
 import java.util.ArrayList;
 
@@ -57,14 +57,15 @@ public class AddProductToTicket implements Command {
         int numPersonalizations = args.length - 4;
         ArrayList<String> personalizations = null;
 
-        if (numPersonalizations > 0)
+        if (numPersonalizations > 0) {
             personalizations = new ArrayList<>(numPersonalizations);
 
-        for (int i = 4; i < args.length; i++) {
-            personalizations.add(args[i].replace("--p", ""));
+            for (int i = 4; i < args.length; i++) {
+                personalizations.add(args[i].replace("--p", ""));
+            }
         }
 
-        Cashier cashier = (Cashier) cashiers.getUser(cashId); // TODO remove cast
+        Cashier cashier = cashiers.getUser(cashId);
         if (cashier == null) {
             return -1; // TODO exception
         }

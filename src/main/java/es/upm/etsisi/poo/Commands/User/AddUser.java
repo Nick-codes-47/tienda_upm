@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.Containers.User.Email;
-import es.upm.etsisi.poo.Containers.User.User;
-import es.upm.etsisi.poo.Containers.User.UserRegister;
+import es.upm.etsisi.poo.Models.User.Users.Email;
+import es.upm.etsisi.poo.Models.User.Users.User;
+import es.upm.etsisi.poo.Models.User.UserRegister;
 
 public abstract class AddUser<T extends User> extends UserCommand<T> {
 

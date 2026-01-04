@@ -4,7 +4,6 @@ import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.Commands.User.AddCustomer;
 import es.upm.etsisi.poo.Commands.User.ListUsers;
 import es.upm.etsisi.poo.Commands.User.RemoveUser;
-import es.upm.etsisi.poo.Containers.User.Customer;
 
 public class CustomerHandler extends RequestHandler {
     public static String handler_id = "client";
