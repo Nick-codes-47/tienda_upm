@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Services;
 
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
@@ -32,7 +32,7 @@ public class TicketService {
         return tickets;
     }
 
-    public List<Ticket> getTicketsWith(BaseProduct product) {
+    public List<Ticket> getTicketsWith(GoodsProduct product) {
         List<Ticket> tickets = new ArrayList<>();
 
         for (Cashier cashier : cashiers) {

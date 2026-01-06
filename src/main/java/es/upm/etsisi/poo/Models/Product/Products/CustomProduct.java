@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
+import es.upm.etsisi.poo.Exceptions.InvalidProductException;
+
 import java.util.ArrayList;
 
 public class CustomProduct extends Product {

@@ -1,11 +1,12 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
+import es.upm.etsisi.poo.Exceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
  */
-public class Product extends BaseProduct {
+public class Product extends GoodsProduct {
 
     /**
      * This constructor is done to introduce all the attributes the user wants for the product

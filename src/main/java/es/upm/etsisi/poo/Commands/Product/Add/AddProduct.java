@@ -2,8 +2,9 @@ package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Product.Products.CustomProduct;
+import es.upm.etsisi.poo.Exceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Product.Products.Product;
 
 /**
@@ -44,7 +45,7 @@ public class AddProduct implements Command {
         }
 
         try {
-            BaseProduct product;
+            GoodsProduct product;
 
             if (realArgs == 3) {
                 // Normal product
@@ -72,7 +73,7 @@ public class AddProduct implements Command {
             System.err.println("ERROR: price and/or maxPers are not valid. " +
                     "(Please, Do not write just a number as a product's name)");
             return 1;
-        } catch (BaseProduct.InvalidProductException e) {
+        } catch (InvalidProductException e) {
             System.err.println(e.getMessage());
             return 2;
         }

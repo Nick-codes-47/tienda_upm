@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 
 public class SupportMethods {
     /**
@@ -58,7 +58,7 @@ public class SupportMethods {
      *         -2 if the catalog is full
      *         -3 if the product's id already exists
      */
-    static int addToCatalog(BaseProduct product, Catalog catalog) {
+    static int addToCatalog(GoodsProduct product, Catalog catalog) {
         int add = catalog.add(product);
         if (add == 0){
             // If the product was added we show it

@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Models.Product;
 
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 
 import java.util.HashMap;
 import java.util.Set;
@@ -21,11 +21,11 @@ public class Catalog {
      * @return null if the id is not correct.
      * the product with the id if it's correct
      */
-    public BaseProduct getProduct(int id) {
+    public GoodsProduct getProduct(int id) {
         return products.get(id);
     }
 
-    public HashMap<Integer, BaseProduct> getProducts() { return products; }
+    public HashMap<Integer, GoodsProduct> getProducts() { return products; }
 
     /**
      * Method to add a product to the catalog so it is available to buy it
@@ -36,7 +36,7 @@ public class Catalog {
      *         -2 if the product passed was a null;
      *         -1 if we already reached the maxProducts;
      */
-    public int add(BaseProduct product) {
+    public int add(GoodsProduct product) {
         // Discard null objects
         if (product == null) {
             return -2;
@@ -74,8 +74,8 @@ public class Catalog {
      * @param id to search the product
      * @return either the product that was removed or null if the product doesn't exist in the catalog.
      */
-    public BaseProduct deleteProduct(int id) {
-        BaseProduct product = this.getProduct(id);
+    public GoodsProduct deleteProduct(int id) {
+        GoodsProduct product = this.getProduct(id);
         if (product != null) {
             // If the product exist in the catalog we delete it
             products.remove(id);
@@ -87,6 +87,6 @@ public class Catalog {
         return this.getProduct(id) != null;
     }
 
-    private final HashMap<Integer, BaseProduct> products;
+    private final HashMap<Integer, GoodsProduct> products;
     private final int MAX_PRODUCTS = 200;
 }

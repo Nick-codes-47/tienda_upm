@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
@@ -38,7 +38,7 @@ public class UpdateProduct implements Command {
         // if the number of arguments are correct we try to update
         try {
             int id = Integer.parseInt(args[0]);
-            BaseProduct product = catalog.getProduct(id);
+            GoodsProduct product = catalog.getProduct(id);
             if (product == null) {
                 // Product does not exist
                 System.err.println("ERROR: Product with id " + id + " does not exist!");

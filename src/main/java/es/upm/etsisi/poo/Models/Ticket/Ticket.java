@@ -1,9 +1,7 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.CustomProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Event;
-import es.upm.etsisi.poo.Models.Product.Products.Product;
+import es.upm.etsisi.poo.Exceptions.InvalidProductException;
+import es.upm.etsisi.poo.Models.Product.Products.*;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
@@ -72,7 +70,7 @@ public class Ticket {
      * -4 Event requires minimum time to be planned
      * -5 Error in the number of people in event
      */
-    private int addProduct(BaseProduct baseProduct, int quantity) {
+    private int addProduct(GoodsProduct baseProduct, int quantity) {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
@@ -112,7 +110,7 @@ public class Ticket {
             }
             try {
                 event.setActualPeople(quantity);
-            } catch (BaseProduct.InvalidProductException e) {
+            } catch (InvalidProductException e) {
                 return -5;
             }
         }
@@ -149,14 +147,14 @@ public class Ticket {
      * @param edits customizations for the product
      * @return -6 Maximum product customizations reached
      */
-    public int addProduct(BaseProduct product, int quantity, ArrayList<String> edits) {
+    public int addProduct(GoodsProduct product, int quantity, ArrayList<String> edits) {
         if (edits == null) {
             return addProduct(product, quantity);
         }
         try {
             CustomProduct custom = (CustomProduct) product;
             custom.setPersonalizations(edits);
-        } catch (BaseProduct.InvalidProductException e) {
+        } catch (InvalidProductException e) {
             return -6;
         }
         return addProduct(product, quantity);
@@ -195,7 +193,7 @@ public class Ticket {
      * Permite modificar un atributo del objeto BaseProduct referenciado y,
      * crucialmente, actualiza el snapshot del precio si el campo modificado es 'price'.
      */
-    public int updateProduct(BaseProduct product, Field field, Object newValueConverted)  throws IllegalAccessException{
+    public int updateProduct(GoodsProduct product, Field field, Object newValueConverted)  throws IllegalAccessException{
 
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
@@ -204,7 +202,7 @@ public class Ticket {
         ProductEntry productEntry = this.entries.get(product.getId());
 
         if (productEntry != null) {
-            BaseProduct baseProduct = productEntry.product;
+            GoodsProduct baseProduct = productEntry.product;
             field.set(baseProduct, newValueConverted); // Actualiza la referencia del producto
 
             if (field.getName().equalsIgnoreCase("price")) {
@@ -326,7 +324,7 @@ public class Ticket {
             sb.append("No products added yet.\n");
         } else {
             for (ProductEntry entry : this.entries.values()) {
-                BaseProduct product = entry.product;
+                GoodsProduct product = entry.product;
                 int quantity = entry.amount;
 
                 if (product instanceof Event event) {
@@ -367,13 +365,13 @@ public class Ticket {
      * CLASE ANIDADA: Mantiene solo los Snapshots de Precio y Categoría.
      */
     private static class ProductEntry {
-        public final BaseProduct product;
+        public final GoodsProduct product;
         public final int amount;
 
         public final double unitPriceSnapshot;
         public final Category categorySnapshot;
 
-        public ProductEntry(BaseProduct product, int amount) {
+        public ProductEntry(GoodsProduct product, int amount) {
             this.product = product;
             this.amount = amount;
             this.unitPriceSnapshot = product.getPrice();
@@ -385,7 +383,7 @@ public class Ticket {
             }
         }
 
-        public ProductEntry(BaseProduct product, int amount, double unitPriceSnapshot, Category categorySnapshot) {
+        public ProductEntry(GoodsProduct product, int amount, double unitPriceSnapshot, Category categorySnapshot) {
             this.product = product;
             this.amount = amount;
             this.unitPriceSnapshot = unitPriceSnapshot;

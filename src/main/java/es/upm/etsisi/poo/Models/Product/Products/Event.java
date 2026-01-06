@@ -1,14 +1,15 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
 
+import es.upm.etsisi.poo.Exceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 
-public class Event extends BaseProduct {
+public class Event extends GoodsProduct {
 
     public Event(int id, String name, double price, LocalDateTime expireDate, int maxPeople, EventType type)
-        throws InvalidProductException{
+        throws InvalidProductException {
         super(id,name, price);
         if (maxPeople < 1 || maxPeople > MAX_PEOPLE_ALLOWED)
             throw new InvalidProductException("ERROR: Events must have between 1 and 100 people");
