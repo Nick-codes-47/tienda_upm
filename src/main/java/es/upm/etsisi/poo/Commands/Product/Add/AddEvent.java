@@ -2,8 +2,8 @@ package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Event;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.time.LocalDate;
@@ -46,7 +46,7 @@ public abstract class AddEvent implements Command {
         }
 
         try {
-            BaseProduct event = new Event(
+            GoodsProduct event = new EventProduct(
                     finalId,                                        // ID
                     args[offset],                                  // name
                     Double.parseDouble(args[offset + 1]),           // price
@@ -64,7 +64,7 @@ public abstract class AddEvent implements Command {
         } catch (DateTimeParseException e) {
             System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
             return 1;
-        } catch (BaseProduct.InvalidProductException e) {
+        } catch (GoodsProduct.InvalidProductException e) {
             System.err.println(e.getMessage());
             return 2;
         }

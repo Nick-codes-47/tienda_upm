@@ -1,55 +1,69 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
-/**
- * This class is used to create objects with the characteristics we need for our products
- */
-public class Product extends BaseProduct {
+public class Product extends GoodsProduct {
 
-    /**
-     * This constructor is done to introduce all the attributes the user wants for the product
-     * @param id to recognize the product among others
-     * @param category The category of the product
-     * @param name The name of the product
-     * @param price The price of the product
-     */
-    public Product(int id, String name, String category, double price) throws InvalidProductException {
-        super(id,name,price);
+    public Product(ProductID ID, ProductName name, String category, double price) throws AppException {
+        super(ProductType.PRODUCT, ID, name, price);
+
         try {
             this.category = Category.valueOf(category.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidProductException("ERROR: Product's category is invalid");
+            throw new InvalidProductException("category is invalid");
         }
+
+        this.maxPersonalization = 0;
+    }
+
+    public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws AppException {
+        super(ProductType.CUSTOM, ID, name, price);
+
+        try {
+            this.category = Category.valueOf(category.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidProductException("category is invalid");
+        }
+
+        if (numPersonalizations < 1)
+            throw new InvalidProductException("customizations must have at leat one personalizable.");
+
+        this.maxPersonalization = numPersonalizations;
+    }
+
+    public Product(Product other) {
+        super(other);
+        this.category = other.category;
+        this.maxPersonalization = other.maxPersonalization;
     }
 
     public Category getCategory() { return this.category; }
 
-    /**
-     * Compares this product to another with the ID
-     * @param obj (another)
-     * @return whether the IDs match
-     */
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj) return true;
-        if (obj == null || getClass() != obj.getClass()) return false;
-        Product other = (Product) obj;
-        return super.getId() == other.getId();
+    public Product clone() {
+        return new Product(this);
     }
-
-    @Override
-    public int hashCode() {
-        return Integer.hashCode(super.getId());
-    }
-
 
     @Override
     public String toString() {
-        return "{class:Product, id:"+super.getId()+", name:'"+super.getName()+"', category:"+this.category+
-                ", price:"+super.getPrice()+"}";
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{class:").append(super.getType())
+                .append(", id:").append(super.getID())
+                .append(", name:'").append(super.getName())
+                .append("', category:").append(category)
+                .append(", price:").append(super.getPrice());
+        if (maxPersonalization != 0)
+                sb.append(", maxPersonal:").append(this.maxPersonalization);
+        sb.append("}");
+
+        return sb.toString();
     }
 
-
-    private Category category;
+    private final Category category;
+    private final int maxPersonalization;
 }

@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
 
@@ -33,7 +33,7 @@ public class RemoveProduct implements Command {
         try {
             // We try to remove the product from the catalog
             int id = Integer.parseInt(args[0]);
-            BaseProduct prod = catalog.deleteProduct(id);
+            GoodsProduct prod = catalog.deleteProduct(id);
             if (prod != null) {
                 // If the product was deleted we show it
                 System.out.println(prod);

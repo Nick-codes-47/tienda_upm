@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
@@ -29,7 +29,7 @@ public class AddProductToTicket implements Command {
         String prodIdStr = args[2];
         String amountStr = args[3];
 
-        BaseProduct product;
+        GoodsProduct product;
         try {
             int productId = Integer.parseInt(prodIdStr);
             product = catalog.getProduct(productId);

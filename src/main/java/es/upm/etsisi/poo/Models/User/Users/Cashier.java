@@ -6,7 +6,7 @@ import java.util.HashMap;
 
 public class Cashier extends User {
 
-    public final HashMap<String, Ticket> tickets = new HashMap<>();
+    public final HashMap<String, Ticket<?>> tickets = new HashMap<>();
 
     public Cashier(String id, String name, Email email) {
         super(id, name, email);
@@ -16,18 +16,17 @@ public class Cashier extends User {
         return TYPE;
     }
 
-    public int addTicket(String ticketID) {
-        if (tickets.containsKey(ticketID)) {
+    public int addTicket(Ticket<?> ticket) {
+        if (tickets.containsKey(ticket.getTicketId())) {
             return -1; // TODO: exception
         }
 
-        Ticket ticket = new Ticket(ticketID);
-        tickets.put(ticketID, ticket);
+        tickets.put(ticket.getTicketId(), ticket);
 
         return 0;
     }
 
-    public Ticket getTicket(String ticketID) {
+    public Ticket<?> getTicket(String ticketID) {
         return tickets.get(ticketID);
     }
 
