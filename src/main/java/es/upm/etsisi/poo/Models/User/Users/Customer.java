@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class Customer extends User {
@@ -8,7 +9,7 @@ public class Customer extends User {
         super(dni, name, email); // TODO: verify dnis
         this.cashierId = cashierId;
     }
-    
+
     public String getCashierId() {
         return cashierId;
     }

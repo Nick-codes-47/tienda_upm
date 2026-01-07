@@ -71,7 +71,7 @@ public class AddProduct implements Command {
             System.err.println("ERROR: price and/or maxPers are not valid. " +
                     "(Please, Do not write just a number as a product's name)");
             return 1;
-        } catch (GoodsProduct.InvalidProductException e) {
+        } catch (InvalidProductException e) {
             System.err.println(e.getMessage());
             return 2;
         }

@@ -64,7 +64,7 @@ public abstract class AddEvent implements Command {
         } catch (DateTimeParseException e) {
             System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
             return 1;
-        } catch (GoodsProduct.InvalidProductException e) {
+        } catch (InvalidProductException e) {
             System.err.println(e.getMessage());
             return 2;
         }
