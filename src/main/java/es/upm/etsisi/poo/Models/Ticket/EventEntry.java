@@ -34,7 +34,7 @@ public class EventEntry extends TicketEntry<EventProduct> {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{class:")
-                .append(EventType.toSentenceCase(product.getType()))
+                .append(product.getType().toSentenceCase())
                 .append(", id:")
                 .append(product.getId())
                 .append(", name:'")

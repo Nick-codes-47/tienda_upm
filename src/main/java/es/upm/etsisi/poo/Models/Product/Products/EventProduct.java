@@ -45,7 +45,7 @@ public class EventProduct extends GoodsProduct {
         StringBuilder sb = new StringBuilder();
 
         sb.append("{class:")
-                .append(EventType.toSentenceCase(type))
+                .append(this.type)
                 .append(", id:")
                 .append(super.getID())
                 .append(", name:'")
