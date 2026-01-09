@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
 public abstract class User {
-    public static final String TYPE = "User"; // TODO: should be an enum
 
     public User(String id, String name, Email email) {
         this.name = name;
@@ -20,9 +19,7 @@ public abstract class User {
     public String getId() {
         return id;
     }
-
-    public static String getType() { return TYPE; }
-
+    
     protected String addVarToPrint() {
         return "";
     }

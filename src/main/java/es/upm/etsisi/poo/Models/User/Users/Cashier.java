@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 
 import java.util.HashMap;
 
@@ -12,7 +13,7 @@ public class Cashier extends User {
         super(id, name, email);
     }
 
-    public static String getType() {
+    public static UserType getType() {
         return TYPE;
     }
 
@@ -30,5 +31,5 @@ public class Cashier extends User {
         return tickets.get(ticketID);
     }
 
-    private static final String TYPE = "Cash";
+    private static final UserType TYPE = UserType.CASHIER;
 }
