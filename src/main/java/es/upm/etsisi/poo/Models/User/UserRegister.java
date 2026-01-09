@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.User;
 
+import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 import es.upm.etsisi.poo.Models.User.Users.User;
 
 import java.util.HashMap;
@@ -8,7 +9,7 @@ import java.util.List;
 
 public abstract class UserRegister<T extends User> implements Iterable<T> {
 
-    public UserRegister(String userType) {
+    public UserRegister(UserType userType) {
         users = new HashMap<>();
         this.USER_TYPE = userType;
     }
@@ -56,6 +57,6 @@ public abstract class UserRegister<T extends User> implements Iterable<T> {
     public String getNewId() { return null; }
     public abstract boolean isValidId(String id);
 
-    public final String USER_TYPE;
+    public final UserType USER_TYPE;
     private final HashMap<String, T> users;
 }
