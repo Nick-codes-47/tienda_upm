@@ -2,7 +2,6 @@ package es.upm.etsisi.poo.Models.User.Users;
 
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 
-import java.lang.reflect.Type;
 import java.util.ArrayList;
 
 public class Customer extends User {
@@ -13,9 +12,9 @@ public class Customer extends User {
         this.cashierId = cashierId;
 
         if (isCompany(identification)) {
-            this.TYPE = ClientType.COMPANY;
+            this.type = ClientType.COMPANY;
         } else {
-            this.TYPE = ClientType.INDIVIDUAL;
+            this.type = ClientType.INDIVIDUAL;
         }
 
     }
@@ -27,7 +26,7 @@ public class Customer extends User {
     public String getDni() { return id; }
 
     public ClientType getType() {
-        return TYPE;
+        return type;
     }
 
     public int addTicket(String ticketID) {
@@ -49,7 +48,7 @@ public class Customer extends User {
 
     private final String cashierId;
 
-    private final ClientType TYPE;
+    private final ClientType type;
 
     private final ArrayList<String> tickets = new ArrayList<>();
 }

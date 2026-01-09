@@ -14,7 +14,7 @@ public class Cashier extends User {
     }
 
     public static UserType getType() {
-        return TYPE;
+        return type;
     }
 
     public int addTicket(Ticket<?> ticket) {
@@ -31,5 +31,5 @@ public class Cashier extends User {
         return tickets.get(ticketID);
     }
 
-    private static final UserType TYPE = UserType.CASHIER;
+    private static final UserType type = UserType.CASHIER;
 }
