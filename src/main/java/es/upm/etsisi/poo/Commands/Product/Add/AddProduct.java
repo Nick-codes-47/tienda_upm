@@ -12,7 +12,7 @@ import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 
 /**
  * Class to add a Product or CustomProduct to the catalog
@@ -49,7 +49,7 @@ public class AddProduct implements Command {
         return 0;
     }
 
-    private BaseProduct createProduct(String[] args) {
+    protected BaseProduct createProduct(String[] args) {
         BaseProduct product = null;
 
         try {
@@ -60,10 +60,10 @@ public class AddProduct implements Command {
 
             if (args.length == 2 && rawID == -1) {
                 ServiceID ID = catalog.getNewServiceID();
-                product = new ServiceProduct(ID, LocalDateTime.parse(args[0], DATE_TIME_FORMATTER), args[1]);
+                product = new ServiceProduct(ID, LocalDateTime.parse(args[0]), args[1]);
             } else if (args.length == 3 && rawID != -1) {
                 ServiceID ID = new ServiceID(rawID);
-                product = new ServiceProduct(ID, LocalDateTime.parse(args[0], DATE_TIME_FORMATTER), args[1]);
+                product = new ServiceProduct(ID, LocalDateTime.parse(args[1]), args[2]);
             } else if (args.length == 3 && rawID == -1) {
                 ProductID ID = catalog.getNewProductID();
                 product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
@@ -79,6 +79,8 @@ public class AddProduct implements Command {
             } else return null;
 
             return product;
+        } catch (DateTimeParseException e) {
+            System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
         } catch (AppException e) {
             System.err.println(e.getMessage());
         }
@@ -96,6 +98,5 @@ public class AddProduct implements Command {
         return ID + " [id] \"<name>\" <category> <price> [<maxPers>]";
     }
 
-    private final Catalog catalog;
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+    protected final Catalog catalog;
 }

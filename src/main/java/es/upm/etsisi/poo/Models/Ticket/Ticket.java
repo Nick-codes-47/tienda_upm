@@ -147,10 +147,6 @@ public class Ticket<ProductType extends BaseProduct> {
         System.out.println(this);
     }
 
-    /**
-     * Calcula el precio total sumando el precio (unitario * cantidad) de todos los productos.
-     * Usa unitPriceSnapshot.
-     */
     private double calculateTotalPrice() {
         double totalPrice = 0.0;
         for (TicketEntry<ProductType> entry : entries.values()) {
@@ -159,10 +155,6 @@ public class Ticket<ProductType extends BaseProduct> {
         return totalPrice;
     }
 
-    /**
-     * Calcula el valor del descuento para una sola unidad de un producto dado.
-     * Usa unitPriceSnapshot y categorySnapshot.
-     */
     private double getProductDiscountValue(ProductType baseProduct) {
         if (baseProduct instanceof Product product) {
             Category category = product.getCategory();
