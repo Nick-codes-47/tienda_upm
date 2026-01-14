@@ -1,10 +1,11 @@
 package es.upm.etsisi.poo.Models.User;
 
+import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 
 public class CashierRegister extends UserRegister<Cashier> {
 
-    public CashierRegister() { super(Cashier.getType()); }
+    public CashierRegister() { super(UserType.CASHIER); }
 
     @Override
     public String getNewId() {

@@ -1,25 +1,19 @@
 package es.upm.etsisi.poo.Models.Product.Products.ProductEnums;
 
 public enum EventType {
-    FOOD(72), MEETING(12);
+    FOOD(72, "Food"), MEETING(12, "Meeting");
 
-    EventType(int planningTime) {
+    EventType(int planningTime, String print) {
         this.planningTime = planningTime;
+        this.print = print;
     }
     public int getPlanningTime() { return this.planningTime; }
 
-    public static String toSentenceCase(EventType eventType) {
-        // Store in a String the eventType
-        String type = eventType.name();
-
-        // Convert to upper case the first character
-        char firstChar = type.charAt(0);
-        String firstletter = String.valueOf(firstChar).toUpperCase();
-
-        // Convert to lower case the rest of the word
-        String restOfWord = type.substring(1).toLowerCase();
-        return firstletter + restOfWord;
+    @Override
+    public String toString() {
+        return this.print;
     }
 
     private final int planningTime;
+    private final String print;
 }

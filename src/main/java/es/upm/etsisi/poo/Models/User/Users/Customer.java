@@ -1,13 +1,22 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
-import java.lang.reflect.Type;
+import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
+
 import java.util.ArrayList;
 
 public class Customer extends User {
 
-    public Customer(String dni, String name, Email email, String cashierId) {
-        super(dni, name, email); // TODO: verify dnis
+    public Customer(String identification, String name, Email email, String cashierId) {
+        super(identification, name, email); // TODO: verify dnis
+
         this.cashierId = cashierId;
+
+        if (isCompany(identification)) {
+            this.type = ClientType.COMPANY;
+        } else {
+            this.type = ClientType.INDIVIDUAL;
+        }
+
     }
 
     public String getCashierId() {
@@ -16,8 +25,8 @@ public class Customer extends User {
     
     public String getDni() { return id; }
 
-    public static String getType() {
-        return TYPE;
+    public ClientType getType() {
+        return type;
     }
 
     public int addTicket(String ticketID) {
@@ -33,9 +42,13 @@ public class Customer extends User {
         return ", cash='" + cashierId + "'";
     }
 
+    private boolean isCompany(String possibleNif) {
+        return Character.isLetter(possibleNif.charAt(0)); // NIF starts with letter while DNI with number
+    }
+
     private final String cashierId;
 
-    private static final String TYPE = "Client";
+    private final ClientType type;
 
     private final ArrayList<String> tickets = new ArrayList<>();
 }
