@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.Core.AppID;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 
 import java.util.*;
 
@@ -27,7 +27,7 @@ public class ListProducts implements Command {
         if (args.length != 0) return 3;
 
         // We obtain the map of products
-        HashMap<AppID, BaseProduct> products = catalog.getProducts();
+        HashMap<ProductID, BaseProduct> products = catalog.getProducts();
         // We check if the catalog is empty
         if (products.isEmpty()) {
             System.err.println("ERROR: There are no products in the catalog yet!");
@@ -35,10 +35,10 @@ public class ListProducts implements Command {
         }
 
         // We list the products in ascending order by their id
-        ArrayList<Map.Entry<AppID, BaseProduct>> entries = new ArrayList<>(products.entrySet());
-        entries.sort();
+        ArrayList<Map.Entry<ProductID, BaseProduct>> entries = new ArrayList<>(products.entrySet());
+        entries.sort(APPID_LIST_ORDER);
         System.out.println("Catalog:");
-        for (Map.Entry<AppID, BaseProduct> entry : entries) {
+        for (Map.Entry<ProductID, BaseProduct> entry : entries) {
             // We only show the product
             System.out.println(" "+entry.getValue());
         }
@@ -56,4 +56,13 @@ public class ListProducts implements Command {
     }
 
     private final Catalog catalog;
+
+    private final Comparator<Map.Entry<ProductID, ?>> APPID_LIST_ORDER = Comparator.comparing(
+            (Map.Entry<ProductID, ?> e) -> e.getKey().getClass(),
+            (class1, class2) -> {
+                if (class1 == class2) return 0;
+                if (class1 == ProductID.class) return -1;
+                else return 1;
+            })
+            .thenComparing(Map.Entry::getKey, ProductID::compareTo);
 }

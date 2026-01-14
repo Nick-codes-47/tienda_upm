@@ -7,7 +7,6 @@ import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
@@ -40,11 +39,7 @@ public class AddProduct implements Command {
             return 1;
 
         BaseProduct product = createProduct(args);
-
-        if (product instanceof GoodsProduct good) {
-            catalog.add(good);
-        } else if (product instanceof ServiceProduct service)
-            catalog.add(service);
+        catalog.add(product);
 
         return 0;
     }

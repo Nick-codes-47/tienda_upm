@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Models.Core;
 
 import java.util.Objects;
 
-public abstract class AppID {
+public abstract class AppID implements Comparable<AppID> {
 
     public AppID(int ID) throws InvalidAppIDException {
         if (ID <= 0)
@@ -31,6 +31,13 @@ public abstract class AppID {
     public final int hashCode() {
         // Allows as to generate different hashCodes for different classes with the same baseID
         return Objects.hash(getClass(), baseID);
+    }
+
+    public int compareTo(AppID other) {
+        if (!getClass().equals(other.getClass()))
+            throw new ClassCastException("Cannot compare different AppID types");
+
+        return Integer.compare(baseID, other.baseID);
     }
 
     protected final int baseID;

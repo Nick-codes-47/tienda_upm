@@ -40,7 +40,7 @@ public class UpdateProduct implements Command {
         // if the number of arguments are correct we try to update
         try {
             ProductID ID = new ProductID(Integer.parseInt(args[0]));
-            BaseProduct product = catalog.getProduct(ID);
+            BaseProduct product = catalog.get(ID);
             if (product == null) {
                 // Product does not exist
                 System.err.println("ERROR: Product with id " + ID + " does not exist!");

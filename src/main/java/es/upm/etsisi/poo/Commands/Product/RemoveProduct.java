@@ -35,7 +35,7 @@ public class RemoveProduct implements Command {
         try {
             // We try to remove the product from the catalog
             ProductID ID = new ProductID(Integer.parseInt(args[0]));
-            BaseProduct prod = catalog.deleteProduct(ID);
+            BaseProduct prod = catalog.delete(ID);
             if (prod != null) {
                 // If the product was deleted we show it
                 System.out.println(prod);
