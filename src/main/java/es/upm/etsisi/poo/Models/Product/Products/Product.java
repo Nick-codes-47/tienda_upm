@@ -21,10 +21,13 @@ public class Product extends GoodsProduct {
     }
 
     public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws InvalidProductException {
-        this(ID, name, category, price);
+        super(ProductType.CUSTOM, ID, name, price);
 
-        if (numPersonalizations < 1)
-            throw new InvalidProductException("custom products must have at least one personalizable.");
+        try {
+            this.category = Category.valueOf(category.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new InvalidProductException("category is invalid");
+        }
 
         this.maxPersonalization = numPersonalizations;
     }
@@ -60,5 +63,5 @@ public class Product extends GoodsProduct {
     }
 
     private final Category category;
-    private int maxPersonalization;
+    private final int maxPersonalization;
 }
