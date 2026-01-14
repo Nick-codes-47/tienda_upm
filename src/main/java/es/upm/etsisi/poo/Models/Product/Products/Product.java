@@ -1,14 +1,14 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProductException;
 
 public class Product extends GoodsProduct {
 
-    public Product(ProductID ID, ProductName name, String category, double price) throws AppException {
+    public Product(ProductID ID, ProductName name, String category, double price) throws InvalidProductException {
         super(ProductType.PRODUCT, ID, name, price);
 
         try {
@@ -20,14 +20,8 @@ public class Product extends GoodsProduct {
         this.maxPersonalization = 0;
     }
 
-    public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws AppException {
-        super(ProductType.CUSTOM, ID, name, price);
-
-        try {
-            this.category = Category.valueOf(category.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidProductException("category is invalid");
-        }
+    public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws InvalidProductException {
+        this(ID, name, category, price);
 
         if (numPersonalizations < 1)
             throw new InvalidProductException("customizations must have at leat one personalizable.");
@@ -66,5 +60,5 @@ public class Product extends GoodsProduct {
     }
 
     private final Category category;
-    private final int maxPersonalization;
+    private int maxPersonalization;
 }

@@ -27,10 +27,4 @@ public abstract class BaseProduct {
     }
 
     abstract public BaseProduct clone();
-
-    public static class InvalidProductException extends AppException {
-        public InvalidProductException(String message) {
-            super("Product " + message);
-        }
-    }
 }
