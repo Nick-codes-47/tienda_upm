@@ -21,12 +21,6 @@ public abstract class AppID implements Comparable<AppID> {
 
     public abstract String toString();
 
-    public static class InvalidAppIDException extends AppException {
-        public InvalidAppIDException(String message) {
-            super("App ID can not be " + message);
-        }
-    }
-
     @Override
     public final int hashCode() {
         // Allows as to generate different hashCodes for different classes with the same baseID
@@ -38,6 +32,12 @@ public abstract class AppID implements Comparable<AppID> {
             throw new ClassCastException("Cannot compare different AppID types");
 
         return Integer.compare(baseID, other.baseID);
+    }
+
+    public static class InvalidAppIDException extends AppException {
+        public InvalidAppIDException(String message) {
+            super("App ID can not be " + message);
+        }
     }
 
     protected final int baseID;

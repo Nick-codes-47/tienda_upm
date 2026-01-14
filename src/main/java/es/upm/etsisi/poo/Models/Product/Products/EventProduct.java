@@ -4,6 +4,7 @@ import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProductException;
 
 import java.time.LocalDateTime;
 
@@ -43,7 +44,7 @@ public class EventProduct extends GoodsProduct {
     public String toString() {
 
         return "{class:" +
-                EventType.toSentenceCase(type) +
+                type +
                 ", id:" +
                 super.getID() +
                 ", name:'" +

@@ -20,6 +20,10 @@ public class Customer extends User {
 
     }
 
+    private boolean isCompany(String possibleNif) {
+        return Character.isLetter(possibleNif.charAt(0)); // NIF starts with letter while DNI with number
+    }
+
     public String getCashierId() {
         return cashierId;
     }
@@ -41,10 +45,6 @@ public class Customer extends User {
     @Override // TODO explain
     protected String addVarToPrint() {
         return ", cash='" + cashierId + "'";
-    }
-
-    private boolean isCompany(String possibleNif) {
-        return Character.isLetter(possibleNif.charAt(0)); // NIF starts with letter while DNI with number
     }
 
     private final String cashierId;
