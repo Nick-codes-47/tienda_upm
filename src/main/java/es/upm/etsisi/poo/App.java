@@ -13,6 +13,9 @@ import es.upm.etsisi.poo.Handlers.Request;
 import es.upm.etsisi.poo.Handlers.RequestHandler;
 import es.upm.etsisi.poo.Services.TicketService;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -23,6 +26,8 @@ public class App {
     public final CustomerRegister customers = new CustomerRegister();
 
     public final TicketService ticketService = new TicketService(cashiers);
+
+    private static final Logger logger = LogManager.getLogger("AppLogger");
 
     public App() {}
 
@@ -58,7 +63,7 @@ public class App {
             }
         }
         catch (RuntimeException exception) {
-            System.err.printf("ERROR::main> " + exception);
+            logger.error("ERROR::main> {}", String.valueOf(exception));
         }
     }
 
