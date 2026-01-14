@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
@@ -47,12 +48,12 @@ public abstract class AddEvent implements Command {
 
         try {
             GoodsProduct event = new EventProduct(
+                    this.eventType,                                 // event type
                     finalId,                                        // ID
                     args[offset],                                  // name
                     Double.parseDouble(args[offset + 1]),           // price
                     LocalDate.parse(args[offset + 2]).atStartOfDay(), // expiration date
                     Integer.parseInt(args[offset + 3]),             // max_people
-                    this.eventType                                 // event type
             );
 
             return SupportMethods.addToCatalog(event, catalog);
@@ -64,7 +65,7 @@ public abstract class AddEvent implements Command {
         } catch (DateTimeParseException e) {
             System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
             return 1;
-        } catch (InvalidProductException e) {
+        } catch (AppException e) {
             System.err.println(e.getMessage());
             return 2;
         }

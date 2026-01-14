@@ -42,6 +42,7 @@ public class Product extends GoodsProduct {
     }
 
     public Category getCategory() { return this.category; }
+    public int getMaxPersonalization() { return this.maxPersonalization; }
 
     @Override
     public Product clone() {

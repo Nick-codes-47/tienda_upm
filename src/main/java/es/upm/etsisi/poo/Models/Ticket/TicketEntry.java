@@ -1,10 +1,18 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
-public abstract class TicketEntry<T extends GoodsProduct> {
-    public void update(T newProduct) {
-        product = newProduct.clone();
+public abstract class TicketEntry<ProductType extends BaseProduct> {
+
+    protected TicketEntry(ProductType product) {
+        this.product = product;
+    }
+
+    public void update(ProductType newProduct) throws AppException {
+        if (newProduct.getID() == product.getID())
+            product = (ProductType) newProduct.clone();
+        else throw new AppException("");
     };
 
     public abstract String toString();
@@ -13,5 +21,5 @@ public abstract class TicketEntry<T extends GoodsProduct> {
 
     public abstract boolean checkValidity();
 
-    protected T product;
+    protected ProductType product;
 }

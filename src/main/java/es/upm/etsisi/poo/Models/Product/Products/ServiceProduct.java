@@ -1,8 +1,6 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Core.AppEntity;
 import es.upm.etsisi.poo.Models.Core.AppException;
-import es.upm.etsisi.poo.Models.Core.AppID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ServiceCategory;
@@ -38,12 +36,12 @@ public class ServiceProduct extends BaseProduct {
     }
 
     @Override
-    public AppID getID() {
+    public ServiceID getID() {
         return ID;
     }
 
     @Override
-    public AppEntity clone() {
+    public ServiceProduct clone() {
         return new ServiceProduct(this);
     }
 

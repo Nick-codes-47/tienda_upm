@@ -1,8 +1,9 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppID;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
 import java.util.*;
 
@@ -26,7 +27,7 @@ public class ListProducts implements Command {
         if (args.length != 0) return 3;
 
         // We obtain the map of products
-        HashMap<Integer, GoodsProduct> products = catalog.getProducts();
+        HashMap<AppID, BaseProduct> products = catalog.getProducts();
         // We check if the catalog is empty
         if (products.isEmpty()) {
             System.err.println("ERROR: There are no products in the catalog yet!");
@@ -34,10 +35,10 @@ public class ListProducts implements Command {
         }
 
         // We list the products in ascending order by their id
-        ArrayList<Map.Entry<Integer, GoodsProduct>> entries = new ArrayList<>(products.entrySet());
-        entries.sort(Map.Entry.comparingByKey());
+        ArrayList<Map.Entry<AppID, BaseProduct>> entries = new ArrayList<>(products.entrySet());
+        entries.sort();
         System.out.println("Catalog:");
-        for (Map.Entry<Integer, GoodsProduct> entry : entries) {
+        for (Map.Entry<AppID, BaseProduct> entry : entries) {
             // We only show the product
             System.out.println(" "+entry.getValue());
         }
