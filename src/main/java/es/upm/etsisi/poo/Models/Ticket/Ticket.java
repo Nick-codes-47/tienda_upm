@@ -10,17 +10,13 @@ import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
 import java.util.HashMap;
 
-public class Ticket<ProductType extends BaseProduct> {
+public abstract class Ticket<ProductType extends BaseProduct> {
 
     public Ticket(TicketID ID) {
         this.ID = ID;
         this.entries = new HashMap<>();
         this.categories = new HashMap<>();
         this.ticketState = TicketState.VACIO;
-    }
-
-    public Ticket(int ID) throws AppException {
-        this(new TicketID(ID));
     }
 
     public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
@@ -193,11 +189,6 @@ public class Ticket<ProductType extends BaseProduct> {
      */
     private double calculateFinalPrice() {
         return calculateTotalPrice() - calculateTotalDiscount();
-    }
-
-    @Override
-    public Ticket<ProductType> clone() {
-        return new Ticket<>(this);
     }
 
     /**

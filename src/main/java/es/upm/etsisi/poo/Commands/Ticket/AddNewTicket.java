@@ -1,15 +1,29 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
+import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
+import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.TicketID;
+import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 import es.upm.etsisi.poo.Models.User.Users.Customer;
 import es.upm.etsisi.poo.Models.User.CustomerRegister;
+import es.upm.etsisi.poo.Services.TicketService;
 
 public class AddNewTicket implements Command {
     public static final String ID = "new";
 
-    public AddNewTicket(CashierRegister cashiers, CustomerRegister customers) {
+    private final TicketService ticketService;
+    private final CashierRegister cashiers;
+    private final CustomerRegister customers;
+
+    public AddNewTicket(TicketService ticketService, CashierRegister cashiers, CustomerRegister customers) {
+        this.ticketService = ticketService;
         this.cashiers = cashiers;
         this.customers = customers;
     }
@@ -56,19 +70,37 @@ public class AddNewTicket implements Command {
             return -1;
         }
 
-        int result = cashier.addTicket(ticketId);
-        if (result == -1) {
-            System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
+        // TODO check the ticketID is not in another cashier
+
+        try {
+            Ticket<?> ticket;
+            TicketID ID;
+
+            if (ticketId != null)
+                ID = new TicketID(Integer.parseInt(ticketId));
+            else
+                ID = ticketService.getNewTicketID();
+
+            if (customer.getType() == ClientType.COMPANY)
+                ticket = new CompanyTicket(ID);
+            else
+                ticket = new CommonTicket(ID);
+
+            int result = cashier.addTicket(ticket);
+            if (result == -1) {
+                System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
+            }
+
+            customer.addTicket(ID);
+
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
         }
-        customer.addTicket(ticketId);
-        return result;
+        return 0;
     }
 
     @Override
     public String help() {
         return ID +" [<ticketId>] <cashId> <customerId>";
     }
-
-    private final CashierRegister cashiers;
-    private final CustomerRegister customers;
 }

@@ -8,7 +8,7 @@ public class TicketHandler extends RequestHandler {
 
     public TicketHandler(App app) {
         super(handler_id);
-        commands.put(AddNewTicket.ID, () -> new AddNewTicket(app.cashiers, app.customers));
+        commands.put(AddNewTicket.ID, () -> new AddNewTicket(app.ticketService, app.cashiers, app.customers));
         commands.put(AddProductToTicket.ID,() -> new AddProductToTicket(app.catalog, app.cashiers));
         commands.put(RemoveProductFromTicket.ID, () -> new RemoveProductFromTicket(app.cashiers));
         commands.put(PrintTicket.ID, () -> new PrintTicket(app.cashiers));

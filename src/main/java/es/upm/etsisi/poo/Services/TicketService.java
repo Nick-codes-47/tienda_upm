@@ -1,7 +1,9 @@
 package es.upm.etsisi.poo.Services;
 
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
@@ -44,6 +46,19 @@ public class TicketService {
         }
 
         return tickets;
+    }
+
+    private int totalTickets() {
+        int total = 10000;
+        for (Cashier cashier : cashiers)
+            total += cashier.tickets.size();
+
+        return total;
+    }
+
+    public TicketID getNewTicketID() {
+        try { return new TicketID(totalTickets() + 1); } catch (AppException e) {/* ignored its never gonna pass a negative ID */ }
+        return null;
     }
 
     private final CashierRegister cashiers;
