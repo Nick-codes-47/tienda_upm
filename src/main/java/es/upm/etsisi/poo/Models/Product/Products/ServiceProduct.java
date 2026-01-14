@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ServiceCategory;

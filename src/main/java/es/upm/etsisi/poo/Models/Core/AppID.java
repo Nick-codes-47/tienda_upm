@@ -21,16 +21,16 @@ public abstract class AppID {
 
     public abstract String toString();
 
-    public static class InvalidAppIDException extends AppException {
-        public InvalidAppIDException(String message) {
-            super("App ID can not be " + message);
-        }
-    }
-
     @Override
     public final int hashCode() {
         // Allows as to generate different hashCodes for different classes with the same baseID
         return Objects.hash(getClass(), baseID);
+    }
+
+    public static class InvalidAppIDException extends AppException {
+        public InvalidAppIDException(String message) {
+            super("App ID can not be " + message);
+        }
     }
 
     protected final int baseID;

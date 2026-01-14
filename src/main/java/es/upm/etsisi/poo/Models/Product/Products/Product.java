@@ -24,7 +24,7 @@ public class Product extends GoodsProduct {
         this(ID, name, category, price);
 
         if (numPersonalizations < 1)
-            throw new InvalidProductException("customizations must have at leat one personalizable.");
+            throw new InvalidProductException("custom products must have at least one personalizable.");
 
         this.maxPersonalization = numPersonalizations;
     }
