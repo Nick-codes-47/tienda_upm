@@ -32,7 +32,7 @@ public class AddProductToTicket implements Command {
         GoodsProduct product;
         try {
             int productId = Integer.parseInt(prodIdStr);
-            product = catalog.getProduct(productId);
+            product = catalog.get(productId);
             if (product == null) {
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
                 return -1;
@@ -74,7 +74,7 @@ public class AddProductToTicket implements Command {
             return -1; // TODO exception
         }
 
-        int result = ticket.addProduct(product, amount, personalizations);
+        int result = ticket.add(product, amount, personalizations);
 
         if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);

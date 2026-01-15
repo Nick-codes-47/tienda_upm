@@ -1,9 +1,13 @@
 package es.upm.etsisi.poo.Models.Product;
 
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
 
 import java.util.HashMap;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 /**
  * Class that implements a HashMap to store all the products available in the store
@@ -17,15 +21,17 @@ public class Catalog {
     /**
      * Method to search a product in the catalog
      *
-     * @param id id of the product to search it
+     * @param ID id of the product to search it
      * @return null if the id is not correct.
      * the product with the id if it's correct
      */
-    public GoodsProduct getProduct(int id) {
-        return products.get(id);
+    public BaseProduct get(ProductID ID) {
+        return products.get(ID);
     }
 
-    public HashMap<Integer, GoodsProduct> getProducts() { return products; }
+    public HashMap<ProductID, BaseProduct> getProducts() {
+        return products;
+    }
 
     /**
      * Method to add a product to the catalog so it is available to buy it
@@ -36,7 +42,7 @@ public class Catalog {
      *         -2 if the product passed was a null;
      *         -1 if we already reached the maxProducts;
      */
-    public int add(GoodsProduct product) {
+    public int add(BaseProduct product) {
         // Discard null objects
         if (product == null) {
             return -2;
@@ -45,12 +51,13 @@ public class Catalog {
         if (products.size() >= MAX_PRODUCTS) {
             return -1;
         }
+
         // We check if the id is valid
-        if (existsId(product.getId())) {
+        if (get(product.getID()) != null) {
             return -3;
         }
         // Put the product in the map and print it
-        products.put(product.getId(), product);
+        products.put(product.getID(), product);
         return 0;
     }
 
@@ -59,34 +66,49 @@ public class Catalog {
      * id was less than the current id, the next product added will have this id
      * @return new ID
      */
-    public int getNewId() {
-        Set<Integer> usedIds = products.keySet();
-        int newId = 1;
-        while (usedIds.contains(newId)) {
-            newId++;
+    public ProductID getNewProductID() throws AppException {
+        Set<ProductID> usedIDs = products.keySet().stream()
+                .filter(id -> id.getClass() == ProductID.class)
+                .collect(Collectors.toSet());
+
+        int countID = 1;
+        ProductID newID = new ProductID(countID);
+        while (usedIDs.contains(newID)) {
+            newID = new ProductID(++countID);
         }
-        return newId;
+
+        return newID;
+    }
+
+    public ServiceID getNewServiceID() throws AppException {
+        Set<ProductID> usedIDs = products.keySet().stream()
+                .filter(ServiceID.class::isInstance)
+                .collect(Collectors.toSet());
+
+        int countID = 1;
+        ServiceID newID = new ServiceID(countID);
+        while (usedIDs.contains(newID)) {
+            newID = new ServiceID(++countID);
+        }
+
+        return newID;
     }
 
     /**
      * Method to delete a product from the catalog
      *
-     * @param id to search the product
+     * @param ID to search the product
      * @return either the product that was removed or null if the product doesn't exist in the catalog.
      */
-    public GoodsProduct deleteProduct(int id) {
-        GoodsProduct product = this.getProduct(id);
+    public BaseProduct delete(ProductID ID) {
+        BaseProduct product = this.get(ID);
         if (product != null) {
             // If the product exist in the catalog we delete it
-            products.remove(id);
+            products.remove(ID);
         }
         return product;
     }
 
-    public boolean existsId(int id) {
-        return this.getProduct(id) != null;
-    }
-
-    private final HashMap<Integer, GoodsProduct> products;
+    private final HashMap<ProductID, BaseProduct> products;
     private final int MAX_PRODUCTS = 200;
 }

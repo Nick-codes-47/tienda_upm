@@ -1,13 +1,11 @@
 package es.upm.etsisi.poo.Services;
 
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
-import es.upm.etsisi.poo.Services.AddToTicketStrategies.AddEventStrategy;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
-import es.upm.etsisi.poo.Services.AddToTicketStrategies.AddProductStrategy;
-import es.upm.etsisi.poo.Services.AddToTicketStrategies.AddToTicketStrategy;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,7 +19,7 @@ public class TicketService {
     public void printTicketList(List<Ticket<?>> tickets) {
         for (Ticket<?> ticket : tickets) {
             System.out.printf("  %s - %s\n",
-                    ticket.getTicketId(),
+                    ticket.getID(),
                     ticket.getTicketState());
         }
     }
@@ -36,12 +34,12 @@ public class TicketService {
         return tickets;
     }
 
-    public List<Ticket<?>> getTicketsWith(GoodsProduct product) {
+    public List<Ticket<?>> getTicketsWith(BaseProduct product) {
         List<Ticket<?>> tickets = new ArrayList<>();
 
         for (Cashier cashier : cashiers) {
             for (Ticket<?> ticket : cashier.tickets.values()) {
-                if (ticket.hasProduct(product.getId())) {
+                if (ticket.hasProduct(product.getID())) {
                     tickets.add(ticket);
                 }
             }
@@ -50,16 +48,17 @@ public class TicketService {
         return tickets;
     }
 
-    public int add(GoodsProduct product, int quantity, Ticket<?> ticket) {
-        AddToTicketStrategy strategy;
-        if (product instanceof EventProduct)
-            strategy = new AddEventStrategy();
-        else if (product instanceof Product)
-            strategy = new AddProductStrategy();
-        else
-            return 1;
+    private int totalTickets() {
+        int total = 10000;
+        for (Cashier cashier : cashiers)
+            total += cashier.tickets.size();
 
-        return ticket.add(product, quantity);
+        return total;
+    }
+
+    public TicketID getNewTicketID() {
+        try { return new TicketID(totalTickets() + 1); } catch (AppException e) {/* ignored its never gonna pass a negative ID */ }
+        return null;
     }
 
     private final CashierRegister cashiers;

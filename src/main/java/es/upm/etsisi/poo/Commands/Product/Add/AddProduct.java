@@ -1,9 +1,17 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.Products.Product;
+import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 
 /**
  * Class to add a Product or CustomProduct to the catalog
@@ -27,56 +35,53 @@ public class AddProduct implements Command {
      */
     @Override
     public int execute(String[] args) {
-
-        // We obtain the final id depending on whether the user passed the id or not
-        SupportMethods.ParsedIdResult parsed = SupportMethods.parseOptionalId(args, catalog);
-        int finalId = parsed.id;
-        int offset = parsed.offset; // used to get the right arguments in the constructor
-
-        // We need 3 or 4 real arguments:
-        // 3 → normal product
-        // 4 → customizable product
-        int realArgs = args.length - offset;
-        if (realArgs != 3 && realArgs != 4) {
-            System.err.println("ERROR: wrong number of arguments");
-            return 3;
-        }
-
-        try {
-            GoodsProduct product;
-
-            if (realArgs == 3) {
-                // Normal product
-                product = new Product(
-                        finalId,                                   // id
-                        args[offset],                              // name
-                        args[offset + 1],                          // category
-                        Double.parseDouble(args[offset + 2])        // price
-                );
-
-            } else {
-                // Customizable product (4 args)
-                product = new Product(
-                        finalId,                                   // id
-                        args[offset],                              // name
-                        args[offset + 1],                          // category
-                        Double.parseDouble(args[offset + 2]),       // price
-                        Integer.parseInt(args[offset + 3])          // maxPersonalizable
-                );
-            }
-
-            return SupportMethods.addToCatalog(product, catalog);
-
-        } catch (NumberFormatException e) {
-            System.err.println("ERROR: price and/or maxPers are not valid. " +
-                    "(Please, Do not write just a number as a product's name)");
+        if (args.length < 2)
             return 1;
-        } catch (InvalidProductException e) {
-            System.err.println(e.getMessage());
-            return 2;
-        }
+
+        BaseProduct product = createProduct(args);
+        catalog.add(product);
+
+        return 0;
     }
 
+    protected BaseProduct createProduct(String[] args) {
+        BaseProduct product = null;
+
+        try {
+            int rawID = -1;
+
+            if ("1234567890".contains(args[0])) // only IDs start with numbers
+                rawID = Integer.parseInt(args[0]);
+
+            if (args.length == 2 && rawID == -1) {
+                ServiceID ID = catalog.getNewServiceID();
+                product = new ServiceProduct(ID, LocalDateTime.parse(args[0]), args[1]);
+            } else if (args.length == 3 && rawID != -1) {
+                ServiceID ID = new ServiceID(rawID);
+                product = new ServiceProduct(ID, LocalDateTime.parse(args[1]), args[2]);
+            } else if (args.length == 3 && rawID == -1) {
+                ProductID ID = catalog.getNewProductID();
+                product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
+            } else if (args.length == 4 && rawID != -1) {
+                ProductID ID = new ProductID(rawID);
+                product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]));
+            } else if (args.length == 4 && rawID == -1) {
+                ProductID ID = catalog.getNewProductID();
+                product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]), Integer.parseInt(args[3]));
+            } else if (args.length == 5) {
+                ProductID ID = new ProductID(rawID);
+                product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]), Integer.parseInt(args[4]));
+            } else return null;
+
+            return product;
+        } catch (DateTimeParseException e) {
+            System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
+        }
+
+        return product;
+    }
 
     /**
      * Shows how to call the action
@@ -88,5 +93,5 @@ public class AddProduct implements Command {
         return ID + " [id] \"<name>\" <category> <price> [<maxPers>]";
     }
 
-    private final Catalog catalog;
+    protected final Catalog catalog;
 }

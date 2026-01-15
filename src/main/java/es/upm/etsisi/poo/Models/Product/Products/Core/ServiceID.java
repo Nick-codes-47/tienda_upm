@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Models.Product.Products.Core;
 
 public class ServiceID extends ProductID {
 
-    ServiceID(int ID) throws InvalidProductIDException {
+    public ServiceID(int ID) throws InvalidAppIDException {
         super(ID);
     }
 

@@ -1,30 +1,40 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Product;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.HashMap;
 
-public class Ticket <T extends GoodsProduct> {
+public abstract class Ticket<ProductType extends BaseProduct> {
 
-    public Ticket(String ticketID) {
+    public Ticket(TicketID ID) {
+        this.ID = ID;
         this.entries = new HashMap<>();
         this.categories = new HashMap<>();
         this.ticketState = TicketState.VACIO;
-        this.creationDate = LocalDateTime.now();
-        this.ticketId = creationDate.format(DATE_TIME_FORMATTER) + "-" + ticketID;
     }
 
-    public boolean hasProduct(int productId) {
-        return this.entries.containsKey(productId);
+    public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
+        this(other.ID);
+        this.ticketState = other.ticketState;
+        this.entries.putAll(other.entries);
+        this.categories.putAll(other.categories);
+        this.totalUnits = other.totalUnits;
     }
+
+    public TicketID getID() { return ID; }
 
     public TicketState getTicketState() {
         return this.ticketState;
+    }
+
+    public boolean hasProduct(ProductID productId) {
+        return this.entries.containsKey(productId);
     }
 
     private void checkCapacity(int added) {
@@ -33,27 +43,7 @@ public class Ticket <T extends GoodsProduct> {
         } // TODO add exception
     }
 
-    private void updateCategoryCount(GoodsProduct goodsProduct, int amount) {
-        if (goodsProduct instanceof Product product) {
-            Category category = product.getCategory();
-            categories.put(
-                    category,
-                    categories.getOrDefault(category, 0) + amount);
-        }
-    }
-
-    /**
-     * Add a product to the ticket with the amount introduced
-     * @param product to be added
-     * @param amount how many products to be added
-     * @return  0 if product is added correctly
-     * -1 ticket state is closed
-     * -2 maximum number of items reached
-     * -3 Cannot add the same Event (meeting/meal) twice to the same ticket
-     * -4 Event requires minimum time to be planned
-     * -5 Error in the number of people in event
-     */
-    public int add(T product, int amount) {
+    private int add(TicketEntry<ProductType> entry) throws AppException {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
@@ -62,67 +52,79 @@ public class Ticket <T extends GoodsProduct> {
             this.ticketState = TicketState.ACTIVO;
         }
 
-        checkCapacity(amount);
+        checkCapacity(entry.getProductCount());
 
-        Entry entry = entries.get(product.getId());
-        if (entry == null) {
-            entry = new Entry(product.clone(), amount);
-        } else {
-            entry.amount += amount;
+        entries.put(entry.product.getID(), entry);
+        totalUnits += entry.getProductCount();
+
+        if (entry instanceof ProductEntry productEntry) {
+            Product product = productEntry.product;
+            Category category = product.getCategory();
+            int total = categories.getOrDefault(category, 0);
+            categories.put(category, total + entry.getProductCount());
         }
-
-        entries.put(product.getId(), entry);
-        totalUnits += entry.amount;
-
-        updateCategoryCount(product, amount) ;
 
         System.out.println(this);
         return 0;
     }
 
-    /**
-     * Method to delete a product with the product id
-     * @param prodId id of the product to be removed from ticket
-     * @return 0 product removed successfully from ticket
-     * -1 ticket state is closed
-     * -2 product not found in ticket
-     */
-    public int delete(int prodId) {
-        if (this.ticketState == TicketState.CERRADO) {
-            return -1;
-        }
+    public int add(ProductType product) throws AppException {
+        TicketEntry<ProductType> entry;
+        if (product instanceof ServiceProduct service)
+            entry = (TicketEntry<ProductType>) new ServiceEntry(service);
+        else throw new AppException("");
 
-        if (entries.containsKey(prodId)) {
-            Entry entryToRemove = entries.get(prodId);
-            int quantity = entryToRemove.amount;
-
-            if (entryToRemove.product instanceof Product product) {
-                Category categoryKey = product.getCategory();
-                int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
-
-                int newCount = Math.max(0, currentCategoryCount - quantity);
-                categories.put(categoryKey, newCount);
-                totalUnits -= quantity;
-            }
-
-            entries.remove(prodId);
-            return 0;
-        }
-        return -2;
+        return add(entry);
     }
 
-    /**
-     * Permite modificar un atributo del objeto BaseProduct referenciado y,
-     * crucialmente, actualiza el snapshot del precio si el campo modificado es 'price'.
-     */
-    public int update(T product) {
+    public int add(ProductType baseProduct, int amount) throws AppException {
+        TicketEntry<ProductType> entry;
+        switch (baseProduct) {
+            case Product product:
+                entry = (TicketEntry<ProductType>) new ProductEntry(product);
+                ((ProductEntry) entry).amount = amount;
+                break;
+            case EventProduct event:
+                entry = (TicketEntry<ProductType>) new EventEntry(event);
+                ((EventEntry) entry).setActualPeople(amount);
+                break;
+            case null, default:
+                throw new AppException("");
+        };
+
+        return add(entry);
+    }
+
+    public int delete(ProductID ID) {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
 
-        Entry entry = this.entries.get(product.getId());
+        TicketEntry<?> entry = entries.get(ID);
+        if (entry == null)
+            return -2;
+
+        if (entry instanceof ProductEntry productEntry) {
+            Product product = productEntry.product;
+            Category categoryKey = product.getCategory();
+            int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
+            int newCount = Math.max(0, currentCategoryCount - productEntry.getProductCount());
+            categories.put(categoryKey, newCount);
+            totalUnits -= productEntry.getProductCount();
+        }
+
+        entries.remove(ID);
+        return 0;
+    }
+
+    public int update(BaseProduct product) {
+        if (this.ticketState == TicketState.CERRADO) {
+            return -1;
+        }
+
+        TicketEntry<ProductType> entry = this.entries.get(product.getID());
         if (entry != null) {
-            entry.product = product.clone();
+            entry.product = (ProductType) product.clone();
         }
 
         return 0;
@@ -132,59 +134,38 @@ public class Ticket <T extends GoodsProduct> {
      * Cierra el ticket y lo imprime. Si ya está cerrado, imprime la versión cacheada.
      */
     public void print() {
-        if (this.printedOutput != null) {
-            System.out.println(this.printedOutput);
-            return;
-        }
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
-            this.closingDate = LocalDateTime.now();
-
-            if (this.ticketId != null) {
-                this.ticketId = this.ticketId.substring(this.ticketId.length()-5) + "-" + this.closingDate.format(DATE_TIME_FORMATTER);
-            }
+            ID.close();
         }
 
-        this.printedOutput = this.toString();
-
-        System.out.println(this.printedOutput);
+        System.out.println(this);
     }
 
-    public String getTicketId() {
-        return ticketId;
-    }
-
-    /**
-     * Calcula el precio total sumando el precio (unitario * cantidad) de todos los productos.
-     * Usa unitPriceSnapshot.
-     */
     private double calculateTotalPrice() {
         double totalPrice = 0.0;
-        for (Entry entry : entries.values()) {
-            int quantity = entry.amount;
-            totalPrice += entry.product.getPrice() * quantity;
+        for (TicketEntry<ProductType> entry : entries.values()) {
+            totalPrice += entry.getPrice();
         }
         return totalPrice;
     }
 
-    /**
-     * Calcula el valor del descuento para una sola unidad de un producto dado.
-     * Usa unitPriceSnapshot y categorySnapshot.
-     */
-    private double getProductDiscountValue(Entry entry) {
-        if (entry.product instanceof Product product) {
+    private double getProductDiscountValue(ProductType baseProduct) {
+        if (baseProduct instanceof Product product) {
             Category category = product.getCategory();
+
             if (category != null) {
                 int totalCategoryUnits = categories.getOrDefault(category, 0);
 
-                if (totalCategoryUnits >= 2) {
+                if (totalCategoryUnits >= MIN_UNITS_FOR_DISCOUNT) {
                     double unitPrice = product.getPrice();
                     double categoryDiscountRate = category.getDiscount() / 100.0;
                     return unitPrice * categoryDiscountRate;
                 }
             }
         }
+
         return 0.0;
     }
 
@@ -194,9 +175,9 @@ public class Ticket <T extends GoodsProduct> {
     private double calculateTotalDiscount() {
         double totalDiscount = 0.0;
 
-        for (Entry entry : entries.values()) {
-            int quantity = entry.amount;
-            double unitDiscount = getProductDiscountValue(entry);
+        for (TicketEntry<ProductType> entry : entries.values()) {
+            int quantity = entry.getProductCount();
+            double unitDiscount = getProductDiscountValue(entry.product);
             totalDiscount += unitDiscount * quantity;
         }
 
@@ -217,37 +198,26 @@ public class Ticket <T extends GoodsProduct> {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("Ticket: ").append(this.ticketId).append("\n");
+        sb.append("Ticket: ").append(this.ID).append("\n");
 
         if (this.entries.isEmpty()) {
             sb.append("No products added yet.\n");
         } else {
-            for (Entry entry : this.entries.values()) {
-                GoodsProduct product = entry.product;
-                int quantity = entry.amount;
+            for (TicketEntry<ProductType> entry : this.entries.values()) {
+                ProductType product = entry.product;
+                String discountSuffix = null;
 
-                if (product instanceof EventProduct event) {
-                    sb.append(event).append("\n");
-                } else {
-                    double unitDiscount = getProductDiscountValue(entry);
-                    String discountSuffix = "";
+                if (entry instanceof ProductEntry) {
+                    double unitDiscount = getProductDiscountValue(product);
                     if (unitDiscount > 0) {
                         discountSuffix = String.format(" **discount -%.2f", unitDiscount);
                     }
+                }
 
-                    String productLine;
-
-                    if (product instanceof Product customProduct) {
-                        productLine = customProduct.toString();
-                    } else {
-                        Product p = (Product) product;
-                        productLine = String.format("{class:Product, id:%d, name:'%s', category:%s, price:%.2f}",
-                                p.getId(), p.getName());
-                    } // TODO show the product's price and category when ticket is open. Snapshot only when it's closed
-
-                    for (int i = 0; i < quantity; i++) {
-                        sb.append(productLine).append(discountSuffix).append("\n");
-                    }
+                for (int i = 0; i < entry.getProductCount(); i++) {
+                    sb.append(entry);
+                    if (discountSuffix != null)
+                        sb.append(discountSuffix).append("\n");
                 }
             }
         }
@@ -260,16 +230,12 @@ public class Ticket <T extends GoodsProduct> {
         return sb.toString();
     }
 
-    private static final int MAX_PRODUCTS_PER_TICKET = 100;
+    private final TicketID ID;
+    private TicketState ticketState;
+    private final HashMap<ProductID, TicketEntry<ProductType>> entries;
+    private final HashMap<Category, Integer> categories;
     private int totalUnits = 0;
 
-    private TicketState ticketState;
-    private final HashMap<Integer, TicketEntry<>> entries;
-    private final HashMap<Category, Integer> categories;
-    private final LocalDateTime creationDate;
-    private LocalDateTime closingDate;
-    private String ticketId;
-    private String printedOutput = null;
-
-    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
+    private static final int MAX_PRODUCTS_PER_TICKET = 100;
+    private static final int MIN_UNITS_FOR_DISCOUNT = 2;
 }

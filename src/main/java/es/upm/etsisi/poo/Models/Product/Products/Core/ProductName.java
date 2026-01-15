@@ -6,11 +6,13 @@ public class ProductName {
 
     public ProductName(String name) throws InvalidCatalogNameException {
         if (name == null)
-            throw new InvalidCatalogNameException("null");
+            throw new InvalidCatalogNameException("be null");
         else if (name.isEmpty())
-            throw new InvalidCatalogNameException("empty");
+            throw new InvalidCatalogNameException("be empty");
         else if (name.length() >= MAX_CHARACTER_NAME_LENGTH)
-            throw new InvalidCatalogNameException("more than 100 characters");
+            throw new InvalidCatalogNameException("be more than 100 characters");
+        else if ("0123456789".contains("" + name.charAt(0)))
+            throw new InvalidCatalogNameException("start with a number");
 
         this.name = name;
     }
@@ -23,7 +25,7 @@ public class ProductName {
 
     public static class InvalidCatalogNameException extends AppException {
         public InvalidCatalogNameException(String message) {
-            super("Catalog item name can not be " + message);
+            super("Catalog item name can not " + message);
         }
     }
 

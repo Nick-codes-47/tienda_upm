@@ -1,10 +1,11 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Core.AppEntity;
-import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
-public abstract class BaseProduct extends AppEntity {
+public abstract class BaseProduct {
+
+    protected final ProductType type;
 
     public BaseProduct(ProductType type) {
         this.type = type;
@@ -14,13 +15,15 @@ public abstract class BaseProduct extends AppEntity {
         this.type = other.type;
     }
 
+    abstract public ProductID getID();
     public ProductType getType() { return type; }
 
-    private final ProductType type;
-
-    public static class InvalidProductException extends AppException {
-        public InvalidProductException(String message) {
-            super("Product " + message);
-        }
+    public boolean equals(Object other) {
+        if (this == other) return true;
+        else if (other.getClass() != this.getClass()) return false;
+        BaseProduct product = (BaseProduct) other;
+        return this.getID() == product.getID();
     }
+
+    abstract public BaseProduct clone();
 }

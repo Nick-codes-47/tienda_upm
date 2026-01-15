@@ -1,13 +1,31 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
+import java.time.LocalDateTime;
+
 public class EventEntry extends TicketEntry<EventProduct> {
 
-    public EventEntry(EventProduct event) {
-        this.product = event;
+    public EventEntry(EventProduct event) throws AppException {
+        super(event);
+
+        EventType type = event.getEventType();
+
+        int requiredHours;
+        if (type == EventType.FOOD) {
+            requiredHours = 72;
+        } else if (type == EventType.MEETING) {
+            requiredHours = 12;
+        } else {
+            requiredHours = type.getPlanningTime();
+        }
+
+        if (event.getExpireDate().isBefore(LocalDateTime.now().plusHours(requiredHours))) {
+            throw new AppException("Event expires in less than " + requiredHours);
+        }
     }
 
     /**
@@ -15,15 +33,15 @@ public class EventEntry extends TicketEntry<EventProduct> {
      * @param actualPeople the new value of actualPeople
      * @throws GoodsProduct.InvalidProductException Controls that the parameter actualPeople is valid in the Event
      */
-    public void setActualPeople (int actualPeople) throws GoodsProduct.InvalidProductException {
+    public void setActualPeople (int actualPeople) throws AppException {
         if (actualPeople > product.getMaxPeople()) {
-            throw new GoodsProduct.InvalidProductException(
+            throw new AppException(
                     "ERROR: There can't be more than "
                             + product.getMaxPeople() + " people"
             );
         } else if (actualPeople < 1) {
-            throw new GoodsProduct.InvalidProductException(
-                    "ERROR: There must be at leat 1 person in the event"
+            throw new AppException(
+                    "ERROR: There must be at least 1 person in the event"
             );
         }
         people = actualPeople;
@@ -31,25 +49,15 @@ public class EventEntry extends TicketEntry<EventProduct> {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append("{class:")
-                .append(product.getType().toSentenceCase())
-                .append(", id:")
-                .append(product.getId())
-                .append(", name:'")
-                .append(product.getName())
-                .append("', price/person:")
-                .append(product.getPrice())
-                .append(", expiration date:")
-                .append(product.getExpireDate().toLocalDate().toString())
-                .append(", max people allowed:")
-                .append(product.getMaxPeople())
-                .append(", actual People in Event:")
-                .append(people)
-                .append("}");
-
-        return sb.toString();
+        return "{class:" + EventType.toSentenceCase(product.getEventType())
+                + ", id:" + product.getID()
+                + ", name:'" + product.getName()
+                + "', price/person:" + product.getPrice()
+                + ", expiration date:" + product.getExpireDate().toLocalDate().toString()
+                + ", max people allowed:" + product.getMaxPeople()
+                + ", actual People in Event:" + people
+                + "}";
     }
 
     @Override

@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
+import es.upm.etsisi.poo.Models.Ticket.TicketID;
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 
 import java.util.ArrayList;
@@ -19,6 +20,10 @@ public class Customer extends User {
 
     }
 
+    private boolean isCompany(String possibleNif) {
+        return Character.isLetter(possibleNif.charAt(0)); // NIF starts with letter while DNI with number
+    }
+
     public String getCashierId() {
         return cashierId;
     }
@@ -29,7 +34,7 @@ public class Customer extends User {
         return type;
     }
 
-    public int addTicket(String ticketID) {
+    public int addTicket(TicketID ticketID) {
         if (tickets.contains(ticketID))
             return -1; // TODO exception
 
@@ -42,13 +47,9 @@ public class Customer extends User {
         return ", cash='" + cashierId + "'";
     }
 
-    private boolean isCompany(String possibleNif) {
-        return Character.isLetter(possibleNif.charAt(0)); // NIF starts with letter while DNI with number
-    }
-
     private final String cashierId;
 
     private final ClientType type;
 
-    private final ArrayList<String> tickets = new ArrayList<>();
+    private final ArrayList<TicketID> tickets = new ArrayList<>();
 }

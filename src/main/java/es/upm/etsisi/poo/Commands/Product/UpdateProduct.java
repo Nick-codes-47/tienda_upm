@@ -1,8 +1,10 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
@@ -37,11 +39,11 @@ public class UpdateProduct implements Command {
         }
         // if the number of arguments are correct we try to update
         try {
-            int id = Integer.parseInt(args[0]);
-            GoodsProduct product = catalog.getProduct(id);
+            ProductID ID = new ProductID(Integer.parseInt(args[0]));
+            BaseProduct product = catalog.get(ID);
             if (product == null) {
                 // Product does not exist
-                System.err.println("ERROR: Product with id " + id + " does not exist!");
+                System.err.println("ERROR: Product with id " + ID + " does not exist!");
                 return 4;
             }
 
@@ -72,21 +74,18 @@ public class UpdateProduct implements Command {
             // We print the product updated
             System.out.println(product);
 
-            List<Ticket> tickets = ticketService.getTicketsWith(product);
+            List<Ticket<?>> tickets = ticketService.getTicketsWith(product);
 
             if (!tickets.isEmpty()) {
                 System.out.println("The tickets with the following ids had the product and it was updated:");
-                for (Ticket ticket : tickets) {
+                for (Ticket<?> ticket : tickets) {
 
-                    ticket.updateProduct(product, field, converted);
+                    ticket.update(product);
 
                     // We show the ticket that had the product and changed
-                    System.out.println("- " + ticket.getTicketId());
+                    System.out.println("- " + ticket.getID());
                 }
             }
-
-
-            return 0;
 
         } catch (NoSuchFieldException e) {
             System.err.println("ERROR: Field not valid for this product! (Events don't have category)");
@@ -104,7 +103,11 @@ public class UpdateProduct implements Command {
             System.out.println("Valid categories:");
             System.out.println(Category.getCategories());
             return 8;
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
         }
+
+        return 0;
     }
 
     /**

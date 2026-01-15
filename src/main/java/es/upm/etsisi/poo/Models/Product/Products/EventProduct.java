@@ -1,10 +1,10 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProductException;
 
 import java.time.LocalDateTime;
 
@@ -42,22 +42,19 @@ public class EventProduct extends GoodsProduct {
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append("{class:")
-                .append(this.type)
-                .append(", id:")
-                .append(super.getID())
-                .append(", name:'")
-                .append(super.getName())
-                .append("', price/person:")
-                .append(super.getPrice())
-                .append(", expiration date:")
-                .append(this.expireDate.toLocalDate().toString())
-                .append(", max people allowed:")
-                .append(this.maxPeople);
-
-        return sb.toString();
+        return "{class:" +
+                type +
+                ", id:" +
+                super.getID() +
+                ", name:'" +
+                super.getName() +
+                "', price/person:" +
+                super.getPrice() +
+                ", expiration date:" +
+                this.expireDate.toLocalDate().toString() +
+                ", max people allowed:" +
+                this.maxPeople;
     }
 
     private final int maxPeople;

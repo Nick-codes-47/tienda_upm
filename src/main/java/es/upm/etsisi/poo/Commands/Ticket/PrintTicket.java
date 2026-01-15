@@ -30,7 +30,7 @@ public class PrintTicket implements Command {
             return -1;
         }
 
-        ticket.printTicket();
+        ticket.print();
 
         return 0;
     }
