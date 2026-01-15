@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -126,14 +127,13 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         return add(entry);
     }
 
-    public int delete(ProductID ID) {
+    public int delete(ProductID ID) throws AppEntityNotFoundException {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
 
         TicketEntry<?> entry = entries.get(ID);
-        if (entry == null)
-            return -2;
+        if (entry == null) throw new AppEntityNotFoundException("product", ID.toString());
 
         if (entry instanceof ProductEntry productEntry) {
             Product product = productEntry.getProduct();

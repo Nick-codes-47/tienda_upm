@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -38,18 +40,11 @@ public class AddProductToTicket implements Command {
         String prodIdStr = args[2];
         String amountStr = args[3];
 
-        BaseProduct product;
-        try {
-            ProductID productId = new ProductID(prodIdStr);
-            product = catalog.get(productId);
-            if (product == null) {
-                System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
-                return -1;
-            }
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
-            return -1;
-        }
+        ProductID productId = new ProductID(prodIdStr);
+
+        BaseProduct product = catalog.get(productId);
+
+        if (product == null) throw new AppEntityNotFoundException("product", productId.toString());
 
         int amount;
         try {
@@ -75,20 +70,12 @@ public class AddProductToTicket implements Command {
         }
 
         Cashier cashier = cashiers.getUser(cashId);
-        if (cashier == null) {
-            return -1; // TODO exception
-        }
-        int result = 0;
-        try {
-            Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
-            if (ticket == null) {
-                return -1; // TODO exception
-            }
-            result = addProductTmp(product, ticket);
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
-            result = -1;
-        }
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
+
+        Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
+        if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
+
+        int result = addProductTmp(product, ticket);
 
         if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
@@ -102,17 +89,13 @@ public class AddProductToTicket implements Command {
             System.err.print("ERROR: Error in the number of people in event.\n");
         } else if (result == -6) {
             System.err.print("ERROR: Maximum product customizations reached.\n");
-        } else if (result == -7) {
-            System.err.print("ERROR: Ticket does not exist.\n");
-        } else if (result == -8) {
-            System.err.print("ERROR: Product does not exist.\n");
         } else if (result != 0){
             System.err.println("ERROR: Unknown error occurred during product addition.\n");
         }
         return result;
     }
 
-    private int addProductTmp(BaseProduct product, Ticket<?> ticket) { // TODO SMELL refactor Products and TicketEntries
+    private int addProductTmp(BaseProduct product, Ticket<?> ticket) throws AppException { // TODO SMELL refactor Products and TicketEntries
         if (ticket instanceof CompanyTicket companyTicket)
             return addProduct(product, companyTicket);
         if (product instanceof GoodsProduct goody) {
@@ -123,14 +106,8 @@ public class AddProductToTicket implements Command {
         return 0;
     }
 
-    private <T extends BaseProduct> int addProduct(T product, Ticket<T> ticket) {
-        try {
-            ticket.add(product);
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
-            return 1;
-        }
-
+    private <T extends BaseProduct> int addProduct(T product, Ticket<T> ticket) throws AppException {
+        ticket.add(product);
         return 0;
     }
 

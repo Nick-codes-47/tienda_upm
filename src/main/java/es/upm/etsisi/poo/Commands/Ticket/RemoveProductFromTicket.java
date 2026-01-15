@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -28,29 +30,24 @@ public class RemoveProductFromTicket implements Command {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int result = 0;
+        int result;
         Ticket<?> ticket;
-        try {
-            ProductID prodId = new ProductID(prodIdStr);
-            Cashier cashier = cashiers.getUser(cashId);
-            if (cashier == null)
-                return -1; // TODO exception
-            ticket = cashier.getTicket(new TicketID(ticketId));
-            result = ticket.delete(prodId);
-        } catch (AppException e) {
-            System.err.printf(e.getMessage());
-            return -4;
-        }
+
+        ProductID prodId = new ProductID(prodIdStr);
+
+        Cashier cashier = cashiers.getUser(cashId);
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
+
+        ticket = cashier.getTicket(new TicketID(ticketId));
+        if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
+
+        result = ticket.delete(prodId);
 
         if (result == 0) {
             System.out.println(ticket);
             return 0;
         } else if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
-        } else if (result == -2) {
-            System.err.printf("ERROR: Product with ID '%s' is not in the ticket.\n", prodIdStr);
-        } else if (result == -3) {
-            System.err.printf("ERROR: Ticket with ID '%s' does not exist.\n", ticketId);
         } else {
             System.err.println("ERROR: Unknown error occurred during product removal.");
         }

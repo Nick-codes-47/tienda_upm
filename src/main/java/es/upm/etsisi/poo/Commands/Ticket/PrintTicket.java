@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -21,16 +23,13 @@ public class PrintTicket implements Command {
             throw new WrongNumberOfArgsException();
         }
 
-        Cashier cashier = cashiers.getUser(args[1]);
-        if (cashier == null) {
-            return -1; // TODO exception
-        }
+        String cashId = args[1];
+        Cashier cashier = cashiers.getUser(cashId);
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
 
-        Ticket<?> ticket = cashier.getTicket(new TicketID(args[0]));
-        if (ticket == null) {
-            System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", args[0], args[1]);
-            return -1;
-        }
+        String ticketId = args[0];
+        Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
+        if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.print();
 
