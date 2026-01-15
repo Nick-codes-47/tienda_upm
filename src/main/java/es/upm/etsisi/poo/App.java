@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -97,9 +98,13 @@ public class App {
         if (command == null)
             return;
 
-        int retVal = command.execute(request.args);
-        if (retVal == 0)
-            AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
+        try {
+            int retVal = command.execute(request.args);
+            if (retVal == 0)
+                AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
+        } catch (AppException e) {
+            AppLogger.error(e.getMessage());
+        }
     }
 
     private void help() {
