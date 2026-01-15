@@ -30,7 +30,7 @@ public class InputDriver {
 
     public Request next()
     {
-        AppLogger.info(PROMPT);
+        System.out.print(PROMPT); // can't use logger here because we don't want a line break
         String line = input.nextLine();
         if (inputFile != null)
         {
