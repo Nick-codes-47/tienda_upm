@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product;
 
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -27,10 +28,9 @@ public class RemoveProduct implements Command {
      *         4 if the product couldn't be removed
      */
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         if (args.length != 1) {
-            System.err.println("ERROR: Wrong number of arguments");
-            return 3;
+            throw new WrongNumberOfArgsException();
         }
         try {
             // We try to remove the product from the catalog

@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
@@ -15,27 +16,23 @@ public class PrintTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         if (args.length != 2) {
-            System.err.println("ERROR: Two arguments are required: <ticketId> <cashId>.");
-            return -1;
+            throw new WrongNumberOfArgsException();
         }
 
         Cashier cashier = cashiers.getUser(args[1]);
         if (cashier == null) {
             return -1; // TODO exception
         }
-        try {
-            Ticket<?> ticket = cashier.getTicket(new TicketID(args[0]));
-            if (ticket == null) {
-                System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", args[0], args[1]);
-                return -1;
-            }
 
-            ticket.print();
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
+        Ticket<?> ticket = cashier.getTicket(new TicketID(args[0]));
+        if (ticket == null) {
+            System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", args[0], args[1]);
+            return -1;
         }
+
+        ticket.print();
 
         return 0;
     }

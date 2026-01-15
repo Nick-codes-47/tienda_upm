@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.Users.Email;
@@ -12,7 +14,7 @@ public class AddCashier extends AddUser<Cashier> {
     }
 
     @Override
-    protected Cashier createUser(String[] args) {
+    protected Cashier createUser(String[] args) throws AppException {
         String id, nombre;
         Email email;
         if (args.length == 2) { // TODO: repeated code
@@ -29,8 +31,7 @@ public class AddCashier extends AddUser<Cashier> {
                 return null;
             }
         } else {
-            System.err.println("Wrong number of input args");
-            return null;
+            throw new WrongNumberOfArgsException();
         }
         if (email == null) {
             System.err.println("Invalid email");

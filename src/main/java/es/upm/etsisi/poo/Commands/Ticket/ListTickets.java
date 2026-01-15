@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
@@ -16,10 +18,9 @@ public class ListTickets implements Command {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         if (args.length != 0) {
-            System.err.println("ERROR: Command ticket list don't accept arguments.");
-            return -1;
+            throw new WrongNumberOfArgsException();
         }
 
         // if cashierId is null, get all the tickets

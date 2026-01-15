@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product;
 
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -32,10 +33,9 @@ public class UpdateProduct implements Command {
      * 8 if the category introduced is invalid
      */
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException{
         if (args.length != 3) {
-            System.err.println("ERROR: wrong number of arguments");
-            return 3;
+            throw new WrongNumberOfArgsException();
         }
         // if the number of arguments are correct we try to update
         try {

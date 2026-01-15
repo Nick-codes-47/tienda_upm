@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Users.User;
 import es.upm.etsisi.poo.Models.User.UserRegister;
 
@@ -13,7 +15,8 @@ public class ListUsers<T extends User> extends UserCommand<T> {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
+        if (args.length != 0){ throw new WrongNumberOfArgsException(); }
         List<T> users = userRegister.getUsers();
         System.out.println(userRegister.USER_TYPE + ":");
         for (User user : users)

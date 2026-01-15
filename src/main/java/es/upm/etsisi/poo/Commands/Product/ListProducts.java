@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -22,9 +24,9 @@ public class ListProducts implements Command {
      *         7 if the catalog is empty
      */
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         // this action doesn't need arguments (args.length = 0)
-        if (args.length != 0) return 3;
+        if (args.length != 0) throw new WrongNumberOfArgsException();
 
         // We obtain the map of products
         HashMap<ProductID, BaseProduct> products = catalog.getProducts();

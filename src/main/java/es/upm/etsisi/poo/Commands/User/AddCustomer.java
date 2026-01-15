@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
 import es.upm.etsisi.poo.Models.User.Users.Customer;
 import es.upm.etsisi.poo.Models.User.Users.Email;
@@ -15,7 +17,7 @@ public class AddCustomer extends AddUser<Customer> {
     }
 
     @Override
-    protected Customer createUser(String[] args) { // TODO: better use a factory ?
+    protected Customer createUser(String[] args) throws AppException { // TODO: better use a factory ?
         String id, name, dni, cashId;
         Email email;
         if (args.length == 4) { // TODO: repeated code
@@ -36,8 +38,7 @@ public class AddCustomer extends AddUser<Customer> {
                 return null;
             }
         } else {
-            System.err.println("Wrong number of input args");
-            return null;
+            throw new WrongNumberOfArgsException();
         }
 
         if (cashiers.getUser(cashId) == null) {

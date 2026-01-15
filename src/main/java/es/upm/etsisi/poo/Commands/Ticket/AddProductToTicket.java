@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -27,10 +28,9 @@ public class AddProductToTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         if (args.length < 4) {
-            System.err.println("ERROR: At least four arguments are required: <ticketId> <cashId> <prodId> <amount> [personalizations].");
-            return -1;
+            throw new WrongNumberOfArgsException();
         }
 
         String ticketId = args[0];

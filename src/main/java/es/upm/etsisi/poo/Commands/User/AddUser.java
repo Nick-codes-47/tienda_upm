@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.User.Users.Email;
 import es.upm.etsisi.poo.Models.User.Users.User;
 import es.upm.etsisi.poo.Models.User.UserRegister;
@@ -10,7 +11,7 @@ public abstract class AddUser<T extends User> extends UserCommand<T> {
         super(userRegister);
     }
 
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         T user = createUser(args);
         
         int ret = userRegister.addUser(user);
@@ -20,7 +21,7 @@ public abstract class AddUser<T extends User> extends UserCommand<T> {
         return ret;
     }
 
-    protected abstract T createUser(String[] args);
+    protected abstract T createUser(String[] args) throws AppException;
 
     protected Email parseEmail(String rawEmail)
     {

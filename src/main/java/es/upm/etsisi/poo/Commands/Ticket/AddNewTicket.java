@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
@@ -27,7 +29,7 @@ public class AddNewTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
         String ticketId = null;
         String cashId;
         String customerId;
@@ -40,8 +42,7 @@ public class AddNewTicket implements Command {
             cashId = args[1];
             customerId = args[2];
         } else {
-            System.err.println("ERROR: Two or three arguments are required: [<ticketId>] <cashId> <customerId>.");
-            return -1;
+            throw new WrongNumberOfArgsException();
         }
 
         if(ticketId != null){ // TODO generate new

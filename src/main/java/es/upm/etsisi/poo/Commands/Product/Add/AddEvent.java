@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.*;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -24,7 +25,7 @@ public abstract class AddEvent extends AddProduct {
     }
 
     @Override
-    protected BaseProduct createProduct(String[] args) {
+    protected BaseProduct createProduct(String[] args) throws AppException {
         BaseProduct product = null;
 
         try {
@@ -42,13 +43,12 @@ public abstract class AddEvent extends AddProduct {
                 ProductID ID = new ProductID(rawID);
                 product = new EventProduct(eventType, ID, new ProductName(args[1]),
                         Double.parseDouble(args[2]), LocalDateTime.parse(args[3]), Integer.parseInt(args[4]));
-            } else return null;
+            } else
+                throw new WrongNumberOfArgsException();
 
             return product;
         } catch (DateTimeParseException e) {
             System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
         }
 
         return product;

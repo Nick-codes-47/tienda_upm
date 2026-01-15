@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
@@ -11,12 +13,9 @@ public class RemoveCashier extends RemoveUser<Cashier> {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
 
-        if (args.length != 1) {
-            System.err.println("Wrong number of input args");
-            return 1;
-        }
+        if (args.length != 1) { throw new WrongNumberOfArgsException(); }
 
         String userId = args[0];
         if (userRegister.getUser(userId) == null) {

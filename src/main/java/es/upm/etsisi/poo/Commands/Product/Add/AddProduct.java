@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
+import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -34,9 +36,8 @@ public class AddProduct implements Command {
      *         3 if they weren't enough arguments
      */
     @Override
-    public int execute(String[] args) {
-        if (args.length < 2)
-            return 1;
+    public int execute(String[] args) throws AppException {
+        if (args.length < 2) throw new WrongNumberOfArgsException();
 
         BaseProduct product = createProduct(args);
         catalog.add(product);
@@ -44,7 +45,7 @@ public class AddProduct implements Command {
         return 0;
     }
 
-    protected BaseProduct createProduct(String[] args) {
+    protected BaseProduct createProduct(String[] args) throws AppException {
         BaseProduct product = null;
 
         try {
@@ -71,13 +72,12 @@ public class AddProduct implements Command {
             } else if (args.length == 5) {
                 ProductID ID = new ProductID(rawID);
                 product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]), Integer.parseInt(args[4]));
-            } else return null;
+            } else
+                throw new WrongNumberOfArgsException();
 
             return product;
         } catch (DateTimeParseException e) {
             System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
         }
 
         return product;
