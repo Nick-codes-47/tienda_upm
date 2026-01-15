@@ -15,7 +15,7 @@ public class InputDriver {
     public InputDriver(String inputFile)
             throws RuntimeException
     {
-//        System.err.printf("LOG::InputDriver Received input file: %s\n", inputFile);
+//        AppLogger.info(String.format("LOG::InputDriver Received input file: %s\n", inputFile));
         this.inputFile = inputFile;
 
         try
@@ -30,11 +30,11 @@ public class InputDriver {
 
     public Request next()
     {
-        System.out.print(PROMPT);
+        AppLogger.info(PROMPT);
         String line = input.nextLine();
         if (inputFile != null)
         {
-            System.out.println(line);
+            AppLogger.info(line);
         }
         return new Request(line);
     }

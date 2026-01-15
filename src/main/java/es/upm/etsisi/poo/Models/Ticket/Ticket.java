@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -42,7 +43,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
 
     private void checkCapacity(int added) {
         if ((totalUnits + added) > MAX_PRODUCTS_PER_TICKET) {
-            System.err.println("ERROR: maximum number of items reached.");
+            AppLogger.error("Maximum number of items reached.");
         } // TODO add exception
     }
 
@@ -67,7 +68,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
             categories.put(category, total + entry.getProductCount());
         }
 
-        System.out.println(this);
+        AppLogger.info(this.toString());
         return 0;
     }
 
@@ -143,7 +144,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
             ID.close();
         }
 
-        System.out.println(this);
+        AppLogger.info(this.toString());
     }
 
     private double calculateTotalPrice() {

@@ -10,6 +10,11 @@ public enum Category {
 
     public static String getCategories() {
         StringBuilder result = new StringBuilder();
+        addCategories(result);
+        return result.toString();
+    }
+
+    private static void addCategories(StringBuilder result) {
         boolean coma = false;
         for (Category category : values()) {
             if (coma) {
@@ -18,11 +23,15 @@ public enum Category {
             result.append(category.name());
             coma = true;
         }
+    }
+
+    public static String getCategoriesAndDiscount() {
+        StringBuilder result = new StringBuilder();
+        addCategoriesAndDiscounts(result);
         return result.toString();
     }
 
-    public static String getCategoriesWithDiscount() {
-        StringBuilder result = new StringBuilder();
+    private static void addCategoriesAndDiscounts(StringBuilder result) {
         boolean coma = false;
         for (Category category : values()) {
             if (coma) {
@@ -32,7 +41,6 @@ public enum Category {
             result.append(category.name()).append(" ").append(discountInt).append("%");
             coma = true;
         }
-        return result.toString();
     }
 
     private final double discount;
