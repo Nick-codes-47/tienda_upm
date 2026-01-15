@@ -1,6 +1,4 @@
-package es.upm.etsisi.poo.Models.Product.Products.ProductExceptions;
-
-import es.upm.etsisi.poo.Models.Core.AppException;
+package es.upm.etsisi.poo.AppExceptions;
 
 public class InvalidProductException extends AppException {
     public InvalidProductException(String message) {

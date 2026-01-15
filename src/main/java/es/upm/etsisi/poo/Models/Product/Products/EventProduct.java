@@ -4,7 +4,7 @@ import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
-import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProductException;
+import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
 
 import java.time.LocalDateTime;
 

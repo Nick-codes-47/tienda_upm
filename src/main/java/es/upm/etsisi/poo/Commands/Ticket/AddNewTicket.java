@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;

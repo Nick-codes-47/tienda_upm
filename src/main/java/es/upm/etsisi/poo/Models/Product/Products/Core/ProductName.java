@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Models.Product.Products.Core;
 
-import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.AppExceptions.AppException;
 
 import java.io.Serializable;
 

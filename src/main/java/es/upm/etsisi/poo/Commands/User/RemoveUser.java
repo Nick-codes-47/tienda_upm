@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Users.User;
 import es.upm.etsisi.poo.Models.User.UserRegister;
 
@@ -12,7 +14,8 @@ public class RemoveUser<T extends User> extends UserCommand<T> {
     }
 
     @Override
-    public int execute(String[] args) {
+    public int execute(String[] args) throws AppException {
+        if (args.length != 1){ throw new WrongNumberOfArgsException(); }
         String userId = args[0];
         return userRegister.removeUser(userId);
     }

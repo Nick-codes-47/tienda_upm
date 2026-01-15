@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Models.Core;
 
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
+
 import java.util.Objects;
 
 public abstract class AppID implements Comparable<AppID> {

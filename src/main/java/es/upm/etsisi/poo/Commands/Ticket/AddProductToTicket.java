@@ -1,12 +1,11 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;

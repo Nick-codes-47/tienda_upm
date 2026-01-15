@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Models.Product;
 
-import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
