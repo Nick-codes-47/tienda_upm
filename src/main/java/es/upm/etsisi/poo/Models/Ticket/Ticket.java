@@ -8,9 +8,12 @@ import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public abstract class Ticket<ProductType extends BaseProduct> {
+public abstract class Ticket<ProductType extends BaseProduct> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public Ticket(TicketID ID) {
         this.ID = ID;

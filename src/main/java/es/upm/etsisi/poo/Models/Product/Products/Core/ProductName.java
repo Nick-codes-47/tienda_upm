@@ -2,7 +2,11 @@ package es.upm.etsisi.poo.Models.Product.Products.Core;
 
 import es.upm.etsisi.poo.Models.Core.AppException;
 
-public class ProductName {
+import java.io.Serializable;
+
+public class ProductName implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public ProductName(String name) throws InvalidCatalogNameException {
         if (name == null)

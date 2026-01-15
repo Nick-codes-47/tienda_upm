@@ -3,7 +3,11 @@ package es.upm.etsisi.poo.Models.Ticket;
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
-public abstract class TicketEntry<ProductType extends BaseProduct> {
+import java.io.Serializable;
+
+public abstract class TicketEntry<ProductType extends BaseProduct> implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected TicketEntry(ProductType product) {
         this.product = product;

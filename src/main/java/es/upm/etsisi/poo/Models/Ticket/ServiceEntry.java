@@ -4,6 +4,8 @@ import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
 public class ServiceEntry extends TicketEntry<ServiceProduct> {
 
+    private static final long serialVersionUID = 1L;
+
     public ServiceEntry(ServiceProduct service) {
         super(service);
     }

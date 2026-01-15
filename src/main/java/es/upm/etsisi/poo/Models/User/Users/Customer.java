@@ -7,6 +7,8 @@ import java.util.ArrayList;
 
 public class Customer extends User {
 
+    private static final long serialVersionUID = 1L;
+
     public Customer(String identification, String name, Email email, String cashierId) {
         super(identification, name, email); // TODO: verify dnis
 
@@ -27,7 +29,7 @@ public class Customer extends User {
     public String getCashierId() {
         return cashierId;
     }
-    
+
     public String getDni() { return id; }
 
     public ClientType getType() {

@@ -10,6 +10,8 @@ import java.time.LocalDateTime;
 
 public class EventProduct extends GoodsProduct {
 
+    private static final long serialVersionUID = 1L;
+
     public EventProduct(EventType type, ProductID ID, ProductName name, double price, LocalDateTime expireDate, int maxPeople) throws InvalidProductException {
         super(ProductType.EVENT, ID, name, price);
 

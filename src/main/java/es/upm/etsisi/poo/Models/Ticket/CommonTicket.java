@@ -4,6 +4,8 @@ import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 
 public class CommonTicket extends Ticket<GoodsProduct> {
 
+    private static final long serialVersionUID = 1L;
+
     public CommonTicket(TicketID ID) {
         super(ID);
     }

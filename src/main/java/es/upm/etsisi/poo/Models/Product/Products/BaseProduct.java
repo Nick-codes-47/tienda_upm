@@ -3,7 +3,11 @@ package es.upm.etsisi.poo.Models.Product.Products;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
-public abstract class BaseProduct {
+import java.io.Serializable;
+
+public abstract class BaseProduct implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected final ProductType type;
 

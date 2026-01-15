@@ -5,6 +5,7 @@ import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -12,10 +13,19 @@ import java.util.stream.Collectors;
 /**
  * Class that implements a HashMap to store all the products available in the store
  */
-public class Catalog {
+public class Catalog implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public Catalog() {
         products = new HashMap<>();
+    }
+
+    public void loadData(HashMap<ProductID, BaseProduct> loadedProducts) {
+        if (loadedProducts != null) {
+            this.products.clear();
+            this.products.putAll(loadedProducts);
+        }
     }
 
     /**
@@ -38,9 +48,9 @@ public class Catalog {
      *
      * @param product the product that needs to be added to the catalog
      * @return 0 if the product was added to the catalog without problem;
-     *         -3 if the id already exists
-     *         -2 if the product passed was a null;
-     *         -1 if we already reached the maxProducts;
+     * -3 if the id already exists
+     * -2 if the product passed was a null;
+     * -1 if we already reached the maxProducts;
      */
     public int add(BaseProduct product) {
         // Discard null objects

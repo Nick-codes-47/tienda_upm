@@ -2,7 +2,11 @@ package es.upm.etsisi.poo.Models.User.Users;
 
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 
-public abstract class User {
+import java.io.Serializable;
+
+public abstract class User implements Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public User(String id, String name, Email email) {
         this.name = name;

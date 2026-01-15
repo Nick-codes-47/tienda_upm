@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 public class EventEntry extends TicketEntry<EventProduct> {
 
+    private static final long serialVersionUID = 1L;
+
     public EventEntry(EventProduct event) throws AppException {
         super(event);
 

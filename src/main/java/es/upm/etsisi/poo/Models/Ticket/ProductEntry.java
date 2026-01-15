@@ -7,6 +7,9 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class ProductEntry extends TicketEntry<Product> {
+
+    private static final long serialVersionUID = 1L;
+
     public int amount;
 
     public ProductEntry(Product product) {
@@ -28,7 +31,7 @@ public class ProductEntry extends TicketEntry<Product> {
         return print;
     }
 
-        /**
+    /**
      * Method to set the personalization of the product
      * @param personalizations the personalizations to copy
      * @throws AppException controls that the personalizations are valid in the product

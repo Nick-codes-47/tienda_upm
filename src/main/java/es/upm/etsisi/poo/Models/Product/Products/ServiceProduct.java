@@ -9,6 +9,8 @@ import java.time.LocalDateTime;
 
 public class ServiceProduct extends BaseProduct {
 
+    private static final long serialVersionUID = 1L;
+
     public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category) throws InvalidProductException {
         super(ProductType.SERVICE);
 

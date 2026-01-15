@@ -2,15 +2,20 @@ package es.upm.etsisi.poo;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 import es.upm.etsisi.poo.Models.User.CustomerRegister;
+import es.upm.etsisi.poo.Models.User.Users.Cashier;
+import es.upm.etsisi.poo.Models.User.Users.Customer;
 import es.upm.etsisi.poo.Handlers.CashierHandler;
 import es.upm.etsisi.poo.Handlers.CustomerHandler;
 import es.upm.etsisi.poo.Handlers.ProductHandler;
 import es.upm.etsisi.poo.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Handlers.Request;
 import es.upm.etsisi.poo.Handlers.RequestHandler;
+import es.upm.etsisi.poo.Persistence.PersistenceService; // <--- IMPORTANTE
 import es.upm.etsisi.poo.Services.TicketService;
 
 import org.apache.logging.log4j.LogManager;
@@ -25,13 +30,23 @@ public class App {
     public final CashierRegister cashiers = new CashierRegister();
     public final CustomerRegister customers = new CustomerRegister();
 
+    private final PersistenceService persistence = new PersistenceService();
+
     public final TicketService ticketService = new TicketService(cashiers);
 
     private static final Logger logger = LogManager.getLogger("AppLogger");
 
     public App() {}
 
+    @SuppressWarnings("unchecked")
     public void init(String inputFile) {
+        System.out.println("Loading data...");
+        Object[] data = persistence.loadAll();
+
+        if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct>) data[0]);
+        if (data[1] != null) customers.loadData((HashMap<String, Customer>) data[1]);
+        if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
+
         initBuiltinCommandsMap();
         initHandlersMap();
 
@@ -47,22 +62,15 @@ public class App {
         }
     }
 
-    /**
-     * @param args
-     *      args[1] - input file path
-     */
     public static void main(String[] args) {
         try {
             App app = new App();
-
             if (args.length > 0) {
                 app.init(args[0]);
-            }
-            else {
+            } else {
                 app.init(null);
             }
-        }
-        catch (RuntimeException exception) {
+        } catch (RuntimeException exception) {
             logger.error("ERROR::main> {}", String.valueOf(exception));
         }
     }
@@ -75,8 +83,7 @@ public class App {
     private void initInput(String inputFile) {
         if (inputFile != null) {
             input = new InputDriver(inputFile);
-        }
-        else {
+        } else {
             input = new InputDriver();
         }
     }
@@ -84,47 +91,33 @@ public class App {
     private void handleRequest(Request request) {
         if (handlerIds.containsKey(request.handlerId)) {
             execute(handlers[handlerIds.get(request.handlerId)].getCommand(request.commandId), request);
-        }
-        else if (builtinCommands.containsKey(request.handlerId)) {
+        } else if (builtinCommands.containsKey(request.handlerId)) {
             builtinCommands.get(request.handlerId).accept(request);
-        }
-        else {
+        } else {
             System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
         }
     }
 
     private void execute(Command command, Request request) {
-         if (command == null)
+        if (command == null)
             return;
-        
+
         int retVal = command.execute(request.args);
         if (retVal == 0)
             System.out.printf("%s %s: ok\n", request.handlerId, request.commandId);
     }
 
-    /**
-     * This method prints all the commands with its parameters
-     */
     private void help() {
-        // Initialize StringBuilder to build the entire output
         StringBuilder output = new StringBuilder();
-
-        // Show the commands
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
             for (Command command : requestHandler.getCommands()) {
                 output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, command.help()));
             }
         }
-
-        // Show the categories
         output.append("Categories: ").append(Category.getCategories()).append("\n");
-
-        // Show the categories and their discounts
         output.append("Discounts if there are ≥2 units in the category: ")
                 .append(Category.getCategoriesWithDiscount()).append("\n\n");
-
-        // Print all the content built in the StringBuilder at the end
         System.out.print(output);
     }
 
@@ -132,13 +125,18 @@ public class App {
      * Method to exit the program's execution
      */
     private void exit() {
-        System.out.println("Closing Application.\n" +
-                "Goodbye!");
+        System.out.println("Saving data...");
+        persistence.saveAll(
+                catalog.getProducts(),
+                customers.getRawMap(),
+                cashiers.getRawMap()
+        );
+
+        System.out.println("Closing Application.\nGoodbye!");
         System.exit(0);
     }
 
-    private void echo(Request request)
-    {
+    private void echo(Request request) {
         System.out.println(request.commandId);
     }
 
@@ -161,13 +159,8 @@ public class App {
         builtinCommands.put("exit", (request) -> exit());
     }
 
-    // This is done with separate structures instead of a single Hashmap<String, RequestHandler>
-    // in order to maintain the order of RequestsHandlers so functions output like help respect the order in the
-    // handlers array
     private RequestHandler[] handlers;
     private final HashMap<String, Integer> handlerIds = new HashMap<>();
-
     private final HashMap<String, Consumer<Request>> builtinCommands = new HashMap<>();
-
     private InputDriver input;
-} // class App
+}

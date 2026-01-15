@@ -8,6 +8,8 @@ import java.util.HashMap;
 
 public class Cashier extends User {
 
+    private static final long serialVersionUID = 1L;
+
     public final HashMap<TicketID, Ticket<?>> tickets = new HashMap<>();
 
     public Cashier(String id, String name, Email email) {

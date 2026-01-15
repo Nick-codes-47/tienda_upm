@@ -5,6 +5,8 @@ import es.upm.etsisi.poo.Models.User.Users.Cashier;
 
 public class CashierRegister extends UserRegister<Cashier> {
 
+    private static final long serialVersionUID = 1L;
+
     public CashierRegister() { super(UserType.CASHIER); }
 
     @Override

@@ -10,6 +10,8 @@ import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProduc
  */
 public abstract class GoodsProduct extends BaseProduct {
 
+    private static final long serialVersionUID = 1L;
+
     public GoodsProduct(ProductType type, ProductID ID, ProductName name, double price) throws InvalidProductException {
         super(type);
 

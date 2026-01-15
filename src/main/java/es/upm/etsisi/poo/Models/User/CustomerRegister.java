@@ -5,6 +5,8 @@ import es.upm.etsisi.poo.Models.User.Users.Customer;
 
 public class CustomerRegister extends UserRegister<Customer> {
 
+    private static final long serialVersionUID = 1L;
+
     public CustomerRegister() { super(UserType.CLIENT); }
 
     @Override

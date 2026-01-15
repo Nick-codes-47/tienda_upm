@@ -3,15 +3,30 @@ package es.upm.etsisi.poo.Models.User;
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 import es.upm.etsisi.poo.Models.User.Users.User;
 
+import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class UserRegister<T extends User> implements Iterable<T> {
+public abstract class UserRegister<T extends User> implements Iterable<T>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     public UserRegister(UserType userType) {
         users = new HashMap<>();
         this.USER_TYPE = userType;
+    }
+
+    public void loadData(HashMap<String, T> loadedUsers) {
+        if (loadedUsers != null) {
+            this.users.clear();
+            this.users.putAll(loadedUsers);
+        }
+    }
+
+    // Necesitamos acceso al mapa para guardarlo
+    public HashMap<String, T> getRawMap() {
+        return this.users;
     }
 
     @Override
@@ -40,7 +55,7 @@ public abstract class UserRegister<T extends User> implements Iterable<T> {
     public int removeUser(String userId){
         if (!users.containsKey(userId))
             return 1;
-        
+
         users.remove(userId);
         return 0;
     }

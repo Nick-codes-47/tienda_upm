@@ -8,6 +8,8 @@ import es.upm.etsisi.poo.Models.Product.Products.ProductExceptions.InvalidProduc
 
 public class Product extends GoodsProduct {
 
+    private static final long serialVersionUID = 1L;
+
     public Product(ProductID ID, ProductName name, String category, double price) throws InvalidProductException {
         super(ProductType.PRODUCT, ID, name, price);
 
@@ -56,7 +58,7 @@ public class Product extends GoodsProduct {
                 .append("', category:").append(category)
                 .append(", price:").append(super.getPrice());
         if (maxPersonalization != 0)
-                sb.append(", maxPersonal:").append(this.maxPersonalization);
+            sb.append(", maxPersonal:").append(this.maxPersonalization);
         sb.append("}");
 
         return sb.toString();
