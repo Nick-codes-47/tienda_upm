@@ -34,8 +34,6 @@ public class App {
 
     public final TicketService ticketService = new TicketService(cashiers);
 
-    private static final Logger logger = LogManager.getLogger("AppLogger");
-
     public App() {}
 
     @SuppressWarnings("unchecked")
@@ -71,7 +69,7 @@ public class App {
                 app.init(null);
             }
         } catch (RuntimeException exception) {
-            logger.error("ERROR::main> {}", String.valueOf(exception));
+            AppLogger.error(String.format("ERROR::main> %s", exception));
         }
     }
 
