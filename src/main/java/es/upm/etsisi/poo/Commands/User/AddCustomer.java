@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
@@ -18,43 +19,29 @@ public class AddCustomer extends AddUser<Customer> {
 
     @Override
     protected Customer createUser(String[] args) throws AppException { // TODO: better use a factory ?
-        String id, name, dni, cashId;
-        Email email;
-        if (args.length == 4) { // TODO: repeated code
-            id = args[1];
-            dni = id;
-            name = args[0];
-            email = parseEmail(args[2]);
-            cashId = args[3];
-        }
-        else if (args.length == 5) {
-            id = args[0];
-            dni = args[2];
-            name = args[1];
-            email = parseEmail(args[3]);
-            cashId = args[4];
-            if (!Objects.equals(id, dni)) {
-                System.err.printf("client id {%s} and dni {%s} must be the same\n", id, dni);
-                return null;
-            }
-        } else {
+        if (args.length != 4) {
             throw new WrongNumberOfArgsException();
         }
 
+        String name = args[0];
+        String identification = args[1];
+        Email email = parseEmail(args[2]);
+        String cashId = args[3];
+
+
         if (cashiers.getUser(cashId) == null) {
-            System.err.printf("cashier {%s} does not exist\n", cashId);
-            return null;
+            throw new AppEntityNotFoundException("cashier", cashId);
         } else if (email == null) {
             System.err.println("Invalid email");
             return null;
         }
 
-        return new Customer(dni, name, email, cashId);
+        return new Customer(identification, name, email, cashId);
     }
 
     @Override
     public String help() {
-        return ID +" \"<nombre>\" <DNI> <email> <cashId>";
+        return ID + " \"<nombre>\" (<DNI>|<NIF>) <email> <cashId>";
     }
 
     private final CashierRegister cashiers;
