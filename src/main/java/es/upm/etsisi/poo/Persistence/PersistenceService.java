@@ -1,5 +1,8 @@
 package es.upm.etsisi.poo.Persistence;
 
+import es.upm.etsisi.poo.App;
+import es.upm.etsisi.poo.AppLogger;
+
 import java.io.*;
 import java.util.HashMap;
 
@@ -15,7 +18,7 @@ public class PersistenceService {
             try (ObjectOutputStream out = new ObjectOutputStream(new FileOutputStream(filename))) {
                 out.writeObject(data);
             } catch (IOException e) {
-                System.err.println("Error saving " + filename + ": " + e.getMessage());
+                AppLogger.error("Couldn't save " + filename + ": " + e.getMessage());
             }
         }
 
@@ -27,7 +30,7 @@ public class PersistenceService {
             try (ObjectInputStream in = new ObjectInputStream(new FileInputStream(filename))) {
                 return (T) in.readObject();
             } catch (IOException | ClassNotFoundException e) {
-                System.err.println("Error loading " + filename + ": " + e.getMessage());
+                AppLogger.error("Couldn't load " + filename + ": " + e.getMessage());
                 return null;
             }
         }
@@ -37,7 +40,7 @@ public class PersistenceService {
         new FileHelper<HashMap<?, ?>>().save(PRODUCT_FILE, catalogData);
         new FileHelper<HashMap<?, ?>>().save(CUSTOMER_FILE, customerData);
         new FileHelper<HashMap<?, ?>>().save(CASHIER_FILE, cashierData);
-        System.out.println("Persistence: Data saved successfully.");
+        AppLogger.info("Data saved successfully.");
     }
 
     /**

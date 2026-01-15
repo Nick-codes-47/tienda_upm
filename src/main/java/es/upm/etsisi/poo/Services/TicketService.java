@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Services;
 
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
@@ -18,9 +19,9 @@ public class TicketService {
 
     public void printTicketList(List<Ticket<?>> tickets) {
         for (Ticket<?> ticket : tickets) {
-            System.out.printf("  %s - %s\n",
+            AppLogger.info(String.format("  %s - %s\n",
                     ticket.getID(),
-                    ticket.getTicketState());
+                    ticket.getTicketState()));
         }
     }
 

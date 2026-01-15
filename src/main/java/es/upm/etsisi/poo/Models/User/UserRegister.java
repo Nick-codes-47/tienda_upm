@@ -69,7 +69,7 @@ public abstract class UserRegister<T extends User> implements Iterable<T>, Seria
     }
 
 
-    public String getNewId() { return null; }
+    public String getNewId() { return null; } // TODO maybe delete this method since just Cashier uses it
     public abstract boolean isValidId(String id);
 
     public final UserType USER_TYPE;

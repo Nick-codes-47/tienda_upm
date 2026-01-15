@@ -18,9 +18,6 @@ import es.upm.etsisi.poo.Handlers.RequestHandler;
 import es.upm.etsisi.poo.Persistence.PersistenceService; // <--- IMPORTANTE
 import es.upm.etsisi.poo.Services.TicketService;
 
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
-
 import java.util.HashMap;
 import java.util.function.Consumer;
 
@@ -34,13 +31,11 @@ public class App {
 
     public final TicketService ticketService = new TicketService(cashiers);
 
-    private static final Logger logger = LogManager.getLogger("AppLogger");
-
     public App() {}
 
     @SuppressWarnings("unchecked")
     public void init(String inputFile) {
-        System.out.println("Loading data...");
+        AppLogger.info("Loading data...");
         Object[] data = persistence.loadAll();
 
         if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct>) data[0]);
@@ -71,12 +66,12 @@ public class App {
                 app.init(null);
             }
         } catch (RuntimeException exception) {
-            logger.error("ERROR::main> {}", String.valueOf(exception));
+            AppLogger.error(exception.getMessage());
         }
     }
 
     private void printWelcome() {
-        System.out.println("Welcome to the ticket module App.\n" +
+        AppLogger.info("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.");
     }
 
@@ -94,7 +89,7 @@ public class App {
         } else if (builtinCommands.containsKey(request.handlerId)) {
             builtinCommands.get(request.handlerId).accept(request);
         } else {
-            System.err.printf("ERROR: Invalid command %s\n", request.handlerId);
+            AppLogger.error(String.format("Invalid command %s\n", request.handlerId));
         }
     }
 
@@ -104,40 +99,51 @@ public class App {
 
         int retVal = command.execute(request.args);
         if (retVal == 0)
-            System.out.printf("%s %s: ok\n", request.handlerId, request.commandId);
+            AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
     }
 
     private void help() {
         StringBuilder output = new StringBuilder();
+
+        includeCommands(output);
+
+        includeCategories(output);
+
+        AppLogger.info(output.toString());
+    }
+
+    private void includeCommands(StringBuilder output) {
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
             for (Command command : requestHandler.getCommands()) {
                 output.append(String.format("  %s %s\n", requestHandler.HANDLER_ID, command.help()));
             }
         }
+    }
+
+    private static void includeCategories(StringBuilder output) {
         output.append("Categories: ").append(Category.getCategories()).append("\n");
         output.append("Discounts if there are ≥2 units in the category: ")
-                .append(Category.getCategoriesWithDiscount()).append("\n\n");
-        System.out.print(output);
+                .append(Category.getCategoriesAndDiscount()).append("\n\n");
     }
 
     /**
      * Method to exit the program's execution
      */
     private void exit() {
-        System.out.println("Saving data...");
+        AppLogger.info("Saving data...");
         persistence.saveAll(
                 catalog.getProducts(),
                 customers.getRawMap(),
                 cashiers.getRawMap()
         );
 
-        System.out.println("Closing Application.\nGoodbye!");
+        AppLogger.info("Closing Application.\nGoodbye!");
         System.exit(0);
     }
 
     private void echo(Request request) {
-        System.out.println(request.commandId);
+        AppLogger.info(request.commandId);
     }
 
     private void initHandlersMap() {
