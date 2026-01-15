@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 import es.upm.etsisi.poo.Models.User.Users.User;
 
@@ -52,9 +53,9 @@ public abstract class UserRegister<T extends User> implements Iterable<T>, Seria
         return users.get(userId);
     }
 
-    public int removeUser(String userId){
+    public int removeUser(String userId) throws AppEntityNotFoundException {
         if (!users.containsKey(userId))
-            return 1;
+            throw new AppEntityNotFoundException("User", userId);
 
         users.remove(userId);
         return 0;

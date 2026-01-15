@@ -24,7 +24,6 @@ public class RemoveProduct implements Command {
      * @param args the id to remove the product
      * @return 0 if all went fine
      *         1 if the id is not valid
-     *         3 if the number of arguments is not valid
      *         4 if the product couldn't be removed
      */
     @Override

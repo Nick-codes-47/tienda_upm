@@ -18,10 +18,7 @@ public class RemoveCashier extends RemoveUser<Cashier> {
         if (args.length != 1) { throw new WrongNumberOfArgsException(); }
 
         String userId = args[0];
-        if (userRegister.getUser(userId) == null) {
-            System.err.printf("cashier {%s} does not exist\n", userId);
-            return 2;
-        }
+
         userRegister.removeUser(userId);
         return 0;
     }
