@@ -1,7 +1,9 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -25,25 +27,21 @@ public class ListProducts implements Command {
      */
     @Override
     public int execute(String[] args) throws AppException {
-        // this action doesn't need arguments (args.length = 0)
         if (args.length != 0) throw new WrongNumberOfArgsException();
 
-        // We obtain the map of products
         HashMap<ProductID, BaseProduct> products = catalog.getProducts();
-        // We check if the catalog is empty
-        if (products.isEmpty()) {
-            System.err.println("ERROR: There are no products in the catalog yet!");
-            return 7;
-        }
+        if (products.isEmpty()) throw new EmptyDataException("products");
 
         // We list the products in ascending order by their id
         ArrayList<Map.Entry<ProductID, BaseProduct>> entries = new ArrayList<>(products.entrySet());
         entries.sort(APPID_LIST_ORDER);
-        System.out.println("Catalog:");
+
+        StringBuilder productsMessage = new StringBuilder("Catalog:").append("\n");
         for (Map.Entry<ProductID, BaseProduct> entry : entries) {
-            // We only show the product
-            System.out.println(" "+entry.getValue());
+            productsMessage.append(" ").append(entry.getValue()).append("\n");
         }
+
+        AppLogger.info(productsMessage.toString());
         return 0;
     }
 

@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
@@ -21,11 +23,11 @@ public class ListTicketsFromCashier implements Command {
             throw new WrongNumberOfArgsException();
         }
 
-        Cashier cashier = cashiers.getUser(args[0]);
-        if (cashier == null) {
-            System.err.printf("Error: cashier {%s} does not exist\n", args[0]);
-            return -1;
-        }
+        String cashId = args[0];
+        Cashier cashier = cashiers.getUser(cashId);
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
+
+        if (cashier.tickets.isEmpty()) throw new EmptyDataException("tickets");
 
         System.out.println("Tickets:");
         ticketService.printTicketList(cashier.tickets.values().stream().toList());
