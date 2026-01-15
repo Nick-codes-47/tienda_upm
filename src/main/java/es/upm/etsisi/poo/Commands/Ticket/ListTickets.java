@@ -9,6 +9,8 @@ import java.util.List;
 public class ListTickets implements Command {
     public static final String ID = "list";
 
+    private final TicketService ticketService;
+
     public ListTickets(TicketService ticketService) {
         this.ticketService = ticketService;
     }
@@ -21,7 +23,7 @@ public class ListTickets implements Command {
         }
 
         // if cashierId is null, get all the tickets
-        List<Ticket> tickets = ticketService.getTickets();
+        List<Ticket<?>> tickets = ticketService.getTickets();
         if (tickets.isEmpty()) {
             System.err.println("ERROR: No tickets found.");
             return -1;
@@ -35,6 +37,4 @@ public class ListTickets implements Command {
     public String help() {
         return ID;
     }
-
-    private final TicketService ticketService;
 }

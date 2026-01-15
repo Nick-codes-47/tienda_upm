@@ -6,6 +6,8 @@ public enum ProductType {
     SERVICE("ServiceProduct"),
     CUSTOM("ProductPersonalized");
 
+    private final String print;
+
     ProductType(String print) {
         this.print = print;
     }
@@ -14,6 +16,4 @@ public enum ProductType {
     public String toString() {
         return print;
     }
-
-    private final String print;
 }

@@ -6,8 +6,12 @@ public class ServiceID extends ProductID implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public ServiceID(int ID) throws InvalidAppIDException {
-        super(ID);
+    public ServiceID(int id) throws InvalidAppIDException {
+        super(id);
+    }
+
+    public ServiceID(String id) throws InvalidAppIDException {
+        super(id.substring(0, id.length() - 1));
     }
 
     @Override

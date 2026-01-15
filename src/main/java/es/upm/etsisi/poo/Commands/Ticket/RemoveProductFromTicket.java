@@ -1,12 +1,17 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
 public class RemoveProductFromTicket implements Command {
     public static final String ID = "remove";
+
+    private final CashierRegister cashiers;
 
     public RemoveProductFromTicket(CashierRegister cashiers) {
         this.cashiers = cashiers;
@@ -23,19 +28,19 @@ public class RemoveProductFromTicket implements Command {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int prodId;
+        int result = 0;
+        Ticket<?> ticket;
         try {
-            prodId = Integer.parseInt(prodIdStr);
-        } catch (NumberFormatException e) {
-            System.err.printf("ERROR: Product ID '%s' is not a valid number. Must be between 10000-99999.\n", prodIdStr);
+            ProductID prodId = new ProductID(prodIdStr);
+            Cashier cashier = cashiers.getUser(cashId);
+            if (cashier == null)
+                return -1; // TODO exception
+            ticket = cashier.getTicket(new TicketID(ticketId));
+            result = ticket.delete(prodId);
+        } catch (AppException e) {
+            System.err.printf(e.getMessage());
             return -4;
         }
-
-        Cashier cashier = cashiers.getUser(cashId);
-        if (cashier == null)
-            return -1; // TODO exception
-        Ticket ticket = cashier.getTicket(ticketId);
-        int result = ticket.deleteProduct(prodId);
 
         if (result == 0) {
             System.out.println(ticket);
@@ -56,6 +61,4 @@ public class RemoveProductFromTicket implements Command {
     public String help() {
         return ID +" <ticketId> <cashId> <prodId>";
     }
-
-    private final CashierRegister cashiers;
 }

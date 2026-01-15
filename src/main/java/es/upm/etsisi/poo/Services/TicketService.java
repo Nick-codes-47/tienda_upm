@@ -3,7 +3,7 @@ package es.upm.etsisi.poo.Services;
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
-import es.upm.etsisi.poo.Models.Ticket.TicketID;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 

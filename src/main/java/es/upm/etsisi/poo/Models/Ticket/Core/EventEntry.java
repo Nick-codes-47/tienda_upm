@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Ticket;
+package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
@@ -52,7 +52,7 @@ public class EventEntry extends TicketEntry<EventProduct> {
     @Override
     public String toString() {
 
-        return "{class:" + EventType.toSentenceCase(product.getEventType())
+        return "{class:" + product.getEventType()
                 + ", id:" + product.getID()
                 + ", name:'" + product.getName()
                 + "', price/person:" + product.getPrice()

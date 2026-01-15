@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
-import es.upm.etsisi.poo.Models.Ticket.TicketID;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 
 import java.util.ArrayList;

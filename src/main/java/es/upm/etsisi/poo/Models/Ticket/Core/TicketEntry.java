@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Ticket;
+package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -8,6 +8,8 @@ import java.io.Serializable;
 public abstract class TicketEntry<ProductType extends BaseProduct> implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    protected ProductType product;
 
     protected TicketEntry(ProductType product) {
         this.product = product;
@@ -19,11 +21,11 @@ public abstract class TicketEntry<ProductType extends BaseProduct> implements Se
         else throw new AppException("");
     };
 
-    public abstract String toString();
+    public ProductType getProduct() { return product; };
     public abstract int getProductCount();
     public abstract double getPrice();
 
     public abstract boolean checkValidity();
 
-    protected ProductType product;
+    public abstract String toString();
 }

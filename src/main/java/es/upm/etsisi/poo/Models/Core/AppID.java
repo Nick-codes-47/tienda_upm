@@ -1,14 +1,29 @@
 package es.upm.etsisi.poo.Models.Core;
 
+
 import java.util.Objects;
 
 public abstract class AppID implements Comparable<AppID> {
 
-    public AppID(int ID) throws InvalidAppIDException {
-        if (ID <= 0)
-            throw new InvalidAppIDException("0 or less than 0");
+    protected final int baseID;
 
-        this.baseID = ID;
+    public AppID(int id) throws InvalidAppIDException {
+        if (id <= 0)
+            throw new InvalidAppIDException("be 0 or less than 0");
+
+        this.baseID = id;
+    }
+
+    public AppID(String id) throws InvalidAppIDException {
+        if (!id.matches("\\d+")) {
+            throw new InvalidAppIDException("have non numeric characters");
+        }
+
+        int numID = Integer.parseInt(id);
+        if (numID <= 0)
+            throw new InvalidAppIDException("be 0 or less than 0");
+
+        this.baseID = numID;
     }
 
     @Override
@@ -36,9 +51,7 @@ public abstract class AppID implements Comparable<AppID> {
 
     public static class InvalidAppIDException extends AppException {
         public InvalidAppIDException(String message) {
-            super("App ID can not be " + message);
+            super("App ID can not " + message);
         }
     }
-
-    protected final int baseID;
 }

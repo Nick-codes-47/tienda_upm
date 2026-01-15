@@ -1,9 +1,16 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
+import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
+import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
+import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
+import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
@@ -11,6 +18,9 @@ import java.util.ArrayList;
 
 public class AddProductToTicket implements Command {
     public static final String ID = "add";
+
+    private final Catalog catalog;
+    private final CashierRegister cashiers;
 
     public AddProductToTicket(Catalog catalog, CashierRegister cashiers) {
         this.catalog = catalog;
@@ -29,16 +39,16 @@ public class AddProductToTicket implements Command {
         String prodIdStr = args[2];
         String amountStr = args[3];
 
-        GoodsProduct product;
+        BaseProduct product;
         try {
-            int productId = Integer.parseInt(prodIdStr);
+            ProductID productId = new ProductID(prodIdStr);
             product = catalog.get(productId);
             if (product == null) {
                 System.err.printf("ERROR: Product with ID '%s' not found in the Catalog.\n", prodIdStr);
                 return -1;
             }
-        } catch (NumberFormatException e) {
-            System.err.println("ERROR: prodId must be an integer.");
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
             return -1;
         }
 
@@ -69,12 +79,17 @@ public class AddProductToTicket implements Command {
         if (cashier == null) {
             return -1; // TODO exception
         }
-        Ticket ticket = cashier.getTicket(ticketId);
-        if (ticket == null) {
-            return -1; // TODO exception
+        int result = 0;
+        try {
+            Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
+            if (ticket == null) {
+                return -1; // TODO exception
+            }
+            result = addProductTmp(product, ticket);
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
+            result = -1;
         }
-
-        int result = ticket.add(product, amount, personalizations);
 
         if (result == -1) {
             System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
@@ -98,11 +113,36 @@ public class AddProductToTicket implements Command {
         return result;
     }
 
+    private int addProductTmp(BaseProduct product, Ticket<?> ticket) { // TODO SMELL refactor Products and TicketEntries
+        if (ticket instanceof CompanyTicket companyTicket)
+            return addProduct(product, companyTicket);
+        if (product instanceof GoodsProduct goody) {
+            CommonTicket commonTicket = (CommonTicket) ticket;
+            return addProduct(goody, commonTicket);
+        }
+
+        return 0;
+    }
+
+    private <T extends BaseProduct> int addProduct(T product, Ticket<T> ticket) {
+        try {
+            ticket.add(product);
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
+            return 1;
+        }
+
+        return 0;
+    }
+
+    private <T extends BaseProduct, U extends BaseProduct> int add(T product, Ticket<U> ticket) {
+        System.err.printf("ERROR: Can not add product type %s to a %s ticket\n", product.getType(), ticket.getType());
+
+        return -1;
+    }
+
     @Override
     public String help() {
         return ID + " <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]";
     }
-
-    private final Catalog catalog;
-    private final CashierRegister cashiers;
 }

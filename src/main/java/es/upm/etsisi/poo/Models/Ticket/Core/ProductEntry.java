@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Ticket;
+package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.Product;

@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Ticket;
+package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.Models.Core.AppID;
 
@@ -10,8 +10,18 @@ public class TicketID extends AppID implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public TicketID(int ID) throws InvalidAppIDException {
-        super(ID);
+    private boolean closed = false;
+    private final LocalDateTime creationDate;
+    private LocalDateTime closingDate;
+
+    public TicketID(int id) throws InvalidAppIDException {
+        super(id);
+
+        this.creationDate = LocalDateTime.now();
+    }
+
+    public TicketID(String id) throws InvalidAppIDException {
+        super(id);
 
         this.creationDate = LocalDateTime.now();
     }
@@ -35,8 +45,4 @@ public class TicketID extends AppID implements Serializable {
     }
 
     private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yy-MM-dd-HH:mm");
-
-    private boolean closed = false;
-    private final LocalDateTime creationDate;
-    private LocalDateTime closingDate;
 }

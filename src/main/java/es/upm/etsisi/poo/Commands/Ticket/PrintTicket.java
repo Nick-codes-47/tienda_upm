@@ -1,7 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
+import es.upm.etsisi.poo.Models.Core.AppException;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
@@ -23,14 +25,17 @@ public class PrintTicket implements Command {
         if (cashier == null) {
             return -1; // TODO exception
         }
+        try {
+            Ticket<?> ticket = cashier.getTicket(new TicketID(args[0]));
+            if (ticket == null) {
+                System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", args[0], args[1]);
+                return -1;
+            }
 
-        Ticket ticket = cashier.getTicket(args[0]);
-        if (ticket == null) {
-            System.err.printf("ERROR: Cannot be found ticket with ID: '%s' or the cashier '%s' is not authorized to print it.\n", args[0], args[1]);
-            return -1;
+            ticket.print();
+        } catch (AppException e) {
+            System.err.println(e.getMessage());
         }
-
-        ticket.print();
 
         return 0;
     }

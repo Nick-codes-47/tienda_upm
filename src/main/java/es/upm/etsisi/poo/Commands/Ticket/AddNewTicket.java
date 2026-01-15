@@ -2,12 +2,10 @@ package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Core.AppException;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
-import es.upm.etsisi.poo.Models.Ticket.TicketID;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
@@ -77,7 +75,7 @@ public class AddNewTicket implements Command {
             TicketID ID;
 
             if (ticketId != null)
-                ID = new TicketID(Integer.parseInt(ticketId));
+                ID = new TicketID(ticketId);
             else
                 ID = ticketService.getNewTicketID();
 

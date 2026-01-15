@@ -8,8 +8,12 @@ public class ProductID extends AppID implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public ProductID(int ID) throws InvalidAppIDException {
-        super(ID);
+    public ProductID(int id) throws InvalidAppIDException {
+        super(id);
+    }
+
+    public ProductID(String id) throws InvalidAppIDException {
+        super(id);
     }
 
     @Override

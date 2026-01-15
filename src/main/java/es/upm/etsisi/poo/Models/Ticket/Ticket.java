@@ -7,15 +7,29 @@ import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
+import es.upm.etsisi.poo.Models.Ticket.Core.*;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 
 public abstract class Ticket<ProductType extends BaseProduct> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public Ticket(TicketID ID) {
+
+    private final TicketID ID;
+    private final TicketType type;
+    private TicketState ticketState;
+    private final HashMap<ProductID, TicketEntry<ProductType>> entries;
+    private final HashMap<Category, Integer> categories;
+    private int totalUnits = 0;
+
+    private static final int MAX_PRODUCTS_PER_TICKET = 100;
+    private static final int MIN_UNITS_FOR_DISCOUNT = 2;
+
+    public Ticket(TicketType type, TicketID ID) {
+        this.type = type;
         this.ID = ID;
         this.entries = new HashMap<>();
         this.categories = new HashMap<>();
@@ -23,18 +37,16 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
     }
 
     public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
-        this(other.ID);
+        this(other.type, other.ID);
         this.ticketState = other.ticketState;
         this.entries.putAll(other.entries);
         this.categories.putAll(other.categories);
         this.totalUnits = other.totalUnits;
     }
 
+    public TicketType getType() { return type; };
     public TicketID getID() { return ID; }
-
-    public TicketState getTicketState() {
-        return this.ticketState;
-    }
+    public TicketState getTicketState() { return this.ticketState; }
 
     public boolean hasProduct(ProductID productId) {
         return this.entries.containsKey(productId);
@@ -46,7 +58,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         } // TODO add exception
     }
 
-    private int add(TicketEntry<ProductType> entry) throws AppException {
+    private int add(TicketEntry<ProductType> entry) {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
@@ -57,11 +69,11 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
 
         checkCapacity(entry.getProductCount());
 
-        entries.put(entry.product.getID(), entry);
+        entries.put(entry.getProduct().getID(), entry);
         totalUnits += entry.getProductCount();
 
         if (entry instanceof ProductEntry productEntry) {
-            Product product = productEntry.product;
+            Product product = productEntry.getProduct();
             Category category = product.getCategory();
             int total = categories.getOrDefault(category, 0);
             categories.put(category, total + entry.getProductCount());
@@ -98,6 +110,21 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         return add(entry);
     }
 
+    public int add(ProductType baseProduct, int amount, ArrayList<String> personalizations) throws AppException {
+        TicketEntry<ProductType> entry;
+        switch (baseProduct) {
+            case Product product:
+                entry = (TicketEntry<ProductType>) new ProductEntry(product);
+                ((ProductEntry) entry).amount = amount;
+                ((ProductEntry) entry).setPersonalizations(personalizations);
+                break;
+            case null, default:
+                throw new AppException("");
+        };
+
+        return add(entry);
+    }
+
     public int delete(ProductID ID) {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
@@ -108,7 +135,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
             return -2;
 
         if (entry instanceof ProductEntry productEntry) {
-            Product product = productEntry.product;
+            Product product = productEntry.getProduct();
             Category categoryKey = product.getCategory();
             int currentCategoryCount = categories.getOrDefault(categoryKey, 0);
             int newCount = Math.max(0, currentCategoryCount - productEntry.getProductCount());
@@ -120,14 +147,14 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         return 0;
     }
 
-    public int update(BaseProduct product) {
+    public int update(BaseProduct product) throws AppException {
         if (this.ticketState == TicketState.CERRADO) {
             return -1;
         }
 
         TicketEntry<ProductType> entry = this.entries.get(product.getID());
         if (entry != null) {
-            entry.product = (ProductType) product.clone();
+            entry.update((ProductType) product);
         }
 
         return 0;
@@ -180,7 +207,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
 
         for (TicketEntry<ProductType> entry : entries.values()) {
             int quantity = entry.getProductCount();
-            double unitDiscount = getProductDiscountValue(entry.product);
+            double unitDiscount = getProductDiscountValue(entry.getProduct());
             totalDiscount += unitDiscount * quantity;
         }
 
@@ -207,7 +234,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
             sb.append("No products added yet.\n");
         } else {
             for (TicketEntry<ProductType> entry : this.entries.values()) {
-                ProductType product = entry.product;
+                ProductType product = entry.getProduct();
                 String discountSuffix = null;
 
                 if (entry instanceof ProductEntry) {
@@ -232,13 +259,4 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
 
         return sb.toString();
     }
-
-    private final TicketID ID;
-    private TicketState ticketState;
-    private final HashMap<ProductID, TicketEntry<ProductType>> entries;
-    private final HashMap<Category, Integer> categories;
-    private int totalUnits = 0;
-
-    private static final int MAX_PRODUCTS_PER_TICKET = 100;
-    private static final int MIN_UNITS_FOR_DISCOUNT = 2;
 }
