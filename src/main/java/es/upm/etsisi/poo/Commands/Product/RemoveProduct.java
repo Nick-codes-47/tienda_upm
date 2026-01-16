@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -31,37 +32,29 @@ public class RemoveProduct implements Command {
         if (args.length != 1) {
             throw new WrongNumberOfArgsException();
         }
-        try {
-            // We try to remove the product from the catalog
-            ProductID ID = new ProductID(Integer.parseInt(args[0]));
-            BaseProduct prod = catalog.delete(ID);
-            if (prod != null) {
-                // If the product was deleted we show it
-                System.out.println(prod);
-            } else {
-                // if the product wasn't in the catalog we show it
-                System.err.println("ERROR: Product with id " + ID + " does not exist!");
-                return 4;
-            }
-            // We search for tickets with the product
-            List<Ticket<?>> tickets = ticketService.getTicketsWith(prod);
+        // We try to remove the product from the catalog
+        ProductID ID = new ProductID(Integer.parseInt(args[0]));
+        BaseProduct prod = catalog.delete(ID);
+        if (prod != null) {
+            // If the product was deleted we show it
+            System.out.println(prod);
+        } else throw new AppEntityNotFoundException("product", ID.toString());
+        // We search for tickets with the product
+        List<Ticket<?>> tickets = ticketService.getTicketsWith(prod);
 
-            if (!tickets.isEmpty()) {
-                // We show the tickets that had the product
-                System.out.println("The tickets with the following ids had the product and it was deleted:");
-                for (Ticket ticket : tickets) {
-                    // We remove the product from each ticket
-                    ticket.delete(prod.getID());
+        if (!tickets.isEmpty()) {
+            // We show the tickets that had the product
+            System.out.println("The tickets with the following ids had the product and it was deleted:");
+            for (Ticket ticket : tickets) {
+                // We remove the product from each ticket
+                ticket.delete(prod.getID());
 
-                    System.out.println("- " + ticket.getID());
-                }
+                System.out.println("- " + ticket.getID());
             }
-            // Since everything went well we return 0
-            return 0;
-        }  catch (AppException e) {
-            System.err.println("ERROR: The product id must be an integer");
-            return 1;
         }
+        // Since everything went well we return 0
+        return 0;
+
     }
 
     /**

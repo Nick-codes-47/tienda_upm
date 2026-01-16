@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -41,11 +42,7 @@ public class UpdateProduct implements Command {
         try {
             ProductID ID = new ProductID(Integer.parseInt(args[0]));
             BaseProduct product = catalog.get(ID);
-            if (product == null) {
-                // Product does not exist
-                System.err.println("ERROR: Product with id " + ID + " does not exist!");
-                return 4;
-            }
+            if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
             // We obtain the field to modify and the new value
             String fieldName = args[1].toLowerCase();
@@ -103,8 +100,6 @@ public class UpdateProduct implements Command {
             System.out.println("Valid categories:");
             System.out.println(Category.getCategories());
             return 8;
-        } catch (AppException e) {
-            System.err.println(e.getMessage());
         }
 
         return 0;
