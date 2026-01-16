@@ -38,19 +38,7 @@ public class RemoveProduct implements Command {
         BaseProduct prod = catalog.delete(ID);
         AppLogger.info(prod.toString());
 
-        // We search for tickets with the product
-        List<Ticket<?>> tickets = ticketService.getTicketsWith(prod);
-
-        if (!tickets.isEmpty()) {
-            // We show the tickets that had the product
-            System.out.println("The tickets with the following ids had the product and it was deleted:");
-            for (Ticket ticket : tickets) {
-                // We remove the product from each ticket
-                ticket.delete(prod.getID());
-
-                System.out.println("- " + ticket.getID());
-            }
-        }
+        ticketService.showModifiedTickets(prod);
 
         return 0;
 

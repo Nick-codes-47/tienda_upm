@@ -53,6 +53,20 @@ public class TicketService {
         return tickets;
     }
 
+    public void showModifiedTickets(BaseProduct product) throws AppException {
+        List<Ticket<?>> tickets = this.getTicketsWith(product);
+        if (!tickets.isEmpty()) {
+            StringBuilder sb =
+                    new StringBuilder("The tickets with the following ids had the product and it was updated:");
+            for (Ticket<?> ticket : tickets) {
+                ticket.update(product);
+                // We show the ticket that had the product and changed
+                sb.append("- ").append(ticket.getID());
+            }
+            AppLogger.info(sb.toString());
+        }
+    }
+
     private int totalTickets() {
         int total = 10000;
         for (Cashier cashier : cashiers)

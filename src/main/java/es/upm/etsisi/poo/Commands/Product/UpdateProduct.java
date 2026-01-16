@@ -69,7 +69,7 @@ public class UpdateProduct implements Command {
 
         AppLogger.info(product.toString());
 
-        showModifiedTickets(product);
+        ticketService.showModifiedTickets(product);
 
         return 0;
     }
@@ -117,20 +117,6 @@ public class UpdateProduct implements Command {
             field.set(product, converted);
         } catch (IllegalAccessException e) {
             throw new FieldNotValidException();
-        }
-    }
-
-    private void showModifiedTickets(BaseProduct product) throws AppException {
-        List<Ticket<?>> tickets = ticketService.getTicketsWith(product);
-        if (!tickets.isEmpty()) {
-            StringBuilder sb =
-                    new StringBuilder("The tickets with the following ids had the product and it was updated:");
-            for (Ticket<?> ticket : tickets) {
-                ticket.update(product);
-                // We show the ticket that had the product and changed
-                sb.append("- ").append(ticket.getID());
-            }
-            AppLogger.info(sb.toString());
         }
     }
 
