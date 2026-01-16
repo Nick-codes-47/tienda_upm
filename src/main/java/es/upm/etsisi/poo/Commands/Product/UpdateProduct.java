@@ -63,8 +63,7 @@ public class UpdateProduct implements Command {
         Field field = getFieldFromHierarchy(product.getClass(), fieldName);
         field.setAccessible(true);
 
-        // We convert
-        Object converted = convertValue(field, newValue);
+        Object converted = converNewtValue(field, newValue);
 
         setNewValue(field, product, converted);
 
@@ -90,7 +89,7 @@ public class UpdateProduct implements Command {
         throw new FieldNotValidException();
     }
 
-    private Object convertValue(Field field, String value)
+    private Object converNewtValue(Field field, String value)
             throws InvalidNewValueException {
         // We get the class of the field to be modified
         Class<?> type = field.getType();
