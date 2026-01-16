@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
+import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
 
@@ -36,12 +37,10 @@ public class Customer extends User {
         return type;
     }
 
-    public int addTicket(TicketID ticketID) {
-        if (tickets.contains(ticketID))
-            return -1; // TODO exception
+    public void addTicket(TicketID ticketID) throws EntityAlreadyExistsException{
+        if (tickets.contains(ticketID)) throw new EntityAlreadyExistsException("ticket", ticketID.toString());
 
         tickets.add(ticketID);
-        return 0;
     }
 
     @Override // TODO explain

@@ -31,8 +31,7 @@ public abstract class AddEvent extends AddProduct {
         try {
             int rawID = -1;
 
-
-            if ("1234567890".contains(args[0])) // only IDs start with numbers
+            if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
                 rawID = Integer.parseInt(args[0]);
 
             if (args.length == 4 && rawID == -1) {

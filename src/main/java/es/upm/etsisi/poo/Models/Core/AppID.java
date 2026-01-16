@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Models.Core;
 
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 
 import java.util.Objects;
 
@@ -11,19 +12,19 @@ public abstract class AppID implements Comparable<AppID> {
 
     public AppID(int id) throws InvalidAppIDException {
         if (id <= 0)
-            throw new InvalidAppIDException("be 0 or less than 0");
+            throw new InvalidAppIDException("can't be 0 or less than 0");
 
         this.baseID = id;
     }
 
     public AppID(String id) throws InvalidAppIDException {
         if (!id.matches("\\d+")) {
-            throw new InvalidAppIDException("have non numeric characters");
+            throw new InvalidAppIDException("can't have non numeric characters");
         }
 
         int numID = Integer.parseInt(id);
         if (numID <= 0)
-            throw new InvalidAppIDException("be 0 or less than 0");
+            throw new InvalidAppIDException("can't be 0 or less than 0");
 
         this.baseID = numID;
     }
@@ -49,11 +50,5 @@ public abstract class AppID implements Comparable<AppID> {
             throw new ClassCastException("Cannot compare different AppID types");
 
         return Integer.compare(baseID, other.baseID);
-    }
-
-    public static class InvalidAppIDException extends AppException {
-        public InvalidAppIDException(String message) {
-            super("App ID can not " + message);
-        }
     }
 }

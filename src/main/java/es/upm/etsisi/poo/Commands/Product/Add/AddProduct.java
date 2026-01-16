@@ -48,37 +48,33 @@ public class AddProduct implements Command {
     protected BaseProduct createProduct(String[] args) throws AppException {
         BaseProduct product = null;
 
-        try {
-            int rawID = -1;
+        int rawID = -1;
 
-            if ("1234567890".contains(args[0])) // only IDs start with numbers
-                rawID = Integer.parseInt(args[0]);
+        if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
+            rawID = Integer.parseInt(args[0]);
 
-            if (args.length == 2 && rawID == -1) {
-                ServiceID ID = catalog.getNewServiceID();
+        // TODO add enum to this class and make this infinite if else a switch
+        if (args.length == 2 && rawID == -1) {
+            ServiceID ID = catalog.getNewServiceID();
+            try {
                 product = new ServiceProduct(ID, LocalDateTime.parse(args[0]), args[1]);
-            } else if (args.length == 3 && rawID != -1) {
-                ServiceID ID = new ServiceID(rawID);
-                product = new ServiceProduct(ID, LocalDateTime.parse(args[1]), args[2]);
-            } else if (args.length == 3 && rawID == -1) {
-                ProductID ID = catalog.getNewProductID();
-                product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
-            } else if (args.length == 4 && rawID != -1) {
-                ProductID ID = new ProductID(rawID);
-                product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]));
-            } else if (args.length == 4 && rawID == -1) {
-                ProductID ID = catalog.getNewProductID();
-                product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]), Integer.parseInt(args[3]));
-            } else if (args.length == 5) {
-                ProductID ID = new ProductID(rawID);
-                product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]), Integer.parseInt(args[4]));
-            } else
-                throw new WrongNumberOfArgsException();
-
-            return product;
-        } catch (DateTimeParseException e) {
-            System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
-        }
+            } catch (DateTimeParseException e) {
+                // TODO add app exception to handle
+            }
+        } else if (args.length == 3 && rawID == -1) {
+            ProductID ID = catalog.getNewProductID();
+            product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
+        } else if (args.length == 4 && rawID != -1) {
+            ProductID ID = new ProductID(rawID);
+            product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]));
+        } else if (args.length == 4 && rawID == -1) {
+            ProductID ID = catalog.getNewProductID();
+            product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]), Integer.parseInt(args[3]));
+        } else if (args.length == 5) {
+            ProductID ID = new ProductID(rawID);
+            product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]), Integer.parseInt(args[4]));
+        } else
+            throw new WrongNumberOfArgsException();
 
         return product;
     }

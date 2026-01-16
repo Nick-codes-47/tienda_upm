@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -47,15 +48,9 @@ public class AddNewTicket implements Command {
         }
 
         if(ticketId != null){ // TODO generate new
-            if (!ticketId.matches("\\d+")) {
-                System.err.println("ERROR: Ticket ID must be numeric.");
-                return -1;
-            }
+            if (!ticketId.matches("\\d+")) throw new InvalidAppIDException("Ticket ID must be numeric.");
 
-            if (ticketId.length() != 5) {
-                System.err.println("ERROR: Ticket ID has to be 5 digits.");
-                return -1;
-            }
+            if (ticketId.length() != 5) throw new InvalidAppIDException("Ticket ID has to be 5 digits.");
         }
 
         Cashier cashier = cashiers.getUser(cashId);
@@ -79,10 +74,7 @@ public class AddNewTicket implements Command {
         else
             ticket = new CommonTicket(ID);
 
-        int result = cashier.addTicket(ticket);
-        if (result == -1) {
-            System.err.println("ERROR: Ticket with ID '" + ticketId + "' already exists.");
-        }
+        cashier.addTicket(ticket);
 
         customer.addTicket(ID);
 

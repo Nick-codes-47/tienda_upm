@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
@@ -26,17 +28,12 @@ public class AddCashier extends AddUser<Cashier> {
             id = args[0];
             nombre = args[1];
             email = parseEmail(args[2]);
-            if (userRegister.getUser(id) != null) {
-                System.err.printf("cashier {%s} already exists\n", id);
-                return null;
-            }
+            if (userRegister.getUser(id) != null) throw new EntityAlreadyExistsException("cashier", id);
         } else {
             throw new WrongNumberOfArgsException();
         }
-        if (email == null) {
-            System.err.println("Invalid email");
-            return null;
-        }
+
+        if (email == null) throw new InvalidEmailException();
 
         return new Cashier(id, nombre, email);
     }

@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Product.Products.Core;
 
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.Models.Core.AppID;
 
 import java.io.Serializable;

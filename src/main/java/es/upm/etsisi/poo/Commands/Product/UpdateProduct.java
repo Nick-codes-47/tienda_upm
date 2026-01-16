@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -40,7 +41,12 @@ public class UpdateProduct implements Command {
         }
         // if the number of arguments are correct we try to update
         try {
-            ProductID ID = new ProductID(Integer.parseInt(args[0]));
+            ProductID ID;
+            try {
+                ID = new ProductID(Integer.parseInt(args[0]));
+            } catch (NumberFormatException e) {
+                throw new InvalidAppIDException("ID must be a number");
+            }
             BaseProduct product = catalog.get(ID);
             if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
@@ -90,9 +96,6 @@ public class UpdateProduct implements Command {
         } catch (IllegalAccessException e) {
             System.err.println("ERROR: Illegal access! (You can't modify that field)");
             return 6;
-        } catch (NumberFormatException e) {
-            System.err.println("ERROR: Id or price is not valid");
-            return 1;
         } catch (IllegalArgumentException e) {
             // The value of the new category is not valid
             System.err.println("ERROR category is not valid");

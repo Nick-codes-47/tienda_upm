@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -35,10 +36,8 @@ public class RemoveProduct implements Command {
         // We try to remove the product from the catalog
         ProductID ID = new ProductID(Integer.parseInt(args[0]));
         BaseProduct prod = catalog.delete(ID);
-        if (prod != null) {
-            // If the product was deleted we show it
-            System.out.println(prod);
-        } else throw new AppEntityNotFoundException("product", ID.toString());
+        AppLogger.info(prod.toString());
+
         // We search for tickets with the product
         List<Ticket<?>> tickets = ticketService.getTicketsWith(prod);
 
@@ -52,7 +51,7 @@ public class RemoveProduct implements Command {
                 System.out.println("- " + ticket.getID());
             }
         }
-        // Since everything went well we return 0
+
         return 0;
 
     }

@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Core;
 
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
+
 import java.io.Serializable;
 
 public class ServiceID extends ProductID implements Serializable {

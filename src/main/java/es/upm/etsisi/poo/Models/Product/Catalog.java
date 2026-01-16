@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Product;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -110,12 +111,12 @@ public class Catalog implements Serializable {
      * @param ID to search the product
      * @return either the product that was removed or null if the product doesn't exist in the catalog.
      */
-    public BaseProduct delete(ProductID ID) {
+    public BaseProduct delete(ProductID ID) throws AppEntityNotFoundException {
         BaseProduct product = this.get(ID);
         if (product != null) {
             // If the product exist in the catalog we delete it
             products.remove(ID);
-        }
+        } else throw new AppEntityNotFoundException("product", ID.toString());
         return product;
     }
 

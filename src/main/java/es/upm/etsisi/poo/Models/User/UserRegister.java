@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Models.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 import es.upm.etsisi.poo.Models.User.Users.User;
 
@@ -35,15 +37,14 @@ public abstract class UserRegister<T extends User> implements Iterable<T>, Seria
         return users.values().iterator();
     }
 
-    public int addUser(T user){
+    public int addUser(T user) throws EntityAlreadyExistsException, InvalidAppIDException {
         if (user == null)
             return 1;
         if (users.containsKey(user.getId())) {
-            return 2;
+            throw new EntityAlreadyExistsException(USER_TYPE.toString(), user.getId());
         }
 
-        if (!isValidId(user.getId()))
-            return 3;
+        if (!isValidId(user.getId())) throw new InvalidAppIDException("");
 
         users.put(user.getId(), user);
         return 0;

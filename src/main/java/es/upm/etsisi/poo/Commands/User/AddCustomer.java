@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
 import es.upm.etsisi.poo.Models.User.Users.Customer;
@@ -29,12 +30,8 @@ public class AddCustomer extends AddUser<Customer> {
         String cashId = args[3];
 
 
-        if (cashiers.getUser(cashId) == null) {
-            throw new AppEntityNotFoundException("cashier", cashId);
-        } else if (email == null) {
-            System.err.println("Invalid email");
-            return null;
-        }
+        if (cashiers.getUser(cashId) == null) throw new AppEntityNotFoundException("cashier", cashId);
+        else if (email == null) throw new InvalidEmailException();
 
         return new Customer(identification, name, email, cashId);
     }
