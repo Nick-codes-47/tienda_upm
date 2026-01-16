@@ -1,5 +1,7 @@
 package es.upm.etsisi.poo.Services;
 
+import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
+import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -17,12 +19,14 @@ public class TicketService {
         this.cashiers = cashiers;
     }
 
-    public void printTicketList(List<Ticket<?>> tickets) {
+    public String getTicketList(List<Ticket<?>> tickets) {
+        StringBuilder sb = new StringBuilder();
         for (Ticket<?> ticket : tickets) {
-            AppLogger.info(String.format("  %s - %s\n",
+            sb.append(String.format("  %s - %s\n",
                     ticket.getID(),
                     ticket.getTicketState()));
         }
+        return sb.toString();
     }
 
     public List<Ticket<?>> getTickets() {
@@ -57,9 +61,8 @@ public class TicketService {
         return total;
     }
 
-    public TicketID getNewTicketID() {
-        try { return new TicketID(totalTickets() + 1); } catch (AppException e) {/* ignored its never gonna pass a negative ID */ }
-        return null;
+    public TicketID getNewTicketID() throws InvalidAppIDException {
+        return new TicketID(totalTickets() + 1);
     }
 
     private final CashierRegister cashiers;

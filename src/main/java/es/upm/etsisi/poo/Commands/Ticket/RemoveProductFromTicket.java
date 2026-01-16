@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -30,7 +31,6 @@ public class RemoveProductFromTicket implements Command {
         String cashId = args[1];
         String prodIdStr = args[2];
 
-        int result;
         Ticket<?> ticket;
 
         ProductID prodId = new ProductID(prodIdStr);
@@ -41,17 +41,11 @@ public class RemoveProductFromTicket implements Command {
         ticket = cashier.getTicket(new TicketID(ticketId));
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
-        result = ticket.delete(prodId);
+        ticket.delete(prodId);
 
-        if (result == 0) {
-            System.out.println(ticket);
-            return 0;
-        } else if (result == -1) {
-            System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
-        } else {
-            System.err.println("ERROR: Unknown error occurred during product removal.");
-        }
-        return result;
+        AppLogger.info(ticket.toString());
+
+        return 0;
     }
 
     @Override

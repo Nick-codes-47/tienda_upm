@@ -4,6 +4,7 @@ import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
@@ -29,8 +30,7 @@ public class ListTicketsFromCashier implements Command {
 
         if (cashier.tickets.isEmpty()) throw new EmptyDataException("tickets");
 
-        System.out.println("Tickets:");
-        ticketService.printTicketList(cashier.tickets.values().stream().toList());
+        AppLogger.info("Tickets:\n" + ticketService.getTicketList(cashier.tickets.values().stream().toList()));
 
         return 0;
     }

@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Services.TicketService;
@@ -20,15 +21,13 @@ public class ListTickets implements Command {
 
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 0) {
-            throw new WrongNumberOfArgsException();
-        }
+        if (args.length != 0) throw new WrongNumberOfArgsException();
 
         // if cashierId is null, get all the tickets
         List<Ticket<?>> tickets = ticketService.getTickets();
         if (tickets.isEmpty()) throw new EmptyDataException("tickets");
 
-        ticketService.printTicketList(tickets);
+        AppLogger.info(ticketService.getTicketList(tickets));
         return 0;
     }
 

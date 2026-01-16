@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.ClosedTicketException;
+import es.upm.etsisi.poo.AppExceptions.FullContainerException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
@@ -54,16 +56,13 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         return this.entries.containsKey(productId);
     }
 
-    private void checkCapacity(int added) {
-        if ((totalUnits + added) > MAX_PRODUCTS_PER_TICKET) {
-            AppLogger.error("Maximum number of items reached.");
-        } // TODO add exception
+    private void checkCapacity(int added) throws FullContainerException {
+        if ((totalUnits + added) > MAX_PRODUCTS_PER_TICKET) throw new FullContainerException();
     }
 
-    private int add(TicketEntry<ProductType> entry) {
-        if (this.ticketState == TicketState.CERRADO) {
-            return -1;
-        }
+    private int add(TicketEntry<ProductType> entry)
+            throws ClosedTicketException, FullContainerException {
+        if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
         if (this.ticketState == TicketState.VACIO) {
             this.ticketState = TicketState.ACTIVO;
@@ -127,10 +126,9 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
         return add(entry);
     }
 
-    public int delete(ProductID ID) throws AppEntityNotFoundException {
-        if (this.ticketState == TicketState.CERRADO) {
-            return -1;
-        }
+    public int delete(ProductID ID)
+            throws AppEntityNotFoundException, ClosedTicketException {
+        if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
         TicketEntry<?> entry = entries.get(ID);
         if (entry == null) throw new AppEntityNotFoundException("product", ID.toString());
@@ -149,9 +147,7 @@ public abstract class Ticket<ProductType extends BaseProduct> implements Seriali
     }
 
     public int update(BaseProduct product) throws AppException {
-        if (this.ticketState == TicketState.CERRADO) {
-            return -1;
-        }
+        if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
         TicketEntry<ProductType> entry = this.entries.get(product.getID());
         if (entry != null) {

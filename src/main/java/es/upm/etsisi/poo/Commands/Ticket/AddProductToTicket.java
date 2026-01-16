@@ -1,10 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -49,13 +46,9 @@ public class AddProductToTicket implements Command {
         int amount;
         try {
             amount = Integer.parseInt(amountStr);
-            if (amount <= 0) {
-                System.err.println("ERROR: Amount must be a positive integer.");
-                return -1;
-            }
+            if (amount <= 0) throw new InvalidAmountException();
         } catch (NumberFormatException e) {
-            System.err.println("ERROR: Amount must be a positive integer.");
-            return -1;
+            throw new InvalidAmountException();
         }
 
         int numPersonalizations = args.length - 4;
@@ -77,11 +70,7 @@ public class AddProductToTicket implements Command {
 
         int result = addProductTmp(product, ticket);
 
-        if (result == -1) {
-            System.err.printf("ERROR: Ticket with ID '%s' is closed.\n", ticketId);
-        } else if (result == -2) {
-            System.err.print("ERROR: Maximum number of products reached.\n");
-        } else if (result == -3) {
+        if (result == -3) {
             System.err.print("ERROR: Cannot add the same event/meal to the same ticket\n");
         } else if (result == -4) {
             System.err.print("ERROR: Event requires minimum time to be planned (72h for meals and 12h for meetings).\n");
@@ -89,9 +78,8 @@ public class AddProductToTicket implements Command {
             System.err.print("ERROR: Error in the number of people in event.\n");
         } else if (result == -6) {
             System.err.print("ERROR: Maximum product customizations reached.\n");
-        } else if (result != 0){
-            System.err.println("ERROR: Unknown error occurred during product addition.\n");
         }
+
         return result;
     }
 

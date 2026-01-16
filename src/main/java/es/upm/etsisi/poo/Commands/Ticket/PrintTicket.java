@@ -1,10 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Ticket.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
@@ -18,10 +15,9 @@ public class PrintTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
-        if (args.length != 2) {
-            throw new WrongNumberOfArgsException();
-        }
+    public int execute(String[] args)
+            throws WrongNumberOfArgsException, AppEntityNotFoundException, InvalidAppIDException {
+        if (args.length != 2) throw new WrongNumberOfArgsException();
 
         String cashId = args[1];
         Cashier cashier = cashiers.getUser(cashId);
