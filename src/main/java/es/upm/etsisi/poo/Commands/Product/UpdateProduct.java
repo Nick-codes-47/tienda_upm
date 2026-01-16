@@ -1,10 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
@@ -35,90 +33,49 @@ public class UpdateProduct implements Command {
      * 8 if the category introduced is invalid
      */
     @Override
-    public int execute(String[] args) throws AppException{
+    public int execute(String[] args) throws AppException {
         if (args.length != 3) {
             throw new WrongNumberOfArgsException();
         }
         // if the number of arguments are correct we try to update
+        ProductID ID;
         try {
-            ProductID ID;
-            try {
-                ID = new ProductID(Integer.parseInt(args[0]));
-            } catch (NumberFormatException e) {
-                throw new InvalidAppIDException("ID must be a number");
-            }
-            BaseProduct product = catalog.get(ID);
-            if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
-
-            // We obtain the field to modify and the new value
-            String fieldName = args[1].toLowerCase();
-            String newValue = args[2];
-
-            // We check that the field the user wants to change is supported for a change
-            String[] supportedFields = {"name","price","category"};
-            int i = 0;
-            while (i < supportedFields.length && !supportedFields[i].equals(fieldName)) {
-                i++;
-            }
-            if (i >= supportedFields.length) {
-                System.err.println("ERROR: field " + fieldName + " not found!");
-                return 5;
-            }
-
-            // We look in the products class and its superclasses to get the field if it exists
-            Field field = getFieldFromHierarchy(product.getClass(), fieldName);
-            field.setAccessible(true);
-
-            // We convert
-            Object converted = convertValue(field, newValue);
-
-            field.set(product, converted);
-
-            // We print the product updated
-            System.out.println(product);
-
-            List<Ticket<?>> tickets = ticketService.getTicketsWith(product);
-
-            if (!tickets.isEmpty()) {
-                System.out.println("The tickets with the following ids had the product and it was updated:");
-                for (Ticket<?> ticket : tickets) {
-
-                    ticket.update(product);
-
-                    // We show the ticket that had the product and changed
-                    System.out.println("- " + ticket.getID());
-                }
-            }
-
-        } catch (NoSuchFieldException e) {
-            System.err.println("ERROR: Field not valid for this product! (Events don't have category)");
-            return 5;
-        } catch (IllegalAccessException e) {
-            System.err.println("ERROR: Illegal access! (You can't modify that field)");
-            return 6;
-        } catch (IllegalArgumentException e) {
-            // The value of the new category is not valid
-            System.err.println("ERROR category is not valid");
-
-            System.out.println("Valid categories:");
-            System.out.println(Category.getCategories());
-            return 8;
+            ID = new ProductID(Integer.parseInt(args[0]));
+        } catch (NumberFormatException e) {
+            throw new InvalidAppIDException("ID must be a number");
         }
+        BaseProduct product = catalog.get(ID);
+        if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
+
+        // We obtain the field to modify and the new value
+        String fieldName = args[1].toLowerCase();
+        String newValue = args[2];
+
+        // We check that the field the user wants to change is supported for a change
+        String[] supportedFields = {"name", "price", "category"};
+        int i = 0;
+        while (i < supportedFields.length && !supportedFields[i].equals(fieldName)) {
+            i++;
+        }
+        if (i >= supportedFields.length) throw new FieldNotValidException();
+
+        // We look in the products class and its superclasses to get the field if it exists
+        Field field = getFieldFromHierarchy(product.getClass(), fieldName);
+        field.setAccessible(true);
+
+        // We convert
+        Object converted = convertValue(field, newValue);
+
+        setNewValue(field, product, converted);
+
+        AppLogger.info(product.toString());
+
+        showModifiedTickets(product);
 
         return 0;
     }
 
-    /**
-     * Shows how to call the action to update a product
-     *
-     * @return a string with the command and its arguments
-     */
-    @Override
-    public String help() {
-        return ID + " <id> NAME|CATEGORY|PRICE <value>";
-    }
-
-    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws NoSuchFieldException {
+    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws FieldNotValidException {
         // We get the current class of the object
         Class<?> current = clazz;
         while (current != null) {
@@ -129,11 +86,12 @@ public class UpdateProduct implements Command {
                 current = current.getSuperclass();
             }
         }
-        // If we didn't find the field we let it know with a new NoSuchFieldException
-        throw new NoSuchFieldException("Field '" + fieldName + "' not found");
+        // If we didn't find the field we let it know with a new FieldNotValidException
+        throw new FieldNotValidException();
     }
 
-    private Object convertValue(Field field, String value) {
+    private Object convertValue(Field field, String value)
+            throws InvalidNewValueException {
         // We get the class of the field to be modified
         Class<?> type = field.getType();
 
@@ -147,9 +105,50 @@ public class UpdateProduct implements Command {
         if (type.equals(double.class) || type.equals(Double.class)) {
             return Double.parseDouble(value);
         }
+        if (type.equals(Category.class)) {
+            return Category.valueOf(value);
+        }
 
-        // if we didn't manage to parse to one of the permitted classes we throw a new IllegalArgumentException
-        throw new IllegalArgumentException("Unsupported field type: " + type.getName());
+        // if we didn't manage to parse to one of the permitted classes it's an invalid new value.
+        throw new InvalidNewValueException(field.getName());
+    }
+
+    private static void setNewValue(Field field, BaseProduct product, Object converted) throws FieldNotValidException {
+        try {
+            field.set(product, converted);
+        } catch (IllegalAccessException e) {
+            throw new FieldNotValidException();
+        }
+    }
+
+    private void showModifiedTickets(BaseProduct product) throws AppException {
+        List<Ticket<?>> tickets = ticketService.getTicketsWith(product);
+        if (!tickets.isEmpty()) {
+            StringBuilder sb =
+                    new StringBuilder("The tickets with the following ids had the product and it was updated:");
+            for (Ticket<?> ticket : tickets) {
+                ticket.update(product);
+                // We show the ticket that had the product and changed
+                sb.append("- ").append(ticket.getID());
+            }
+            AppLogger.info(sb.toString());
+        }
+    }
+
+    /**
+     * Shows how to call the action to update a product
+     *
+     * @return a string with the command and its arguments
+     */
+    @Override
+    public String help() {
+        return ID + " <id> NAME|CATEGORY|PRICE <value>";
+    }
+
+    private static class InvalidNewValueException extends AppException {
+        private InvalidNewValueException(String field) {
+            super("New value is not valid for " + field);
+        }
     }
 
     final private Catalog catalog;
