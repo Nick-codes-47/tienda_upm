@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.User;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Users.User;
@@ -14,7 +15,7 @@ public class RemoveUser<T extends User> extends UserCommand<T> {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
+    public int execute(String[] args) throws WrongNumberOfArgsException, AppEntityNotFoundException {
         if (args.length != 1){ throw new WrongNumberOfArgsException(); }
         String userId = args[0];
         return userRegister.removeUser(userId);

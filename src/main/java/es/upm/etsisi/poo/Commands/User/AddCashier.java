@@ -16,7 +16,8 @@ public class AddCashier extends AddUser<Cashier> {
     }
 
     @Override
-    protected Cashier createUser(String[] args) throws AppException {
+    protected Cashier createUser(String[] args)
+            throws WrongNumberOfArgsException, InvalidEmailException, EntityAlreadyExistsException{
         String id, nombre;
         Email email;
         if (args.length == 2) { // TODO: repeated code

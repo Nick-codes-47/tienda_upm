@@ -19,19 +19,17 @@ public class AddCustomer extends AddUser<Customer> {
     }
 
     @Override
-    protected Customer createUser(String[] args) throws AppException { // TODO: better use a factory ?
-        if (args.length != 4) {
-            throw new WrongNumberOfArgsException();
-        }
+    protected Customer createUser(String[] args)
+            throws WrongNumberOfArgsException, InvalidEmailException, AppEntityNotFoundException {
+        // TODO: better use a factory ?
+        if (args.length != 4) throw new WrongNumberOfArgsException();
 
         String name = args[0];
         String identification = args[1];
         Email email = parseEmail(args[2]);
         String cashId = args[3];
 
-
         if (cashiers.getUser(cashId) == null) throw new AppEntityNotFoundException("cashier", cashId);
-        else if (email == null) throw new InvalidEmailException();
 
         return new Customer(identification, name, email, cashId);
     }
