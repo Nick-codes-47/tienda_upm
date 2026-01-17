@@ -28,12 +28,7 @@ public class AddProduct implements Command {
     /**
      * Method that executes the action to add a Product or CustomProduct to the catalog
      * @param args the arguments required to add a product to the catalog
-     * @return -3 if the id is already in the catalog
-     *         -1 if the catalog is full
-     *         0 if all went well
-     *         1 if id, price or maxPersonalizable were not valid
-     *         2 if one of the arguments was invalid to create the product
-     *         3 if they weren't enough arguments
+     * @return 0 if all went well
      */
     @Override
     public int execute(String[] args) throws AppException {

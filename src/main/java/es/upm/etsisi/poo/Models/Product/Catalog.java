@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Models.Product;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
@@ -49,25 +48,15 @@ public class Catalog implements Serializable {
      *
      * @param product the product that needs to be added to the catalog
      * @return 0 if the product was added to the catalog without problem;
-     * -3 if the id already exists
-     * -2 if the product passed was a null;
-     * -1 if we already reached the maxProducts;
      */
-    public int add(BaseProduct product) {
-        // Discard null objects
-        if (product == null) {
-            return -2;
-        }
-        // We check if we reached the maxProducts
-        if (products.size() >= MAX_PRODUCTS) {
-            return -1;
-        }
+    public int add(BaseProduct product)
+            throws NullAppEntityException, FullContainerException, EntityAlreadyExistsException {
+        if (product == null) throw new NullAppEntityException("product");
 
-        // We check if the id is valid
-        if (get(product.getID()) != null) {
-            return -3;
-        }
-        // Put the product in the map and print it
+        if (products.size() >= MAX_PRODUCTS) throw new FullContainerException();
+
+        if (get(product.getID()) != null) throw new EntityAlreadyExistsException("product", product.getID().toString());
+
         products.put(product.getID(), product);
         return 0;
     }
@@ -113,10 +102,10 @@ public class Catalog implements Serializable {
      */
     public BaseProduct delete(ProductID ID) throws AppEntityNotFoundException {
         BaseProduct product = this.get(ID);
-        if (product != null) {
-            // If the product exist in the catalog we delete it
-            products.remove(ID);
-        } else throw new AppEntityNotFoundException("product", ID.toString());
+        if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
+
+        products.remove(ID);
+
         return product;
     }
 
