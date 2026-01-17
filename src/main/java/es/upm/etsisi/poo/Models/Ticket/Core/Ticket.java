@@ -4,13 +4,13 @@ import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventEntry;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
 import java.io.Serializable;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -113,10 +113,10 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     public void close() throws ExpiredException {
         ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
-        checkForNonProgrammableEvents(eventsInTicket);
+        checkForExpiredProducts(eventsInTicket);
 
         ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
-        checkForExpiredServices(servicesInTicket);
+        checkForExpiredProducts(servicesInTicket);
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
@@ -138,25 +138,20 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return products;
     }
 
-    // TODO implement an expirable interface with an isExpired method  and refactor these methods into one
-    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningForEventException {
-        for (EventProduct event : eventsInTicket) {
-            if (event.isNotPossibleToPlanFromNow(LocalDateTime.now())) {
-                throw new NotEnoughPlanningForEventException
-                        (event.getID().toString(), event.getEventType().getPlanningTime(),event.getExpireDate());
-            }
+    private <T extends ExpirableProduct> void checkForExpiredProducts(ArrayList<T> expirables)
+            throws ExpiredException {
+        for (ExpirableProduct expirableProduct : expirables) {
+            if (expirableProduct.hasExpired()) throwExpiredException(expirableProduct);
         }
     }
 
-    private static void checkForExpiredServices(ArrayList<ServiceProduct> servicesInTicket) throws ExpiredServiceException {
-        for (ServiceProduct service : servicesInTicket) {
-            if (service.hasExpired()) {
-                throw new ExpiredServiceException(service.getID().toString());
-            }
+    private void throwExpiredException(ExpirableProduct expirableProduct) throws ExpiredException {
+        if (expirableProduct instanceof ServiceProduct)
+            throw new ExpiredServiceException(expirableProduct.getID().toString());
+        else if (expirableProduct instanceof EventProduct event) {
+            throw new NotEnoughPlanningForEventException(event.getID().toString(),
+                    event.getEventType().getPlanningTime(), event.getExpireDate());
         }
     }
 
-    private boolean isEvent(TicketEntry<ProductType> entry) {
-        return entry.getProduct() instanceof EventProduct;
-    }
 }

@@ -19,7 +19,7 @@ public class EventEntry extends TicketEntry<EventProduct> {
 
         EventType type = event.getEventType();
         int requiredHours = type.getPlanningTime();
-        if (event.isNotPossibleToPlanFromNow(LocalDateTime.now())) {
+        if (event.isNotPossibleToPlanFromNow()) {
             throw new NotEnoughPlanningForEventException(event.getID().toString(), requiredHours, event.getExpireDate());
         }
     }

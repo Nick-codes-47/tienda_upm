@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Models.Product.Products.Event;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
 import es.upm.etsisi.poo.Models.Core.Copyable;
+import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
@@ -12,7 +13,7 @@ import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 
 import java.time.LocalDateTime;
 
-public class EventProduct extends GoodsProduct<EventProduct> implements Copyable<EventProduct> {
+public class EventProduct extends GoodsProduct<EventProduct> implements Copyable<EventProduct>, ExpirableProduct {
 
     private static final long serialVersionUID = 1L;
 
@@ -47,8 +48,12 @@ public class EventProduct extends GoodsProduct<EventProduct> implements Copyable
     public LocalDateTime getExpireDate() { return this.expireDate; }
     public EventType getEventType() { return this.type; }
 
-    public boolean isNotPossibleToPlanFromNow(LocalDateTime now) {
-        return this.getExpireDate().isBefore(now.plusHours(this.type.getPlanningTime()));
+    public boolean hasExpired() {
+        return isNotPossibleToPlanFromNow();
+    }
+
+    public boolean isNotPossibleToPlanFromNow() {
+        return this.getExpireDate().isBefore(LocalDateTime.now().plusHours(this.type.getPlanningTime()));
     }
 
     @Override

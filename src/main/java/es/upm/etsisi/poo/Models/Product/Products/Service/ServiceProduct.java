@@ -2,6 +2,7 @@ package es.upm.etsisi.poo.Models.Product.Products.Service;
 
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
@@ -9,7 +10,7 @@ import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 
 import java.time.LocalDate;
 
-public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copyable<ServiceProduct> {
+public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copyable<ServiceProduct>, ExpirableProduct {
 
     private static final long serialVersionUID = 1L;
 
