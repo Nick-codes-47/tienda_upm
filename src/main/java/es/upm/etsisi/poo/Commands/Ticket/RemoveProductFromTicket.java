@@ -24,7 +24,7 @@ public class RemoveProductFromTicket implements Command {
     @Override
     public int execute(String[] args) throws AppException{
         if (args.length != 3) {
-            throw new WrongNumberOfArgsException();
+            throw new WrongNumberOfArgsException(this);
         }
 
         String ticketId = args[0];

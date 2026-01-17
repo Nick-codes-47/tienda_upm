@@ -18,4 +18,6 @@ public abstract class BaseProduct<T extends BaseProduct<T>>
         BaseProduct<?> product = (BaseProduct<?>) other;
         return this.getID() == product.getID();
     }
+
+    abstract public String toString();
 }

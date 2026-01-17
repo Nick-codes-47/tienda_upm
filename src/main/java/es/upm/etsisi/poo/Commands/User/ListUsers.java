@@ -18,7 +18,7 @@ public class ListUsers<T extends User> extends UserCommand<T> {
 
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 0){ throw new WrongNumberOfArgsException(); }
+        if (args.length != 0){ throw new WrongNumberOfArgsException(this); }
 
         List<T> users = userRegister.getUsers();
 

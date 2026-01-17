@@ -27,7 +27,7 @@ public class ListProducts implements Command {
      */
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 0) throw new WrongNumberOfArgsException();
+        if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         HashMap<ProductID, BaseProduct<?>> products = catalog.getProducts();
         if (products.isEmpty()) throw new EmptyDataException("products");

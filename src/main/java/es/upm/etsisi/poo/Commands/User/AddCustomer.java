@@ -20,7 +20,7 @@ public class AddCustomer extends AddUser<Customer> {
     protected Customer createUser(String[] args)
             throws WrongNumberOfArgsException, InvalidEmailException, AppEntityNotFoundException, InvalidAppIDException {
         // TODO: better use a factory ?
-        if (args.length != 4) throw new WrongNumberOfArgsException();
+        if (args.length != 4) throw new WrongNumberOfArgsException(this);
 
         String name = args[0];
         UserNIF identification = new UserNIF(args[1]);

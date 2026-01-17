@@ -33,7 +33,7 @@ public class AddCashier extends AddUser<Cashier> {
             email = parseEmail(args[2]);
             if (userRegister.getUser(id.toString()) != null) throw new EntityAlreadyExistsException("Cashier", id.toString());
         } else {
-            throw new WrongNumberOfArgsException();
+            throw new WrongNumberOfArgsException(this);
         }
 
         if (email == null) throw new InvalidEmailException();

@@ -1,18 +1,13 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.User.Core.UserRegister;
-import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
-import es.upm.etsisi.poo.Models.User.Core.Cashier;
-import es.upm.etsisi.poo.Models.User.Core.Customer;
+import es.upm.etsisi.poo.Models.Ticket.ServiceTicket;
+import es.upm.etsisi.poo.Models.User.Core.*;
 import es.upm.etsisi.poo.Services.TicketService;
 
 public class AddNewTicket implements Command {
@@ -30,57 +25,69 @@ public class AddNewTicket implements Command {
 
     @Override
     public int execute(String[] args) throws AppException {
-        String ticketId = null;
-        String cashId;
-        String customerId;
+        TicketID ticketId = null;
+        CashID cashId;
+        UserNIF customerId;
+        TicketType type = TicketType.PRODUCT;
 
         if (args.length == 2) {
-            cashId = args[0];
-            customerId = args[1];
-        } else if (args.length == 3) {
-            ticketId = args[0];
-            cashId = args[1];
-            customerId = args[2];
+            cashId = new CashID(args[0]);
+            customerId = new UserNIF(args[1]);
+        } else if (args.length == 3 && args[0].charAt(0) != 'U') {
+            ticketId = new TicketID(args[0]);
+            cashId = new CashID(args[1]);
+            customerId = new UserNIF(args[2]);
+        } else if (args.length == 3 && args[2].charAt(0) == '-' && args[2].length() == 2) {
+            cashId = new CashID(args[0]);
+            customerId = new UserNIF(args[1]);
+            type = TicketType.getType(args[2].charAt(1));
+            if (type == null) throw new WrongCommandArgumentsException("", this);
         } else {
-            throw new WrongNumberOfArgsException();
+            throw new WrongNumberOfArgsException(this);
         }
 
-        if(ticketId != null){ // TODO generate new
-            if (!ticketId.matches("\\d+")) throw new InvalidAppIDException("Ticket ID must be numeric.");
+        Cashier cashier = cashiers.getUser(cashId.toString());
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId.toString());
 
-            if (ticketId.length() != 5) throw new InvalidAppIDException("Ticket ID has to be 5 digits.");
-        }
+        Customer customer = customers.getUser(customerId.toString());
+        if (customer == null) throw new AppEntityNotFoundException("customer", customerId.toString());
 
-        Cashier cashier = cashiers.getUser(cashId);
-        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
+        if (!customer.isCompany() && (type == TicketType.SERVICE || type == TicketType.COMBINED))
+            throw new AppException("Only Companies can open Servicer or Combined tickets.");
 
-        Customer customer = customers.getUser(customerId);
-        if (customer == null) throw new AppEntityNotFoundException("customer", customerId);
-
-        // TODO check the ticketID is not in another cashier
-
-        Ticket<?> ticket;
-        TicketID ID;
-
-        if (ticketId != null)
-            ID = new TicketID(ticketId);
-        else
-            ID = ticketService.getNewTicketID();
-
-        if (customer.getType() == ClientType.COMPANY)
-            ticket = new CompanyTicket(ID);
-        else
-            ticket = new CommonTicket(ID);
+        if (ticketId == null)
+            ticketId = ticketService.getNewTicketID();
+        Ticket<?> ticket = ticketFactory(type, ticketId);
 
         cashier.addTicket(ticket);
-
-        customer.addTicket(ID);
+        customer.addTicket(ticketId);
 
         return 0;
     }
 
+    private Ticket<?> ticketFactory(TicketType type, TicketID id) {
+        return switch (type) {
+            case PRODUCT -> new CommonTicket(id);
+            case SERVICE -> new ServiceTicket(id);
+            case COMBINED -> new CompanyTicket(id);
+        };
+    }
+
+    private enum TicketType {
+        PRODUCT, SERVICE, COMBINED;
+
+        static TicketType getType(char c) {
+            return switch (c) {
+                case 'p': yield PRODUCT;
+                case 's': yield SERVICE;
+                case 'c': yield COMBINED;
+                default: yield null;
+            };
+        }
+    }
+
     @Override
     public String help() {
-        return ID +" [<ticketId>] <cashId> <customerId>";
+        return ID +" [<ticketId>] <cashId> <customerId> -[c|p|s]";
     }
 }

@@ -12,6 +12,13 @@ public class ServiceID extends ProductID implements Serializable {
         super(id);
     }
 
+    public ServiceID(String id) throws InvalidAppIDException {
+        super(id.substring(0, id.length() - 1));
+
+        if (id.charAt(id.length() - 1) != 'S')
+            throw new InvalidAppIDException("Service ID must end with an S");
+    }
+
     @Override
     public String toString() {
         return super.toString() + "S";

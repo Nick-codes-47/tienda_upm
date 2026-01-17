@@ -24,7 +24,7 @@ public class ListTicketsFromCashier implements Command {
     @Override
     public int execute(String[] args) throws AppException {
         if (args.length != 1) {
-            throw new WrongNumberOfArgsException();
+            throw new WrongNumberOfArgsException(this);
         }
 
         String cashId = args[0];

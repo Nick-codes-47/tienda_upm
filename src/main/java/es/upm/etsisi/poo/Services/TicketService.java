@@ -77,6 +77,23 @@ public class TicketService {
     }
 
     public TicketID getNewTicketID() throws InvalidAppIDException {
-        return new TicketID(totalTickets() + 1);
+        int idVal = totalTickets();
+        TicketID ticketID = null;
+
+        boolean is_new = false;
+        while (!is_new) {
+            is_new = true;
+            ticketID = new TicketID(idVal++);
+
+            for (Cashier cashier : cashiers) {
+                Ticket<?> ticket = cashier.getTicket(ticketID);
+                if (ticket != null) {
+                    is_new = false;
+                    break;
+                }
+            }
+        }
+
+        return ticketID;
     }
 }

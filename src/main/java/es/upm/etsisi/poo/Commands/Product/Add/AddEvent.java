@@ -45,13 +45,13 @@ public abstract class AddEvent extends AddProduct {
         return switch (args.length) {
             case 4 -> {
                 if (rawID == -1) yield EventToAdd.EVENT_WITHOUT_ID;
-                throw new WrongNumberOfArgsException();
+                throw new WrongNumberOfArgsException(this);
             }
             case 5 -> {
                 if (rawID != -1) yield EventToAdd.EVENT_WITH_ID;
-                throw new WrongNumberOfArgsException();
+                throw new WrongNumberOfArgsException(this);
             }
-            default -> throw new WrongNumberOfArgsException();
+            default -> throw new WrongNumberOfArgsException(this);
         };
     }
 

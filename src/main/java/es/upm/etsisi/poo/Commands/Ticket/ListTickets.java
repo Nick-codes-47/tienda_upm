@@ -21,7 +21,7 @@ public class ListTickets implements Command {
 
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 0) throw new WrongNumberOfArgsException();
+        if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         // if cashierId is null, get all the tickets
         List<Ticket<?>> tickets = ticketService.getTickets();

@@ -19,7 +19,7 @@ public class PrintTicket implements Command {
     @Override
     public int execute(String[] args)
             throws WrongNumberOfArgsException, AppEntityNotFoundException, InvalidAppIDException {
-        if (args.length != 2) throw new WrongNumberOfArgsException();
+        if (args.length != 2) throw new WrongNumberOfArgsException(this);
 
         String cashId = args[1];
         Cashier cashier = cashiers.getUser(cashId);

@@ -33,7 +33,7 @@ public class UpdateProduct implements Command {
     @Override
     public int execute(String[] args) throws AppException {
         if (args.length != 3) {
-            throw new WrongNumberOfArgsException();
+            throw new WrongNumberOfArgsException(this);
         }
         // if the number of arguments are correct we try to update
         ProductID ID = getProductID(args);

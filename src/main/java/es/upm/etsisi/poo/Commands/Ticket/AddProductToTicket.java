@@ -6,6 +6,7 @@ import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
@@ -27,7 +28,7 @@ public class AddProductToTicket implements Command {
 
     @Override
     public int execute(String[] rawArgs) throws AppException {
-        CommandArgs args = new CommandArgs(rawArgs);
+        CommandArgs args = new CommandArgs(rawArgs, this);
 
         BaseProduct<?> product = catalog.get(args.productID);
         if (product == null) throw new AppEntityNotFoundException("product", args.productID.toString());
@@ -61,16 +62,19 @@ public class AddProductToTicket implements Command {
         ProductID productID;
         String[] args = null;
 
-        public CommandArgs(String[] args) throws InvalidAppIDException, NonPositiveNumberException, WrongNumberOfArgsException {
+        public CommandArgs(String[] args, Command command) throws InvalidAppIDException, WrongNumberOfArgsException {
             if (args.length < 3) {
-                throw new WrongNumberOfArgsException();
+                throw new WrongNumberOfArgsException(command);
             }
 
             String ticketId = args[0];
             String cashId = args[1];
             String prodIdStr = args[2];
 
-            this.productID = new ProductID(prodIdStr);
+            if (prodIdStr.charAt(prodIdStr.length() - 1) == 'S')
+                this.productID = new ServiceID(prodIdStr);
+            else
+                this.productID = new ProductID(prodIdStr);
             this.ticketID = new TicketID(ticketId);
             this.cashID = cashId;
 

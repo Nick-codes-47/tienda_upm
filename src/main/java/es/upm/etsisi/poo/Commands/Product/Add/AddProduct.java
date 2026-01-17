@@ -37,7 +37,7 @@ public class AddProduct implements Command {
      */
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length < 2) throw new WrongNumberOfArgsException();
+        if (args.length < 2) throw new WrongNumberOfArgsException(this);
 
         BaseProduct<?> product = createProduct(args);
         catalog.add(product);
@@ -60,18 +60,18 @@ public class AddProduct implements Command {
         return switch (args.length) {
             case 2 -> {
                 if (rawID == -1) yield ProductToAdd.SERVICE;
-                throw new WrongNumberOfArgsException();
+                throw new WrongNumberOfArgsException(this);
             }
             case 3 -> {
                 if (rawID == -1) yield ProductToAdd.PROD_WITHOUT_ID;
-                throw new WrongNumberOfArgsException();
+                throw new WrongNumberOfArgsException(this);
             }
             case 4 -> {
                 if (rawID == -1) yield ProductToAdd.CUSTOM_WITHOUT_ID;
                 yield ProductToAdd.PROD_WITH_ID;
             }
             case 5 -> ProductToAdd.CUSTOM_WITH_ID;
-            default -> throw new WrongNumberOfArgsException();
+            default -> throw new WrongNumberOfArgsException(this);
         };
     }
 

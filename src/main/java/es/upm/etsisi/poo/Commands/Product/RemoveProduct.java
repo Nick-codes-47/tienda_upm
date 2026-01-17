@@ -26,7 +26,7 @@ public class RemoveProduct implements Command {
      */
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 1) throw new WrongNumberOfArgsException();
+        if (args.length != 1) throw new WrongNumberOfArgsException(this);
 
         ProductID ID = new ProductID(Integer.parseInt(args[0]));
         BaseProduct<?> prod = catalog.delete(ID);

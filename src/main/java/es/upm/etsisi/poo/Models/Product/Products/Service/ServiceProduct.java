@@ -57,4 +57,16 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     public ServiceProduct copy() {
         return new ServiceProduct(this);
     }
+
+    @Override
+    public String toString() {
+        StringBuilder sb = new StringBuilder();
+
+        sb.append("{class:ServiceProduct")
+                .append(", id:").append(getID())
+                .append(", expiration:").append(expirationDate)
+                .append("}");
+
+        return sb.toString();
+    }
 }

@@ -18,11 +18,15 @@ public class TicketID extends AppID implements Serializable {
     public TicketID(int id) throws InvalidAppIDException {
         super(id);
 
+        if (id > 99999) throw new InvalidAppIDException("Ticket ID has to be 5digits.");
+
         this.creationDate = LocalDateTime.now();
     }
 
     public TicketID(String id) throws InvalidAppIDException {
         super(id);
+
+        if (id.length() != 5) throw new InvalidAppIDException("Ticket ID has to be 5 digits.");
 
         this.creationDate = LocalDateTime.now();
     }
@@ -37,9 +41,9 @@ public class TicketID extends AppID implements Serializable {
         if (!closed)
             return creationDate.format(DATE_TIME_FORMATTER)
                     + "-"
-                    + super.baseID;
+                    + String.format("%05d", super.baseID);
         else
-            return super.baseID
+            return String.format("%05d", super.baseID)
                     + "-"
                     + this.closingDate.format(DATE_TIME_FORMATTER);
 
