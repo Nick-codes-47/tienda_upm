@@ -1,10 +1,11 @@
-package es.upm.etsisi.poo.Models.Product.Products;
+package es.upm.etsisi.poo.Models.Product.Products.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;

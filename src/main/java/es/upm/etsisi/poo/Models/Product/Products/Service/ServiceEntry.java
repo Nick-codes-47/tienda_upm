@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Product.Products;
+package es.upm.etsisi.poo.Models.Product.Products.Service;
 
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 

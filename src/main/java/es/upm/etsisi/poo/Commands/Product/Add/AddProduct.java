@@ -9,8 +9,8 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
-import es.upm.etsisi.poo.Models.Product.Products.Product;
-import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
+import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;

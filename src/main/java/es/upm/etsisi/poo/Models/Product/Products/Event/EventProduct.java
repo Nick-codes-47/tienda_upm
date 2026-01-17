@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Product.Products;
+package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
@@ -6,6 +6,7 @@ import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
