@@ -5,6 +5,7 @@ import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Event.EventEntry;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
@@ -56,7 +57,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     }
 
     private int add(TicketEntry<ProductType> entry)
-            throws ClosedTicketException, FullContainerException {
+            throws ClosedTicketException, FullContainerException, EntityAlreadyExistsException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
         if (this.ticketState == TicketState.VACIO) {
@@ -65,11 +66,23 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         checkCapacity(entry.getProductCount());
 
-        entries.put(entry.getProduct().getID(), entry);
+        ProductID entryID = entry.getProduct().getID();
+
+        checkForNonRepeatedEvent(entry, entryID);
+
+        entries.put(entryID, entry);
         totalUnits += entry.getProductCount();
 
         AppLogger.info(this.toString());
         return 0;
+    }
+
+    private void checkForNonRepeatedEvent(TicketEntry<ProductType> entry, ProductID entryID) throws EntityAlreadyExistsException {
+        if (entry instanceof EventEntry) {
+            if (entries.containsKey(entryID))
+                throw new EntityAlreadyExistsException("Event", entryID.toString(),
+                        "you can't add an event twice to the same ticket");
+        }
     }
 
     public int add(TicketRegistrable<ProductType> product, String[] args) throws AppException {
@@ -98,12 +111,12 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public void close() throws NotEnoughPlanningHoursException {
+    public void close() throws ExpiredException {
         ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
-
         checkForNonProgrammableEvents(eventsInTicket);
 
         ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
+        checkForExpiredServices(servicesInTicket);
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
@@ -125,11 +138,20 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return products;
     }
 
-    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningHoursException {
+    // TODO implement an expirable interface with an isExpired method  and refactor these methods into one
+    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningForEventException {
         for (EventProduct event : eventsInTicket) {
-            if (!event.isPossibleToPlanFromNow(LocalDateTime.now())) {
-                throw new NotEnoughPlanningHoursException
+            if (event.isNotPossibleToPlanFromNow(LocalDateTime.now())) {
+                throw new NotEnoughPlanningForEventException
                         (event.getID().toString(), event.getEventType().getPlanningTime(),event.getExpireDate());
+            }
+        }
+    }
+
+    private static void checkForExpiredServices(ArrayList<ServiceProduct> servicesInTicket) throws ExpiredServiceException {
+        for (ServiceProduct service : servicesInTicket) {
+            if (service.hasExpired()) {
+                throw new ExpiredServiceException(service.getID().toString());
             }
         }
     }

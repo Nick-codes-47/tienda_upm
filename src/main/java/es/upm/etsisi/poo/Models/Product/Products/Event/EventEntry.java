@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.NotEnoughPlanningHoursException;
+import es.upm.etsisi.poo.AppExceptions.NotEnoughPlanningForEventException;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
@@ -18,11 +18,9 @@ public class EventEntry extends TicketEntry<EventProduct> {
         super(event);
 
         EventType type = event.getEventType();
-
         int requiredHours = type.getPlanningTime();
-
-        if (event.isPossibleToPlanFromNow(LocalDateTime.now())) {
-            throw new NotEnoughPlanningHoursException(event.getID().toString(), requiredHours, event.getExpireDate());
+        if (event.isNotPossibleToPlanFromNow(LocalDateTime.now())) {
+            throw new NotEnoughPlanningForEventException(event.getID().toString(), requiredHours, event.getExpireDate());
         }
     }
 

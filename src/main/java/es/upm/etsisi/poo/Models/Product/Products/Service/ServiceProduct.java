@@ -38,6 +38,10 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
         this.expirationDate = other.expirationDate;
     }
 
+    public boolean hasExpired() {
+        return this.expirationDate.toLocalDate().isBefore(LocalDate.now());
+    }
+
     @Override
     public ServiceID getID() {
         return ID;

@@ -35,9 +35,8 @@ public class ProductEntry extends TicketEntry<Product> {
     /**
      * Method to set the personalization of the product
      * @param personalizations the personalizations to copy
-     * @throws AppException controls that the personalizations are valid in the product
      */
-    public void setPersonalizations(ArrayList<String> personalizations) throws AppException {
+    public void setPersonalizations(ArrayList<String> personalizations) throws PersonalizationExceedsMaxException {
         if (personalizations.size() > product.getMaxPersonalization())
             throw new PersonalizationExceedsMaxException();
         // if we can add the personalizations we copy them

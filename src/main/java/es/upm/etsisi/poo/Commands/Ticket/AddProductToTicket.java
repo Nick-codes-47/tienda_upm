@@ -45,22 +45,13 @@ public class AddProductToTicket implements Command {
             AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
         }
 
-        if (result == -3) {
-            System.err.print("ERROR: Cannot add the same event/meal to the same ticket\n");
-        } else if (result == -4) {
-            System.err.print("ERROR: Event requires minimum time to be planned (72h for meals and 12h for meetings).\n");
-        } else if (result == -5) {
-            System.err.print("ERROR: Error in the number of people in event.\n");
-        } else if (result == -6) {
-            System.err.print("ERROR: Maximum product customizations reached.\n");
-        }
-
         return result;
     }
 
     // If the product is not the correct type, we expect the ClassCastException to be thrown
     @SuppressWarnings("unchecked")
-    private <T extends BaseProduct<?>> int addToTicket(Ticket<T> ticket, BaseProduct<?> baseProduct, String[] args) throws AppException, ClassCastException {
+    private <T extends BaseProduct<?>> int addToTicket(Ticket<T> ticket, BaseProduct<?> baseProduct, String[] args)
+            throws AppException, ClassCastException {
         return ticket.add((TicketRegistrable<T>) baseProduct, args);
     }
 
