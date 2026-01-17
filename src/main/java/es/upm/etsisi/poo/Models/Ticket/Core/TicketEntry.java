@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket.Core;
 
+import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
 
@@ -18,7 +19,7 @@ public abstract class TicketEntry<ProductType extends BaseProduct> implements Se
     public void update(ProductType newProduct) throws AppException {
         if (newProduct.getID() == product.getID())
             product = (ProductType) newProduct.clone();
-        else throw new AppException("");
+        else throw new AppEntityNotFoundException(newProduct.getType().toString(), newProduct.getID().toString());
     };
 
     public ProductType getProduct() { return product; };
