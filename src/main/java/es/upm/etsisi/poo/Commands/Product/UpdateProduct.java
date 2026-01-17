@@ -38,26 +38,13 @@ public class UpdateProduct implements Command {
             throw new WrongNumberOfArgsException();
         }
         // if the number of arguments are correct we try to update
-        ProductID ID;
-        try {
-            ID = new ProductID(Integer.parseInt(args[0]));
-        } catch (NumberFormatException e) {
-            throw new InvalidAppIDException("ID must be a number");
-        }
+        ProductID ID = getProductID(args);
         BaseProduct product = catalog.get(ID);
         if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
         // We obtain the field to modify and the new value
         String fieldName = args[1].toLowerCase();
         String newValue = args[2];
-
-        // We check that the field the user wants to change is supported for a change
-        String[] supportedFields = {"name", "price", "category"};
-        int i = 0;
-        while (i < supportedFields.length && !supportedFields[i].equals(fieldName)) {
-            i++;
-        }
-        if (i >= supportedFields.length) throw new FieldNotValidException();
 
         // We look in the products class and its superclasses to get the field if it exists
         Field field = getFieldFromHierarchy(product.getClass(), fieldName);
@@ -74,7 +61,19 @@ public class UpdateProduct implements Command {
         return 0;
     }
 
-    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName) throws FieldNotValidException {
+    private static ProductID getProductID(String[] args)
+            throws InvalidAppIDException, NonPositiveNumberException {
+        ProductID ID;
+        try {
+            ID = new ProductID(Integer.parseInt(args[0]));
+        } catch (NumberFormatException e) {
+            throw new NonPositiveNumberException("ID");
+        }
+        return ID;
+    }
+
+    private Field getFieldFromHierarchy(Class<?> clazz, String fieldName)
+            throws FieldNotValidException {
         // We get the current class of the object
         Class<?> current = clazz;
         while (current != null) {
