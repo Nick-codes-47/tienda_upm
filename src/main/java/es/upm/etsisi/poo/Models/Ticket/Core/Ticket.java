@@ -100,11 +100,11 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     }
 
     public void close() throws NotEnoughPlanningHoursException {
-        ArrayList<EventProduct> eventsInTicket = getProductTypeFromTicket(EventProduct.class);
+        ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
 
         checkForNonProgrammableEvents(eventsInTicket);
 
-        ArrayList<ServiceProduct> servicesInTicket = getProductTypeFromTicket(ServiceProduct.class);
+        ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
@@ -112,7 +112,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    private <T extends BaseProduct<?>> ArrayList<T> getProductTypeFromTicket(Class<T> productType) {
+    private <T extends BaseProduct<?>> ArrayList<T> getProductsOfTypeFromTicket(Class<T> productType) {
         ArrayList<T> products = new ArrayList<>();
 
         for (TicketEntry<ProductType> entry : entries.values()) {
