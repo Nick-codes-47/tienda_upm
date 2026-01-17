@@ -57,7 +57,7 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
 
     @Override
     public ProductEntry toTicketEntry(EntryArgs args) throws AppException {
-        assert args instanceof ProductEntryArgs : "Wrong EntryArgs sbuclass passed";
+        assert args instanceof ProductEntryArgs : "Wrong EntryArgs subclass passed";
 
         ProductEntryArgs prodArgs = (ProductEntryArgs) args;
 

@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.NotEnoughPlanningHoursException;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
@@ -18,17 +19,10 @@ public class EventEntry extends TicketEntry<EventProduct> {
 
         EventType type = event.getEventType();
 
-        int requiredHours;
-        if (type == EventType.FOOD) {
-            requiredHours = 72;
-        } else if (type == EventType.MEETING) {
-            requiredHours = 12;
-        } else {
-            requiredHours = type.getPlanningTime();
-        }
+        int requiredHours = type.getPlanningTime();
 
         if (event.getExpireDate().isBefore(LocalDateTime.now().plusHours(requiredHours))) {
-            throw new AppException("Event expires in less than " + requiredHours);
+            throw new NotEnoughPlanningHoursException(event.getID().toString(), requiredHours, event.getExpireDate());
         }
     }
 
