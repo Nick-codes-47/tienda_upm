@@ -6,7 +6,7 @@ import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
 import java.io.Serializable;
 
 public abstract class BaseProduct<T extends BaseProduct<T>>
-        implements TicketRegistrable<T, EntryArgs>, Copyable<T>, Serializable {
+        implements TicketRegistrable<T>, Copyable<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
 

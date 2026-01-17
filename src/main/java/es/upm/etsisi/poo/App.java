@@ -39,7 +39,7 @@ public class App {
         AppLogger.info("Loading data...");
         Object[] data = persistence.loadAll();
 
-        if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct>) data[0]);
+        if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct<?>>) data[0]);
         if (data[1] != null) customers.loadData((HashMap<String, Customer>) data[1]);
         if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
 
