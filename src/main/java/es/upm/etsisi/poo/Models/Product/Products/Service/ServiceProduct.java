@@ -7,6 +7,7 @@ import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 
 public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copyable<ServiceProduct> {
@@ -32,6 +33,10 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
         this.ID = other.ID;
         this.category = other.category;
         this.expirationDate = other.expirationDate;
+    }
+
+    public boolean hasExpired() {
+        return this.expirationDate.toLocalDate().isBefore(LocalDate.now());
     }
 
     @Override

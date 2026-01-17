@@ -99,12 +99,12 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public void close() throws NotEnoughPlanningHoursException {
+    public void close() throws ExpiredException {
         ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
-
         checkForNonProgrammableEvents(eventsInTicket);
 
         ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
+        checkForExpiredServices(servicesInTicket);
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
@@ -126,11 +126,20 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return products;
     }
 
-    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningHoursException {
+    // TODO implement an expirable interface with an isExpired method refactor these methods into one
+    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningForEventException {
         for (EventProduct event : eventsInTicket) {
-            if (!event.isPossibleToPlanFromNow(LocalDateTime.now())) {
-                throw new NotEnoughPlanningHoursException
+            if (event.isNotPossibleToPlanFromNow(LocalDateTime.now())) {
+                throw new NotEnoughPlanningForEventException
                         (event.getID().toString(), event.getEventType().getPlanningTime(),event.getExpireDate());
+            }
+        }
+    }
+
+    private static void checkForExpiredServices(ArrayList<ServiceProduct> servicesInTicket) throws ExpiredServiceException {
+        for (ServiceProduct service : servicesInTicket) {
+            if (service.hasExpired()) {
+                throw new ExpiredServiceException(service.getID().toString());
             }
         }
     }
