@@ -6,9 +6,10 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
+
+import java.util.ArrayList;
 
 public class Product extends GoodsProduct<Product> implements Copyable<Product> {
 
@@ -56,14 +57,13 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
     public int getMaxPersonalization() { return this.maxPersonalization; }
 
     @Override
-    public ProductEntry toTicketEntry(EntryArgs args) throws AppException {
-        assert args instanceof ProductEntryArgs : "Wrong EntryArgs subclass passed";
-
-        ProductEntryArgs prodArgs = (ProductEntryArgs) args;
-
+    public ProductEntry toTicketEntry(String[] rawArgs) throws AppException {
+        EntryArgs args = new EntryArgs(rawArgs);
         ProductEntry entry = new ProductEntry(this);
-        entry.amount = prodArgs.amount;
-        entry.setPersonalizations(prodArgs.personalizations);
+
+        entry.amount = args.amount;
+        if (args.personalizations != null)
+            entry.setPersonalizations(args.personalizations);
         return entry;
     }
 
@@ -86,5 +86,14 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
         sb.append("}");
 
         return sb.toString();
+    }
+
+    private class EntryArgs {
+        public int amount;
+        public ArrayList<String> personalizations = null;
+
+        public EntryArgs(String[] args) {
+
+        }
     }
 }

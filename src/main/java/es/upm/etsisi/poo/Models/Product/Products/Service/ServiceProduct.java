@@ -4,7 +4,6 @@ import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
-import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 
@@ -41,7 +40,7 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     }
 
     @Override
-    public ServiceEntry toTicketEntry(EntryArgs args) {
+    public ServiceEntry toTicketEntry(String[] args) {
         return new ServiceEntry(this);
     }
 

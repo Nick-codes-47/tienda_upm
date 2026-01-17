@@ -7,7 +7,6 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 
@@ -49,12 +48,10 @@ public class EventProduct extends GoodsProduct<EventProduct> implements Copyable
     public EventType getEventType() { return this.type; }
 
     @Override
-    public EventEntry toTicketEntry(EntryArgs args) throws AppException {
-        assert args instanceof EventEntryArgs : "Wrong EntryArgs subclass passed";
-
-        EventEntryArgs eventArgs = (EventEntryArgs) args;
+    public EventEntry toTicketEntry(String[] rawArgs) throws AppException {
+        EntryArgs args = new EntryArgs(rawArgs);
         EventEntry entry = new EventEntry(this);
-        entry.setActualPeople(eventArgs.people);
+        entry.setActualPeople(args.people);
         return entry;
     }
 
@@ -78,5 +75,14 @@ public class EventProduct extends GoodsProduct<EventProduct> implements Copyable
                 this.expireDate.toLocalDate().toString() +
                 ", max people allowed:" +
                 this.maxPeople;
+    }
+
+    private class EntryArgs {
+
+        public int people;
+
+        public EntryArgs(String[] rawArgs) {
+
+        }
     }
 }
