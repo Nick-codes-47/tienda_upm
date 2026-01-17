@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.InvalidDateFormatException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.*;
@@ -20,48 +21,83 @@ public abstract class AddEvent extends AddProduct {
 
     public AddEvent(Catalog catalog, EventType eventType, String id) {
         super(catalog);
-
         this.eventType = eventType;
-        ID = id;
+        this.ID = id;
     }
 
     @Override
     protected BaseProduct<?> createProduct(String[] args) throws AppException {
-        BaseProduct<?> product = null;
+        int rawID = -1;
 
-        try {
-            int rawID = -1;
+        if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
+            rawID = Integer.parseInt(args[0]);
 
-            if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
-                rawID = Integer.parseInt(args[0]);
+        EventToAdd type = resolveEventToAdd(args, rawID);
 
-            if (args.length == 4 && rawID == -1) {
-                ProductID ID = catalog.getNewProductID();
-                product = new EventProduct(eventType, ID, new ProductName(args[0]),
-                        Double.parseDouble(args[1]), LocalDateTime.parse(args[2]), Integer.parseInt(args[3]));
-            } else if (args.length == 5 && rawID != -1) {
-                ProductID ID = new ProductID(rawID);
-                product = new EventProduct(eventType, ID, new ProductName(args[1]),
-                        Double.parseDouble(args[2]), LocalDateTime.parse(args[3]), Integer.parseInt(args[4]));
-            } else
+        return getEvent(args, type, rawID);
+    }
+
+    private EventToAdd resolveEventToAdd(String[] args, int rawID) throws WrongNumberOfArgsException {
+        return switch (args.length) {
+            case 4 -> {
+                if (rawID == -1) yield EventToAdd.EVENT_WITHOUT_ID;
                 throw new WrongNumberOfArgsException();
+            }
+            case 5 -> {
+                if (rawID != -1) yield EventToAdd.EVENT_WITH_ID;
+                throw new WrongNumberOfArgsException();
+            }
+            default -> throw new WrongNumberOfArgsException();
+        };
+    }
 
-            return product;
+    private BaseProduct<?> getEventProduct(String[] args, EventToAdd type, int rawID)
+            throws AppException {
+        return switch (type) {
+            case EVENT_WITHOUT_ID -> {
+                ProductID id = catalog.getNewProductID();
+                yield new EventProduct(
+                        eventType,
+                        id,
+                        new ProductName(args[0]),
+                        Double.parseDouble(args[1]),
+                        LocalDateTime.parse(args[2]),
+                        Integer.parseInt(args[3])
+                );
+            }
+            case EVENT_WITH_ID -> {
+                ProductID id = new ProductID(rawID);
+                yield new EventProduct(
+                        eventType,
+                        id,
+                        new ProductName(args[1]),
+                        Double.parseDouble(args[2]),
+                        LocalDateTime.parse(args[3]),
+                        Integer.parseInt(args[4])
+                );
+            }
+        };
+    }
+
+    private BaseProduct getEvent(String[] args, EventToAdd type, int rawID) throws AppException {
+        try {
+            return getEventProduct(args, type, rawID);
         } catch (DateTimeParseException e) {
-            System.err.println("ERROR: the date MUST have the format: yyyy-MM-dd");
+            throw new InvalidDateFormatException();
         }
-
-        return product;
     }
 
     /**
      * Shows how to call all actions that involve adding an event
-     *
-     * @return a string with the command and its arguments
      */
     @Override
     public String help() {
         return ID + " [id] \"<name>\" <price> <expiration: yyyy-MM-dd> <max_people>";
+    }
+
+    private enum EventToAdd {
+        EVENT_WITHOUT_ID,
+        EVENT_WITH_ID
     }
 
     private final EventType eventType;

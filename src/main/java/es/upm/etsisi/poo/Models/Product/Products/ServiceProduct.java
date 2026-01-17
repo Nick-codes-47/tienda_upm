@@ -6,6 +6,11 @@ import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
+import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
+import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ServiceCategory;
 
 import java.time.LocalDateTime;
 
@@ -13,23 +18,19 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
 
     private static final long serialVersionUID = 1L;
 
-    private final ServiceID ID;
-    private final ServiceCategory category;
-    private final LocalDateTime expirationDate;
+    public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category)
+            throws InvalidCategoryException, InvalidDateException {
+        super(ProductType.SERVICE);
 
-    public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category) throws InvalidProductException {
         this.ID = ID;
 
-        if  (expirationDate == null || expirationDate.isBefore(LocalDateTime.now())) {
-            throw new InvalidProductException(" services expiration is null or before now.");
-        }
-
+        if  (expirationDate == null || expirationDate.isBefore(LocalDateTime.now())) throw new InvalidDateException();
         this.expirationDate = expirationDate;
 
         try {
             this.category = ServiceCategory.valueOf(category.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidProductException(" services invalid category provided.");
+            throw new InvalidCategoryException(category);
         }
     }
 
@@ -53,4 +54,8 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     public ServiceProduct copy() {
         return new ServiceProduct(this);
     }
+
+    private final ServiceID ID;
+    private final ServiceCategory category;
+    private final LocalDateTime expirationDate;
 }

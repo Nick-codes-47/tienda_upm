@@ -26,12 +26,11 @@ public class RemoveProduct implements Command {
      */
     @Override
     public int execute(String[] args) throws AppException {
-        if (args.length != 1) {
-            throw new WrongNumberOfArgsException();
-        }
-        // We try to remove the product from the catalog
+        if (args.length != 1) throw new WrongNumberOfArgsException();
+
         ProductID ID = new ProductID(Integer.parseInt(args[0]));
         BaseProduct<?> prod = catalog.delete(ID);
+
         AppLogger.info(prod.toString());
 
         ticketService.showModifiedTickets(prod);

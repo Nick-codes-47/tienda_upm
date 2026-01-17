@@ -39,9 +39,7 @@ public class ProductEntry extends TicketEntry<Product> {
      */
     public void setPersonalizations(ArrayList<String> personalizations) throws AppException {
         if (personalizations.size() > product.getMaxPersonalization())
-            throw new AppException(
-                    "ERROR: The product can't have more than: "+ product.getMaxPersonalization() +" personalizations."
-            );
+            throw new PersonalizationExceedsMaxException();
         // if we can add the personalizations we copy them
         this.personalizations = personalizations;
     }
@@ -60,4 +58,12 @@ public class ProductEntry extends TicketEntry<Product> {
     public boolean checkValidity() {
         return true;
     }
+
+    private class PersonalizationExceedsMaxException extends AppException {
+        public PersonalizationExceedsMaxException() {
+            super("The product can't have more than: "+ product.getMaxPersonalization() + " personalizations.");
+        }
+    }
+
+    private List<String> personalizations;
 }

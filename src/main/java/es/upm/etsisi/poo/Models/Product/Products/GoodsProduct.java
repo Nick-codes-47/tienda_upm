@@ -4,6 +4,10 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
+import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
@@ -16,13 +20,13 @@ public abstract class GoodsProduct<T extends GoodsProduct<T>> extends BaseProduc
     private ProductName name;
     private final double price;
 
-    public GoodsProduct(ProductID ID, ProductName name, double price) throws InvalidProductException {
+    public GoodsProduct(ProductID ID, ProductName name, double price) throws InvalidProductException
+            throws NonPositiveNumberException {
+
         this.ID = ID;
         this.name = name;
 
-        if (price <= 0) {
-            throw new InvalidProductException("price must be positive and higher than 0");
-        }
+        if (price <= 0) throw new NonPositiveNumberException("Price");
 
         this.price = price;
     }

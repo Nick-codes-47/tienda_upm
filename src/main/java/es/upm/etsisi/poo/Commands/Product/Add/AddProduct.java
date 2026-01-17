@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
+import es.upm.etsisi.poo.AppExceptions.InvalidDateFormatException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -27,12 +28,7 @@ public class AddProduct implements Command {
     /**
      * Method that executes the action to add a Product or CustomProduct to the catalog
      * @param args the arguments required to add a product to the catalog
-     * @return -3 if the id is already in the catalog
-     *         -1 if the catalog is full
-     *         0 if all went well
-     *         1 if id, price or maxPersonalizable were not valid
-     *         2 if one of the arguments was invalid to create the product
-     *         3 if they weren't enough arguments
+     * @return 0 if all went well
      */
     @Override
     public int execute(String[] args) throws AppException {
@@ -45,37 +41,74 @@ public class AddProduct implements Command {
     }
 
     protected BaseProduct<?> createProduct(String[] args) throws AppException {
-        BaseProduct<?> product = null;
-
         int rawID = -1;
 
         if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
             rawID = Integer.parseInt(args[0]);
 
-        // TODO add enum to this class and make this infinite if else a switch
-        if (args.length == 2 && rawID == -1) {
-            ServiceID ID = catalog.getNewServiceID();
-            try {
-                product = new ServiceProduct(ID, LocalDateTime.parse(args[0]), args[1]);
-            } catch (DateTimeParseException e) {
-                // TODO add app exception to handle
-            }
-        } else if (args.length == 3 && rawID == -1) {
-            ProductID ID = catalog.getNewProductID();
-            product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
-        } else if (args.length == 4 && rawID != -1) {
-            ProductID ID = new ProductID(rawID);
-            product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]));
-        } else if (args.length == 4 && rawID == -1) {
-            ProductID ID = catalog.getNewProductID();
-            product = new Product(ID, new ProductName(args[0]), args[1], Double.parseDouble(args[2]), Integer.parseInt(args[3]));
-        } else if (args.length == 5) {
-            ProductID ID = new ProductID(rawID);
-            product = new Product(ID, new ProductName(args[1]), args[2], Double.parseDouble(args[3]), Integer.parseInt(args[4]));
-        } else
-            throw new WrongNumberOfArgsException();
+        ProductToAdd type = resolveProductToAdd(args, rawID);
 
-        return product;
+        return getProduct(args, type, rawID);
+    }
+
+    private ProductToAdd resolveProductToAdd(String[] args, int rawID) throws WrongNumberOfArgsException {
+        return switch (args.length) {
+            case 2 -> {
+                if (rawID == -1) yield ProductToAdd.SERVICE;
+                throw new WrongNumberOfArgsException();
+            }
+            case 3 -> {
+                if (rawID == -1) yield ProductToAdd.PROD_WITHOUT_ID;
+                throw new WrongNumberOfArgsException();
+            }
+            case 4 -> {
+                if (rawID == -1) yield ProductToAdd.CUSTOM_WITHOUT_ID;
+                yield ProductToAdd.PROD_WITH_ID;
+            }
+            case 5 -> ProductToAdd.CUSTOM_WITH_ID;
+            default -> throw new WrongNumberOfArgsException();
+        };
+    }
+
+    private BaseProduct getProduct(String[] args, ProductToAdd type, int rawID) throws AppException {
+        return switch (type) {
+            case SERVICE -> {
+                ServiceID id = catalog.getNewServiceID();
+                try {
+                    yield new ServiceProduct(id, LocalDateTime.parse(args[0]), args[1]);
+                } catch (DateTimeParseException e) {
+                    throw new InvalidDateFormatException();
+                }
+            }
+            case PROD_WITHOUT_ID -> {
+                ProductID id = catalog.getNewProductID();
+                yield new Product(id, new ProductName(args[0]), args[1], Double.parseDouble(args[2]));
+            }
+            case PROD_WITH_ID -> {
+                ProductID id = new ProductID(rawID);
+                yield new Product(id, new ProductName(args[1]), args[2], Double.parseDouble(args[3]));
+            }
+            case CUSTOM_WITHOUT_ID -> {
+                ProductID id = catalog.getNewProductID();
+                yield new Product(
+                        id,
+                        new ProductName(args[0]),
+                        args[1],
+                        Double.parseDouble(args[2]),
+                        Integer.parseInt(args[3])
+                );
+            }
+            case CUSTOM_WITH_ID -> {
+                ProductID id = new ProductID(rawID);
+                yield new Product(
+                        id,
+                        new ProductName(args[1]),
+                        args[2],
+                        Double.parseDouble(args[3]),
+                        Integer.parseInt(args[4])
+                );
+            }
+        };
     }
 
     /**
@@ -86,6 +119,10 @@ public class AddProduct implements Command {
     @Override
     public String help() {
         return ID + " [id] \"<name>\" <category> <price> [<maxPers>]";
+    }
+
+    private enum ProductToAdd {
+        SERVICE, PROD_WITHOUT_ID, PROD_WITH_ID, CUSTOM_WITHOUT_ID, CUSTOM_WITH_ID
     }
 
     protected final Catalog catalog;

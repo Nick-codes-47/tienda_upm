@@ -7,6 +7,12 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
+import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
+import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
 public class Product extends GoodsProduct<Product> implements Copyable<Product> {
 
@@ -15,28 +21,32 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
     private final Category category;
     private final int maxPersonalization;
 
-    public Product(ProductID ID, ProductName name, String category, double price) throws InvalidProductException {
+    public Product(ProductID ID, ProductName name, String category, double price)
+            throws NonPositiveNumberException {
         super(ID, name, price);
 
-        try {
-            this.category = Category.valueOf(category.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new InvalidProductException("category is invalid");
-        }
+        initializeCategory(category);
 
         this.maxPersonalization = 0;
     }
 
-    public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws InvalidProductException {
+    public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations)
+            throws InvalidCategoryException, NonPositiveNumberException {
         super(ID, name, price);
 
+        initializeCategory(category);
+
+        if  (numPersonalizations <= 0) throw new NonPositiveNumberException("Personalizations");
+
+        this.maxPersonalization = numPersonalizations;
+    }
+
+    private void initializeCategory(String category) throws InvalidCategoryException {
         try {
             this.category = Category.valueOf(category.toUpperCase());
         } catch (IllegalArgumentException e) {
-            throw new InvalidProductException("category is invalid");
+            throw new InvalidCategoryException(category);
         }
-
-        this.maxPersonalization = numPersonalizations;
     }
 
     public Product(Product other) {

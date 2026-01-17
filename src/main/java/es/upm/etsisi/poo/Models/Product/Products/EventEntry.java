@@ -3,6 +3,9 @@ package es.upm.etsisi.poo.Models.Product.Products;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
+import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
+import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
+import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 
@@ -34,19 +37,12 @@ public class EventEntry extends TicketEntry<EventProduct> {
     /**
      * Sets the actual people value to the one in the parameter. It checks
      * @param actualPeople the new value of actualPeople
-     * @throws AppException Controls that the parameter actualPeople is valid in the Event
      */
-    public void setActualPeople (int actualPeople) throws AppException {
-        if (actualPeople > product.getMaxPeople()) {
-            throw new AppException(
-                    "ERROR: There can't be more than "
-                            + product.getMaxPeople() + " people"
-            );
-        } else if (actualPeople < 1) {
-            throw new AppException(
-                    "ERROR: There must be at least 1 person in the event"
-            );
-        }
+    public void setActualPeople (int actualPeople)
+            throws InvalidPeopleInEventException {
+        if (actualPeople > product.getMaxPeople() ||  actualPeople < 1)
+            throw new InvalidPeopleInEventException();
+
         people = actualPeople;
     }
 

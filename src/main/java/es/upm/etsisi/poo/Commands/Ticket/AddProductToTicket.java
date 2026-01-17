@@ -46,9 +46,9 @@ public class AddProductToTicket implements Command {
         int amount;
         try {
             amount = Integer.parseInt(amountStr);
-            if (amount <= 0) throw new InvalidAmountException();
+            if (amount <= 0) throw new NonPositiveNumberException("Amount");
         } catch (NumberFormatException e) {
-            throw new InvalidAmountException();
+            throw new NonPositiveNumberException("Amount");
         }
 
         int numPersonalizations = args.length - 4;

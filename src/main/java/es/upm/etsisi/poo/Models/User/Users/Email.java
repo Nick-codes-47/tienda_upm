@@ -11,14 +11,6 @@ public class Email implements Serializable {
         this.domain = domain;
     }
 
-    public String getUsername() {
-        return  username;
-    }
-
-    public String getDomain() {
-        return domain;
-    }
-
     @Override
     public String toString() {
         return String.format("%s@%s", username, domain);
