@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
+import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
@@ -15,11 +15,11 @@ public class EventProduct extends GoodsProduct {
     private static final long serialVersionUID = 1L;
 
     public EventProduct(EventType type, ProductID ID, ProductName name, double price, LocalDateTime expireDate, int maxPeople)
-            throws InvalidDateException, InvalidMaxPeopleException, NonPositiveNumberException {
+            throws InvalidDateException, InvalidPeopleInEventException, NonPositiveNumberException {
         super(ProductType.EVENT, ID, name, price);
 
         if (maxPeople < 1 || maxPeople > MAX_PEOPLE_ALLOWED)
-            throw new InvalidMaxPeopleException();
+            throw new InvalidPeopleInEventException();
         if (expireDate == null || expireDate.isBefore(LocalDateTime.now()))
             throw new InvalidDateException();
 
@@ -60,12 +60,6 @@ public class EventProduct extends GoodsProduct {
                 this.expireDate.toLocalDate().toString() +
                 ", max people allowed:" +
                 this.maxPeople;
-    }
-
-    public static class InvalidMaxPeopleException extends AppException {
-        public InvalidMaxPeopleException() {
-            super("Events must have between 1 and 100 people");
-        }
     }
 
     private final int maxPeople;
