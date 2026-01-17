@@ -47,6 +47,10 @@ public class EventProduct extends GoodsProduct<EventProduct> implements Copyable
     public LocalDateTime getExpireDate() { return this.expireDate; }
     public EventType getEventType() { return this.type; }
 
+    public boolean isPossibleToPlanFromNow(LocalDateTime now) {
+        return this.getExpireDate().isBefore(now.plusHours(this.type.getPlanningTime()));
+    }
+
     @Override
     public EventEntry toTicketEntry(String[] rawArgs) throws AppException {
         EntryArgs args = new EntryArgs(rawArgs);

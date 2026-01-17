@@ -1,15 +1,16 @@
 package es.upm.etsisi.poo.Models.Ticket.Core;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.ClosedTicketException;
-import es.upm.etsisi.poo.AppExceptions.FullContainerException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.AppLogger;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
+import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
 import java.io.Serializable;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 
@@ -97,11 +98,43 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public void close() {
+    public void close() throws NotEnoughPlanningHoursException {
+        ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
+
+        checkForNonProgrammableEvents(eventsInTicket);
+
+        ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
 
         if (this.ticketState != TicketState.CERRADO) {
             this.ticketState = TicketState.CERRADO;
             ID.close();
         }
+    }
+
+    private <T extends BaseProduct<?>> ArrayList<T> getProductsOfTypeFromTicket(Class<T> productType) {
+        ArrayList<T> products = new ArrayList<>();
+
+        for (TicketEntry<ProductType> entry : entries.values()) {
+            BaseProduct<?> product = entry.getProduct();
+
+            if (productType.isInstance(product)) {
+                products.add(productType.cast(product));
+            }
+        }
+
+        return products;
+    }
+
+    private static void checkForNonProgrammableEvents(ArrayList<EventProduct> eventsInTicket) throws NotEnoughPlanningHoursException {
+        for (EventProduct event : eventsInTicket) {
+            if (!event.isPossibleToPlanFromNow(LocalDateTime.now())) {
+                throw new NotEnoughPlanningHoursException
+                        (event.getID().toString(), event.getEventType().getPlanningTime(),event.getExpireDate());
+            }
+        }
+    }
+
+    private boolean isEvent(TicketEntry<ProductType> entry) {
+        return entry.getProduct() instanceof EventProduct;
     }
 }

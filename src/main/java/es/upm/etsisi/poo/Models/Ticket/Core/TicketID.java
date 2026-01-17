@@ -34,7 +34,7 @@ public class TicketID extends AppID implements Serializable {
 
     @Override
     public String toString() {
-        if (closed)
+        if (!closed)
             return creationDate.format(DATE_TIME_FORMATTER)
                     + "-"
                     + super.baseID;
