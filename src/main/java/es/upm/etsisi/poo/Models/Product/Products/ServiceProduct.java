@@ -1,19 +1,23 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ServiceCategory;
+import es.upm.etsisi.poo.Models.Core.Copyable;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
+import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 
 import java.time.LocalDateTime;
 
-public class ServiceProduct extends BaseProduct {
+public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copyable<ServiceProduct> {
 
     private static final long serialVersionUID = 1L;
 
-    public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category) throws InvalidProductException {
-        super(ProductType.SERVICE);
+    private final ServiceID ID;
+    private final ServiceCategory category;
+    private final LocalDateTime expirationDate;
 
+    public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category) throws InvalidProductException {
         this.ID = ID;
 
         if  (expirationDate == null || expirationDate.isBefore(LocalDateTime.now())) {
@@ -30,8 +34,6 @@ public class ServiceProduct extends BaseProduct {
     }
 
     public ServiceProduct(ServiceProduct other) {
-        super(other);
-
         this.ID = other.ID;
         this.category = other.category;
         this.expirationDate = other.expirationDate;
@@ -43,11 +45,12 @@ public class ServiceProduct extends BaseProduct {
     }
 
     @Override
-    public ServiceProduct clone() {
-        return new ServiceProduct(this);
+    public ServiceEntry toTicketEntry(EntryArgs args) {
+        return new ServiceEntry(this);
     }
 
-    private final ServiceID ID;
-    private final ServiceCategory category;
-    private final LocalDateTime expirationDate;
+    @Override
+    public ServiceProduct copy() {
+        return new ServiceProduct(this);
+    }
 }

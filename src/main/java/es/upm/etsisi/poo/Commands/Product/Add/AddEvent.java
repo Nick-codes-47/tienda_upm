@@ -4,9 +4,10 @@ import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Products.*;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -25,8 +26,8 @@ public abstract class AddEvent extends AddProduct {
     }
 
     @Override
-    protected BaseProduct createProduct(String[] args) throws AppException {
-        BaseProduct product = null;
+    protected BaseProduct<?> createProduct(String[] args) throws AppException {
+        BaseProduct<?> product = null;
 
         try {
             int rawID = -1;

@@ -1,15 +1,16 @@
-package es.upm.etsisi.poo.Models.Ticket.Core;
+package es.upm.etsisi.poo.Models.Product.Products;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
 import java.time.LocalDateTime;
 
 public class EventEntry extends TicketEntry<EventProduct> {
 
     private static final long serialVersionUID = 1L;
+
+    private int people = 0;
 
     public EventEntry(EventProduct event) throws AppException {
         super(event);
@@ -33,7 +34,7 @@ public class EventEntry extends TicketEntry<EventProduct> {
     /**
      * Sets the actual people value to the one in the parameter. It checks
      * @param actualPeople the new value of actualPeople
-     * @throws GoodsProduct.InvalidProductException Controls that the parameter actualPeople is valid in the Event
+     * @throws AppException Controls that the parameter actualPeople is valid in the Event
      */
     public void setActualPeople (int actualPeople) throws AppException {
         if (actualPeople > product.getMaxPeople()) {
@@ -76,6 +77,4 @@ public class EventEntry extends TicketEntry<EventProduct> {
     public boolean checkValidity() {
         return product.getMaxPeople() >= people;
     }
-
-    private int people = 0;
 }

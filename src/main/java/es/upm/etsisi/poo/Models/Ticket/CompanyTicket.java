@@ -1,15 +1,16 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Ticket.Core.Printable;
+import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.Ticket.Core.TicketType;
 
-public class CompanyTicket extends Ticket<BaseProduct> {
+public class CompanyTicket extends Ticket<BaseProduct<?>> implements Printable {
 
     private static final long serialVersionUID = 1L;
 
     public CompanyTicket(TicketID ID) {
-        super(TicketType.COMPANY, ID);
+        super(ID);
     }
 
     public CompanyTicket(CompanyTicket other) {
@@ -17,7 +18,12 @@ public class CompanyTicket extends Ticket<BaseProduct> {
     }
 
     @Override
-    public CompanyTicket clone() {
+    public CompanyTicket copy() {
         return new CompanyTicket(this);
+    }
+
+    @Override
+    public void print() {
+
     }
 }

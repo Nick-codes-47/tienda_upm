@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;

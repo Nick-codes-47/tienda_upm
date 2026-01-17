@@ -1,14 +1,13 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.Products.Product;
 import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
 
@@ -39,14 +38,14 @@ public class AddProduct implements Command {
     public int execute(String[] args) throws AppException {
         if (args.length < 2) throw new WrongNumberOfArgsException();
 
-        BaseProduct product = createProduct(args);
+        BaseProduct<?> product = createProduct(args);
         catalog.add(product);
 
         return 0;
     }
 
-    protected BaseProduct createProduct(String[] args) throws AppException {
-        BaseProduct product = null;
+    protected BaseProduct<?> createProduct(String[] args) throws AppException {
+        BaseProduct<?> product = null;
 
         int rawID = -1;
 

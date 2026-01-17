@@ -1,7 +1,7 @@
-package es.upm.etsisi.poo.Models.Ticket.Core;
+package es.upm.etsisi.poo.Models.Product.Products;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.Models.Product.Products.Product;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -11,6 +11,7 @@ public class ProductEntry extends TicketEntry<Product> {
     private static final long serialVersionUID = 1L;
 
     public int amount;
+    private List<String> personalizations;
 
     public ProductEntry(Product product) {
         super(product);
@@ -59,6 +60,4 @@ public class ProductEntry extends TicketEntry<Product> {
     public boolean checkValidity() {
         return true;
     }
-
-    private List<String> personalizations;
 }

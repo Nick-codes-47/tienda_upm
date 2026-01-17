@@ -2,9 +2,9 @@ package es.upm.etsisi.poo.Models.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ServiceID;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -22,7 +22,7 @@ public class Catalog implements Serializable {
         products = new HashMap<>();
     }
 
-    public void loadData(HashMap<ProductID, BaseProduct> loadedProducts) {
+    public void loadData(HashMap<ProductID, BaseProduct<?>> loadedProducts) {
         if (loadedProducts != null) {
             this.products.clear();
             this.products.putAll(loadedProducts);
@@ -36,11 +36,11 @@ public class Catalog implements Serializable {
      * @return null if the id is not correct.
      * the product with the id if it's correct
      */
-    public BaseProduct get(ProductID ID) {
+    public BaseProduct<?> get(ProductID ID) {
         return products.get(ID);
     }
 
-    public HashMap<ProductID, BaseProduct> getProducts() {
+    public HashMap<ProductID, BaseProduct<?>> getProducts() {
         return products;
     }
 
@@ -53,7 +53,7 @@ public class Catalog implements Serializable {
      * -2 if the product passed was a null;
      * -1 if we already reached the maxProducts;
      */
-    public int add(BaseProduct product) {
+    public int add(BaseProduct<?> product) {
         // Discard null objects
         if (product == null) {
             return -2;
@@ -111,8 +111,8 @@ public class Catalog implements Serializable {
      * @param ID to search the product
      * @return either the product that was removed or null if the product doesn't exist in the catalog.
      */
-    public BaseProduct delete(ProductID ID) throws AppEntityNotFoundException {
-        BaseProduct product = this.get(ID);
+    public BaseProduct<?> delete(ProductID ID) throws AppEntityNotFoundException {
+        BaseProduct<?> product = this.get(ID);
         if (product != null) {
             // If the product exist in the catalog we delete it
             products.remove(ID);
@@ -120,6 +120,6 @@ public class Catalog implements Serializable {
         return product;
     }
 
-    private final HashMap<ProductID, BaseProduct> products;
+    private final HashMap<ProductID, BaseProduct<?>> products;
     private final int MAX_PRODUCTS = 200;
 }

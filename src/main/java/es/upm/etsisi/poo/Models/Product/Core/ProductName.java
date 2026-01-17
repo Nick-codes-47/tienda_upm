@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.Product.Products.Core;
+package es.upm.etsisi.poo.Models.Product.Core;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
 
@@ -7,6 +7,10 @@ import java.io.Serializable;
 public class ProductName implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private final static int MAX_CHARACTER_NAME_LENGTH = 100;
+
+    private final String name;
 
     public ProductName(String name) throws InvalidCatalogNameException {
         if (name == null)
@@ -49,8 +53,4 @@ public class ProductName implements Serializable {
     public String toString() {
         return name;
     }
-
-    private final static int MAX_CHARACTER_NAME_LENGTH = 100;
-
-    private final String name;
 }

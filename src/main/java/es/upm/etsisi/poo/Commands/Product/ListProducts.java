@@ -6,8 +6,8 @@ import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 
 import java.util.*;
 
@@ -29,15 +29,15 @@ public class ListProducts implements Command {
     public int execute(String[] args) throws AppException {
         if (args.length != 0) throw new WrongNumberOfArgsException();
 
-        HashMap<ProductID, BaseProduct> products = catalog.getProducts();
+        HashMap<ProductID, BaseProduct<?>> products = catalog.getProducts();
         if (products.isEmpty()) throw new EmptyDataException("products");
 
         // We list the products in ascending order by their id
-        ArrayList<Map.Entry<ProductID, BaseProduct>> entries = new ArrayList<>(products.entrySet());
+        ArrayList<Map.Entry<ProductID, BaseProduct<?>>> entries = new ArrayList<>(products.entrySet());
         entries.sort(APPID_LIST_ORDER);
 
         StringBuilder productsMessage = new StringBuilder("Catalog:").append("\n");
-        for (Map.Entry<ProductID, BaseProduct> entry : entries) {
+        for (Map.Entry<ProductID, BaseProduct<?>> entry : entries) {
             productsMessage.append(" ").append(entry.getValue()).append("\n");
         }
 

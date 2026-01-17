@@ -1,17 +1,13 @@
 package es.upm.etsisi.poo.Commands.Product;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Services.TicketService;
-
-import java.util.List;
 
 public class RemoveProduct implements Command {
     public static final String ID = "remove";
@@ -35,7 +31,7 @@ public class RemoveProduct implements Command {
         }
         // We try to remove the product from the catalog
         ProductID ID = new ProductID(Integer.parseInt(args[0]));
-        BaseProduct prod = catalog.delete(ID);
+        BaseProduct<?> prod = catalog.delete(ID);
         AppLogger.info(prod.toString());
 
         ticketService.showModifiedTickets(prod);

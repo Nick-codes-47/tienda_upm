@@ -1,20 +1,22 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
  */
-public abstract class GoodsProduct extends BaseProduct {
+public abstract class GoodsProduct<T extends GoodsProduct<T>> extends BaseProduct<T> {
 
     private static final long serialVersionUID = 1L;
 
-    public GoodsProduct(ProductType type, ProductID ID, ProductName name, double price) throws InvalidProductException {
-        super(type);
+    private final ProductID ID;
+    private ProductName name;
+    private final double price;
 
+    public GoodsProduct(ProductID ID, ProductName name, double price) throws InvalidProductException {
         this.ID = ID;
         this.name = name;
 
@@ -25,9 +27,7 @@ public abstract class GoodsProduct extends BaseProduct {
         this.price = price;
     }
 
-    public GoodsProduct(GoodsProduct other) {
-        super(other);
-
+    public GoodsProduct(GoodsProduct<T> other) {
         this.ID = other.ID;
         this.name = other.name;
         this.price = other.price;
@@ -45,8 +45,4 @@ public abstract class GoodsProduct extends BaseProduct {
     public int hashCode() {
         return ID.hashCode();
     }
-
-    private final ProductID ID;
-    private ProductName name;
-    private final double price;
 }

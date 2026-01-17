@@ -1,7 +1,10 @@
-package es.upm.etsisi.poo.Models.Product.Products.ProductEnums;
+package es.upm.etsisi.poo.Models.Product.ProductEnums;
 
 public enum EventType {
     FOOD(72, "Food"), MEETING(12, "Meeting");
+
+    private final int planningTime;
+    private final String print;
 
     EventType(int planningTime, String print) {
         this.planningTime = planningTime;
@@ -13,7 +16,4 @@ public enum EventType {
     public String toString() {
         return this.print;
     }
-
-    private final int planningTime;
-    private final String print;
 }

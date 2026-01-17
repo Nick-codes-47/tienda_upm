@@ -1,14 +1,11 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.*;
 import es.upm.etsisi.poo.Models.User.Users.Customer;
 import es.upm.etsisi.poo.Models.User.Users.Email;
-
-import java.util.Objects;
 
 public class AddCustomer extends AddUser<Customer> {
     public static final String ID = "add";

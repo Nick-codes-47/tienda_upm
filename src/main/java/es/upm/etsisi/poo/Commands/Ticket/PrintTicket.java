@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Core.Printable;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
@@ -24,11 +24,10 @@ public class PrintTicket implements Command {
         if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
 
         String ticketId = args[0];
-        Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
+        Printable ticket = cashier.getTicket(new TicketID(ticketId));
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.print();
-
         return 0;
     }
 

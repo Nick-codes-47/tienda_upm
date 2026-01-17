@@ -1,19 +1,26 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.Models.Core.Copyable;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
+import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 
 import java.time.LocalDateTime;
 
-public class EventProduct extends GoodsProduct {
+public class EventProduct extends GoodsProduct<EventProduct> implements Copyable<EventProduct> {
 
     private static final long serialVersionUID = 1L;
 
+    private final int maxPeople;
+    private final EventType type;
+    private final LocalDateTime expireDate;
+    private static final int MAX_PEOPLE_ALLOWED = 100;
+
     public EventProduct(EventType type, ProductID ID, ProductName name, double price, LocalDateTime expireDate, int maxPeople) throws InvalidProductException {
-        super(ProductType.EVENT, ID, name, price);
+        super(ID, name, price);
 
         if (maxPeople < 1 || maxPeople > MAX_PEOPLE_ALLOWED)
             throw new InvalidProductException(" events must have between 1 and 100 people");
@@ -38,7 +45,17 @@ public class EventProduct extends GoodsProduct {
     public EventType getEventType() { return this.type; }
 
     @Override
-    public EventProduct clone() {
+    public EventEntry toTicketEntry(EntryArgs args) throws AppException {
+        assert args instanceof EventEntryArgs : "Wrong EntryArgs subclass passed";
+
+        EventEntryArgs eventArgs = (EventEntryArgs) args;
+        EventEntry entry = new EventEntry(this);
+        entry.setActualPeople(eventArgs.people);
+        return entry;
+    }
+
+    @Override
+    public EventProduct copy() {
         return new EventProduct(this);
     }
 
@@ -58,9 +75,4 @@ public class EventProduct extends GoodsProduct {
                 ", max people allowed:" +
                 this.maxPeople;
     }
-
-    private final int maxPeople;
-    private final EventType type;
-    private final LocalDateTime expireDate;
-    private static final int MAX_PEOPLE_ALLOWED = 100;
 }

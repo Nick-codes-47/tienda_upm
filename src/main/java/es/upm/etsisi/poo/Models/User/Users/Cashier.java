@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Models.User.Users;
 
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
-import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 

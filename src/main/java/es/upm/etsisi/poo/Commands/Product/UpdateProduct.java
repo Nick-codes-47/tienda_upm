@@ -4,14 +4,12 @@ import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
-import es.upm.etsisi.poo.Models.Product.Products.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
-import es.upm.etsisi.poo.Models.Ticket.Ticket;
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.Services.TicketService;
 
 import java.lang.reflect.Field;
-import java.util.List;
 
 public class UpdateProduct implements Command {
     public static final String ID = "update";
@@ -44,7 +42,7 @@ public class UpdateProduct implements Command {
         } catch (NumberFormatException e) {
             throw new InvalidAppIDException("ID must be a number");
         }
-        BaseProduct product = catalog.get(ID);
+        BaseProduct<?> product = catalog.get(ID);
         if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
         // We obtain the field to modify and the new value
@@ -112,7 +110,7 @@ public class UpdateProduct implements Command {
         throw new InvalidNewValueException(field.getName());
     }
 
-    private static void setNewValue(Field field, BaseProduct product, Object converted) throws FieldNotValidException {
+    private static void setNewValue(Field field, BaseProduct<?> product, Object converted) throws FieldNotValidException {
         try {
             field.set(product, converted);
         } catch (IllegalAccessException e) {

@@ -1,17 +1,22 @@
 package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
+import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.Models.Core.Copyable;
+import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
+import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 
-public class Product extends GoodsProduct {
+public class Product extends GoodsProduct<Product> implements Copyable<Product> {
 
     private static final long serialVersionUID = 1L;
 
+    private final Category category;
+    private final int maxPersonalization;
+
     public Product(ProductID ID, ProductName name, String category, double price) throws InvalidProductException {
-        super(ProductType.PRODUCT, ID, name, price);
+        super(ID, name, price);
 
         try {
             this.category = Category.valueOf(category.toUpperCase());
@@ -23,7 +28,7 @@ public class Product extends GoodsProduct {
     }
 
     public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations) throws InvalidProductException {
-        super(ProductType.CUSTOM, ID, name, price);
+        super(ID, name, price);
 
         try {
             this.category = Category.valueOf(category.toUpperCase());
@@ -40,11 +45,24 @@ public class Product extends GoodsProduct {
         this.maxPersonalization = other.maxPersonalization;
     }
 
+    public String getType() { return (maxPersonalization > 0)? "ProductPersonalizable" :  "Product"; }
     public Category getCategory() { return this.category; }
     public int getMaxPersonalization() { return this.maxPersonalization; }
 
     @Override
-    public Product clone() {
+    public ProductEntry toTicketEntry(EntryArgs args) throws AppException {
+        assert args instanceof ProductEntryArgs : "Wrong EntryArgs sbuclass passed";
+
+        ProductEntryArgs prodArgs = (ProductEntryArgs) args;
+
+        ProductEntry entry = new ProductEntry(this);
+        entry.amount = prodArgs.amount;
+        entry.setPersonalizations(prodArgs.personalizations);
+        return entry;
+    }
+
+    @Override
+    public Product copy() {
         return new Product(this);
     }
 
@@ -52,7 +70,7 @@ public class Product extends GoodsProduct {
     public String toString() {
         StringBuilder sb = new StringBuilder();
 
-        sb.append("{class:").append(super.getType())
+        sb.append("{class:").append(getType())
                 .append(", id:").append(super.getID())
                 .append(", name:'").append(super.getName())
                 .append("', category:").append(category)
@@ -63,7 +81,4 @@ public class Product extends GoodsProduct {
 
         return sb.toString();
     }
-
-    private final Category category;
-    private final int maxPersonalization;
 }

@@ -1,6 +1,6 @@
-package es.upm.etsisi.poo.Models.Ticket.Core;
+package es.upm.etsisi.poo.Models.Product.Products;
 
-import es.upm.etsisi.poo.Models.Product.Products.ServiceProduct;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
 public class ServiceEntry extends TicketEntry<ServiceProduct> {
 
