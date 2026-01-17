@@ -39,7 +39,7 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     }
 
     public boolean hasExpired() {
-        return this.expirationDate.toLocalDate().isBefore(LocalDate.now());
+        return this.expirationDate.isBefore(LocalDate.now());
     }
 
     @Override
