@@ -11,7 +11,7 @@ public class CashID implements Serializable {
     private final String id;
 
     public CashID(String id) throws InvalidAppIDException {
-        if (id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W')
+        if (!(id.length() == 9 && id.charAt(0) == 'U' && id.charAt(1) == 'W'))
             throw new InvalidAppIDException("cashier id must be UWXXXXXXX");
 
         this.id = id;
