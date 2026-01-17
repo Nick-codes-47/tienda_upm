@@ -9,11 +9,10 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
-import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
@@ -49,7 +48,7 @@ public class AddProduct implements Command {
     protected BaseProduct<?> createProduct(String[] args) throws AppException {
         int rawID = -1;
 
-        if (Character.isDigit(args[0].charAt(0))) // only IDs start with numbers
+        if (args[0].matches("-?\\d+"))
             rawID = Integer.parseInt(args[0]);
 
         ProductToAdd type = resolveProductToAdd(args, rawID);
@@ -81,7 +80,7 @@ public class AddProduct implements Command {
             case SERVICE -> {
                 ServiceID id = catalog.getNewServiceID();
                 try {
-                    yield new ServiceProduct(id, LocalDateTime.parse(args[0], DATE_TIME_FORMATTER), args[1]);
+                    yield new ServiceProduct(id, LocalDate.parse(args[0], DATE_TIME_FORMATTER), args[1]);
                 } catch (DateTimeParseException e) {
                     throw new InvalidDateFormatException();
                 }

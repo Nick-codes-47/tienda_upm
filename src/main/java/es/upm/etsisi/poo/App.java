@@ -6,10 +6,9 @@ import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
-import es.upm.etsisi.poo.Models.User.CustomerRegister;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.Users.Customer;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.Customer;
 import es.upm.etsisi.poo.Handlers.CashierHandler;
 import es.upm.etsisi.poo.Handlers.CustomerHandler;
 import es.upm.etsisi.poo.Handlers.ProductHandler;
@@ -25,12 +24,17 @@ import java.util.function.Consumer;
 public class App {
 
     public final Catalog catalog = new Catalog();
-    public final CashierRegister cashiers = new CashierRegister();
-    public final CustomerRegister customers = new CustomerRegister();
+    public final UserRegister<Cashier> cashiers = new UserRegister<>();
+    public final UserRegister<Customer> customers = new UserRegister<>();
 
     private final PersistenceService persistence = new PersistenceService();
 
     public final TicketService ticketService = new TicketService(cashiers);
+
+    private RequestHandler[] handlers;
+    private final HashMap<String, Integer> handlerIds = new HashMap<>();
+    private final HashMap<String, Consumer<Request>> builtinCommands = new HashMap<>();
+    private InputDriver input;
 
     public App() {}
 
@@ -169,9 +173,4 @@ public class App {
         builtinCommands.put("echo", this::echo);
         builtinCommands.put("exit", (request) -> exit());
     }
-
-    private RequestHandler[] handlers;
-    private final HashMap<String, Integer> handlerIds = new HashMap<>();
-    private final HashMap<String, Consumer<Request>> builtinCommands = new HashMap<>();
-    private InputDriver input;
 }

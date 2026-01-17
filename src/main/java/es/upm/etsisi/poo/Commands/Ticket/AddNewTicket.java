@@ -9,21 +9,20 @@ import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 import es.upm.etsisi.poo.Models.User.UserEnums.ClientType;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
-import es.upm.etsisi.poo.Models.User.Users.Customer;
-import es.upm.etsisi.poo.Models.User.CustomerRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.Customer;
 import es.upm.etsisi.poo.Services.TicketService;
 
 public class AddNewTicket implements Command {
     public static final String ID = "new";
 
     private final TicketService ticketService;
-    private final CashierRegister cashiers;
-    private final CustomerRegister customers;
+    private final UserRegister<Cashier> cashiers;
+    private final UserRegister<Customer> customers;
 
-    public AddNewTicket(TicketService ticketService, CashierRegister cashiers, CustomerRegister customers) {
+    public AddNewTicket(TicketService ticketService, UserRegister<Cashier> cashiers, UserRegister<Customer> customers) {
         this.ticketService = ticketService;
         this.cashiers = cashiers;
         this.customers = customers;

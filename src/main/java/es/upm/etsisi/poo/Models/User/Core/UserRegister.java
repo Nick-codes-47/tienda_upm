@@ -1,24 +1,22 @@
-package es.upm.etsisi.poo.Models.User;
+package es.upm.etsisi.poo.Models.User.Core;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
-import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.AppExceptions.NullAppEntityException;
-import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
-import es.upm.etsisi.poo.Models.User.Users.User;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 
-public abstract class UserRegister<T extends User> implements Iterable<T>, Serializable {
+public class UserRegister<T extends User> implements Iterable<T>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
-    public UserRegister(UserType userType) {
+    private final HashMap<String, T> users;
+
+    public UserRegister() {
         users = new HashMap<>();
-        this.USER_TYPE = userType;
     }
 
     public void loadData(HashMap<String, T> loadedUsers) {
@@ -38,14 +36,12 @@ public abstract class UserRegister<T extends User> implements Iterable<T>, Seria
         return users.values().iterator();
     }
 
-    public void addUser(T user) throws EntityAlreadyExistsException, InvalidAppIDException, NullAppEntityException {
-        if (user == null) throw new NullAppEntityException(USER_TYPE.toString());
+    public void addUser(T user) throws EntityAlreadyExistsException, NullAppEntityException {
+        if (user == null) throw new NullAppEntityException("User");
 
         if (users.containsKey(user.getId())) {
-            throw new EntityAlreadyExistsException(USER_TYPE.toString(), user.getId());
+            throw new EntityAlreadyExistsException("User", user.getId());
         }
-
-        if (!isValidId(user.getId())) throw new InvalidAppIDException();
 
         users.put(user.getId(), user);
     }
@@ -69,11 +65,4 @@ public abstract class UserRegister<T extends User> implements Iterable<T>, Seria
     public int size() {
         return users.size();
     }
-
-
-    public String getNewId() { return null; } // TODO maybe delete this method since just Cashier uses it
-    public abstract boolean isValidId(String id);
-
-    public final UserType USER_TYPE;
-    private final HashMap<String, T> users;
 }

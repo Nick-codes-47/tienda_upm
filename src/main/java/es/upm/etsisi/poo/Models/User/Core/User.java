@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.User.Users;
+package es.upm.etsisi.poo.Models.User.Core;
 
 import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 
@@ -7,6 +7,10 @@ import java.io.Serializable;
 public abstract class User implements Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    protected final String name;
+    protected final Email email;
+    protected final String id;
 
     public User(String id, String name, Email email) {
         this.name = name;
@@ -39,8 +43,4 @@ public abstract class User implements Serializable {
         assert type != null; // won't happen
         return String.format("%s{identifier='%s', name='%s', email:'%s'%s}", type, id, name, email, addVarToPrint());
     }
-
-    protected final String name;
-    protected final Email email;
-    protected final String id;
 }

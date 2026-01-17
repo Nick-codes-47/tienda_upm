@@ -4,8 +4,8 @@ import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
-import es.upm.etsisi.poo.Models.User.Users.User;
-import es.upm.etsisi.poo.Models.User.UserRegister;
+import es.upm.etsisi.poo.Models.User.Core.User;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.List;
 
@@ -24,9 +24,12 @@ public class ListUsers<T extends User> extends UserCommand<T> {
 
         if (users.isEmpty()) throw new EmptyDataException("users");
 
-        StringBuilder sb = new StringBuilder(userRegister.USER_TYPE + ":");
-        for (User user : users)
+        StringBuilder sb = null;
+        for (User user : users) {
+            if (sb == null)
+                sb = new StringBuilder(user.getClass() + ":");
             sb.append("  ").append(user);
+        }
 
         AppLogger.info(sb.toString());
         return 0;

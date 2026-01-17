@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.User.Users;
+package es.upm.etsisi.poo.Models.User.Core;
 
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
@@ -10,12 +10,12 @@ public class Customer extends User {
 
     private static final long serialVersionUID = 1L;
 
-    public Customer(String identification, String name, Email email, String cashierId) {
-        super(identification, name, email); // TODO: verify dnis
+    public Customer(UserNIF id, String name, Email email, String cashierId) {
+        super(id.toString(), name, email); // TODO: verify dnis
 
         this.cashierId = cashierId;
 
-        if (isCompany(identification)) {
+        if (id.isCompany()) {
             this.type = ClientType.COMPANY;
         } else {
             this.type = ClientType.INDIVIDUAL;

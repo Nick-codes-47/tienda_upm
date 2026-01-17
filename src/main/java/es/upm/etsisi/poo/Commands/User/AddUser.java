@@ -1,12 +1,11 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppLogger;
-import es.upm.etsisi.poo.Models.User.Users.Email;
-import es.upm.etsisi.poo.Models.User.Users.User;
-import es.upm.etsisi.poo.Models.User.UserRegister;
+import es.upm.etsisi.poo.Models.User.Core.Email;
+import es.upm.etsisi.poo.Models.User.Core.User;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 public abstract class AddUser<T extends User> extends UserCommand<T> {
 

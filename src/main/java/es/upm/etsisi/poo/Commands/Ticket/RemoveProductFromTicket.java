@@ -9,15 +9,15 @@ import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 public class RemoveProductFromTicket implements Command {
     public static final String ID = "remove";
 
-    private final CashierRegister cashiers;
+    private final UserRegister<Cashier> cashiers;
 
-    public RemoveProductFromTicket(CashierRegister cashiers) {
+    public RemoveProductFromTicket(UserRegister<Cashier> cashiers) {
         this.cashiers = cashiers;
     }
 

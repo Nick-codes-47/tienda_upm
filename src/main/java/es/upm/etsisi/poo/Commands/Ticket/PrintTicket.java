@@ -4,13 +4,15 @@ import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Ticket.Core.Printable;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 public class PrintTicket implements Command {
     public static final String ID = "print";
 
-    public PrintTicket(CashierRegister cashiers) {
+    private final UserRegister<Cashier> cashiers;
+
+    public PrintTicket(UserRegister<Cashier> cashiers) {
         this.cashiers = cashiers;
     }
 
@@ -35,6 +37,4 @@ public class PrintTicket implements Command {
     public String help() {
         return ID + " <ticketId> <cashId>";
     }
-
-    private final CashierRegister cashiers;
 }

@@ -9,8 +9,8 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.Arrays;
 
@@ -18,9 +18,9 @@ public class AddProductToTicket implements Command {
     public static final String ID = "add";
 
     private final Catalog catalog;
-    private final CashierRegister cashiers;
+    private final UserRegister<Cashier> cashiers;
 
-    public AddProductToTicket(Catalog catalog, CashierRegister cashiers) {
+    public AddProductToTicket(Catalog catalog, UserRegister<Cashier> cashiers) {
         this.catalog = catalog;
         this.cashiers = cashiers;
     }

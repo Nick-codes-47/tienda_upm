@@ -6,15 +6,17 @@ import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class TicketService {
 
-    public TicketService(CashierRegister cashiers) {
+    private final UserRegister<Cashier> cashiers;
+
+    public TicketService(UserRegister<Cashier> cashiers) {
         this.cashiers = cashiers;
     }
 
@@ -77,6 +79,4 @@ public class TicketService {
     public TicketID getNewTicketID() throws InvalidAppIDException {
         return new TicketID(totalTickets() + 1);
     }
-
-    private final CashierRegister cashiers;
 }

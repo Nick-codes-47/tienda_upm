@@ -1,10 +1,9 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
-import es.upm.etsisi.poo.Models.User.Users.User;
-import es.upm.etsisi.poo.Models.User.UserRegister;
+import es.upm.etsisi.poo.Models.User.Core.User;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 public class RemoveUser<T extends User> extends UserCommand<T> {
 

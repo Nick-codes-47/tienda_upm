@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.Models.User.Users;
+package es.upm.etsisi.poo.Models.User.Core;
 
 import java.io.Serializable;
 

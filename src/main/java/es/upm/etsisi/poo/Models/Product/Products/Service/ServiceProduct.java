@@ -7,18 +7,22 @@ import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 
 public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copyable<ServiceProduct> {
 
     private static final long serialVersionUID = 1L;
 
-    public ServiceProduct(ServiceID ID, LocalDateTime expirationDate, String category)
+    private final ServiceID ID;
+    private final ServiceCategory category;
+    private final LocalDate expirationDate;
+
+    public ServiceProduct(ServiceID ID, LocalDate expirationDate, String category)
             throws InvalidCategoryException, InvalidDateException {
 
         this.ID = ID;
 
-        if  (expirationDate == null || expirationDate.isBefore(LocalDateTime.now())) throw new InvalidDateException();
+        if  (expirationDate == null || expirationDate.isBefore(LocalDate.now())) throw new InvalidDateException();
         this.expirationDate = expirationDate;
 
         try {
@@ -48,8 +52,4 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     public ServiceProduct copy() {
         return new ServiceProduct(this);
     }
-
-    private final ServiceID ID;
-    private final ServiceCategory category;
-    private final LocalDateTime expirationDate;
 }

@@ -6,14 +6,17 @@ import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.User.Users.Cashier;
-import es.upm.etsisi.poo.Models.User.CashierRegister;
+import es.upm.etsisi.poo.Models.User.Core.Cashier;
+import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 import es.upm.etsisi.poo.Services.TicketService;
 
 public class ListTicketsFromCashier implements Command {
     public static final String ID = "tickets";
 
-    public ListTicketsFromCashier(CashierRegister cashiers, TicketService ticketService) {
+    private final UserRegister<Cashier> cashiers;
+    private final TicketService ticketService;
+
+    public ListTicketsFromCashier(UserRegister<Cashier> cashiers, TicketService ticketService) {
         this.cashiers = cashiers;
         this.ticketService = ticketService;
     }
@@ -39,7 +42,4 @@ public class ListTicketsFromCashier implements Command {
     public String help() {
         return ID + " <id>";
     }
-
-    private final CashierRegister cashiers;
-    private final TicketService ticketService;
 }
