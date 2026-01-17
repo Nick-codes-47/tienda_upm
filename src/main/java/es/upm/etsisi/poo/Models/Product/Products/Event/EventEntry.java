@@ -21,7 +21,7 @@ public class EventEntry extends TicketEntry<EventProduct> {
 
         int requiredHours = type.getPlanningTime();
 
-        if (event.getExpireDate().isBefore(LocalDateTime.now().plusHours(requiredHours))) {
+        if (event.isPossibleToPlanFromNow(LocalDateTime.now())) {
             throw new NotEnoughPlanningHoursException(event.getID().toString(), requiredHours, event.getExpireDate());
         }
     }
