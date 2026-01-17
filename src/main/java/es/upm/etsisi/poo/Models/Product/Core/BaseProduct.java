@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Models.Product.Core;
 
 import es.upm.etsisi.poo.Models.Core.Copyable;
-import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
 
 import java.io.Serializable;

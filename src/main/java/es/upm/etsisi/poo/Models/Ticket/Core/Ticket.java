@@ -72,7 +72,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return 0;
     }
 
-    public int add(TicketRegistrable<ProductType, EntryArgs> product, EntryArgs args) throws AppException {
+    public int add(TicketRegistrable<ProductType> product, String[] args) throws AppException {
         return add(product.toTicketEntry(args));
     }
 
@@ -86,13 +86,13 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         entries.remove(ID);
     }
 
+    @SuppressWarnings("unchecked") // We checked the cast by comparing IDs
     public void update(BaseProduct<?> baseProduct) throws AppException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
         TicketEntry<ProductType> entry = this.entries.get(baseProduct.getID());
 
         if (entry != null) {
-            @SuppressWarnings("unchecked") // We checked by looking for its ID
             ProductType product = (ProductType) baseProduct;
             entry.update(product);
         }

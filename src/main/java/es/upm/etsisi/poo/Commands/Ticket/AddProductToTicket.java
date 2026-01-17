@@ -1,19 +1,18 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
-import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
 import es.upm.etsisi.poo.Models.User.Users.Cashier;
 import es.upm.etsisi.poo.Models.User.CashierRegister;
 
-import java.util.ArrayList;
+import java.util.Arrays;
 
 public class AddProductToTicket implements Command {
     public static final String ID = "add";
@@ -27,48 +26,24 @@ public class AddProductToTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
-        if (args.length < 4) {
-            throw new WrongNumberOfArgsException();
-        }
+    public int execute(String[] rawArgs) throws AppException {
+        CommandArgs args = new CommandArgs(rawArgs);
 
-        String ticketId = args[0];
-        String cashId = args[1];
-        String prodIdStr = args[2];
-        String amountStr = args[3];
+        BaseProduct<?> product = catalog.get(args.productID);
+        if (product == null) throw new AppEntityNotFoundException("product", args.productID.toString());
 
-        ProductID productId = new ProductID(prodIdStr);
+        Cashier cashier = cashiers.getUser(args.cashID);
+        if (cashier == null) throw new AppEntityNotFoundException("cashier", args.cashID);
 
-        BaseProduct<?> product = catalog.get(productId);
+        Ticket<?> ticket = cashier.getTicket(args.ticketID);
+        if (ticket == null) throw new TicketNotInCashException(args.ticketID.toString(), args.cashID);
 
-        if (product == null) throw new AppEntityNotFoundException("product", productId.toString());
-
-        int amount;
+        int result = 1;
         try {
-            amount = Integer.parseInt(amountStr);
-            if (amount <= 0) throw new NonPositiveNumberException("Amount");
-        } catch (NumberFormatException e) {
-            throw new NonPositiveNumberException("Amount");
+            result = addToTicket(ticket, product, args.args);
+        } catch (ClassCastException e) {
+            AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
         }
-
-        int numPersonalizations = args.length - 4;
-        ArrayList<String> personalizations = null;
-
-        if (numPersonalizations > 0) {
-            personalizations = new ArrayList<>(numPersonalizations);
-
-            for (int i = 4; i < args.length; i++) {
-                personalizations.add(args[i].replace("--p", ""));
-            }
-        }
-
-        Cashier cashier = cashiers.getUser(cashId);
-        if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
-
-        Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
-        if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
-
-        int result = addProductTmp(product, ticket);
 
         if (result == -3) {
             System.err.print("ERROR: Cannot add the same event/meal to the same ticket\n");
@@ -83,26 +58,34 @@ public class AddProductToTicket implements Command {
         return result;
     }
 
-    private int addProductTmp(BaseProduct product, Ticket<?> ticket) throws AppException { // TODO SMELL refactor Products and TicketEntries
-        if (ticket instanceof CompanyTicket companyTicket)
-            return addProduct(product, companyTicket);
-        if (product instanceof GoodsProduct goody) {
-            CommonTicket commonTicket = (CommonTicket) ticket;
-            return addProduct(goody, commonTicket);
+    // If the product is not the correct type, we expect the ClassCastException to be thrown
+    @SuppressWarnings("unchecked")
+    private <T extends BaseProduct<?>> int addToTicket(Ticket<T> ticket, BaseProduct<?> baseProduct, String[] args) throws AppException, ClassCastException {
+        return ticket.add((TicketRegistrable<T>) baseProduct, args);
+    }
+
+    private static class CommandArgs {
+        TicketID ticketID;
+        String cashID;
+        ProductID productID;
+        String[] args = null;
+
+        public CommandArgs(String[] args) throws InvalidAppIDException, NonPositiveNumberException, WrongNumberOfArgsException {
+            if (args.length < 3) {
+                throw new WrongNumberOfArgsException();
+            }
+
+            String ticketId = args[0];
+            String cashId = args[1];
+            String prodIdStr = args[2];
+
+            this.productID = new ProductID(prodIdStr);
+            this.ticketID = new TicketID(ticketId);
+            this.cashID = cashId;
+
+            if (args.length > 3)
+                this.args = Arrays.copyOfRange(args, 3, args.length);
         }
-
-        return 0;
-    }
-
-    private <T extends BaseProduct> int addProduct(T product, Ticket<T> ticket) throws AppException {
-        ticket.add(product);
-        return 0;
-    }
-
-    private <T extends BaseProduct, U extends BaseProduct> int add(T product, Ticket<U> ticket) {
-        System.err.printf("ERROR: Can not add product type %s to a %s ticket\n", product.getType(), ticket.getType());
-
-        return -1;
     }
 
     @Override
