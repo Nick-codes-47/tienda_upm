@@ -4,8 +4,6 @@ import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
-import es.upm.etsisi.poo.Models.Product.Products.EventProduct;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.EventType;
 
 import java.time.LocalDateTime;
 

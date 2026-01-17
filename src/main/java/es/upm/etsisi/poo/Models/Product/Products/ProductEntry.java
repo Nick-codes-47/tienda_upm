@@ -64,6 +64,4 @@ public class ProductEntry extends TicketEntry<Product> {
             super("The product can't have more than: "+ product.getMaxPersonalization() + " personalizations.");
         }
     }
-
-    private List<String> personalizations;
 }

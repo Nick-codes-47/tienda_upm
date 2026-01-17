@@ -25,7 +25,7 @@ public abstract class TicketEntry<ProductType extends BaseProduct<?>> implements
     public void update(ProductType newProduct) throws AppException {
         if (newProduct.getID().equals(product.getID())) {
             product = (ProductType) newProduct.copy();
-        } else throw new AppEntityNotFoundException(newProduct.getType().toString(), newProduct.getID().toString());
+        } else throw new AppEntityNotFoundException(newProduct.getClass().toString(), newProduct.getID().toString()); //TODO check getClass
     };
 
     public ProductType getProduct() { return product; };

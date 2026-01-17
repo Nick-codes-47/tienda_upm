@@ -1,7 +1,5 @@
 package es.upm.etsisi.poo.Models.Core;
 
-
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 
 import java.util.Objects;

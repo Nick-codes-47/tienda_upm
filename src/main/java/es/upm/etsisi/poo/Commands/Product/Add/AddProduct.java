@@ -70,7 +70,7 @@ public class AddProduct implements Command {
         };
     }
 
-    private BaseProduct getProduct(String[] args, ProductToAdd type, int rawID) throws AppException {
+    private BaseProduct<?> getProduct(String[] args, ProductToAdd type, int rawID) throws AppException {
         return switch (type) {
             case SERVICE -> {
                 ServiceID id = catalog.getNewServiceID();

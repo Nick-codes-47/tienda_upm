@@ -39,7 +39,7 @@ public class AddProductToTicket implements Command {
 
         ProductID productId = new ProductID(prodIdStr);
 
-        BaseProduct product = catalog.get(productId);
+        BaseProduct<?> product = catalog.get(productId);
 
         if (product == null) throw new AppEntityNotFoundException("product", productId.toString());
 

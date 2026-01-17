@@ -5,24 +5,19 @@ import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
-import es.upm.etsisi.poo.AppExceptions.InvalidProductException;
 import es.upm.etsisi.poo.Models.Ticket.Core.EntryArgs;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Core.ProductName;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.Category;
-import es.upm.etsisi.poo.Models.Product.Products.ProductEnums.ProductType;
 
 public class Product extends GoodsProduct<Product> implements Copyable<Product> {
 
     private static final long serialVersionUID = 1L;
 
-    private final Category category;
+    private Category category;
     private final int maxPersonalization;
 
     public Product(ProductID ID, ProductName name, String category, double price)
-            throws NonPositiveNumberException {
+            throws NonPositiveNumberException, InvalidCategoryException {
         super(ID, name, price);
 
         initializeCategory(category);
