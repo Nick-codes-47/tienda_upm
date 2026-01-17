@@ -2,9 +2,12 @@ package es.upm.etsisi.poo.Models.Core;
 
 import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 
+import java.io.Serializable;
 import java.util.Objects;
 
-public abstract class AppID implements Comparable<AppID> {
+public abstract class AppID implements Comparable<AppID>, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     protected final int baseID;
 
@@ -25,6 +28,10 @@ public abstract class AppID implements Comparable<AppID> {
             throw new InvalidAppIDException("can't be 0 or less than 0");
 
         this.baseID = numID;
+    }
+
+    public AppID(AppID other) {
+        this.baseID = other.baseID;
     }
 
     @Override

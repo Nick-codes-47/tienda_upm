@@ -17,6 +17,10 @@ public class ProductID extends AppID implements Serializable {
         super(id);
     }
 
+    public ProductID(ProductID other) {
+        super(other);
+    }
+
     @Override
     public String toString() {
         return Integer.toString(baseID);

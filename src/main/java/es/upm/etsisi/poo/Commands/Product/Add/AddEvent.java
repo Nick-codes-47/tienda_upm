@@ -11,6 +11,7 @@ import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
@@ -18,6 +19,9 @@ import java.time.format.DateTimeParseException;
  */
 public abstract class AddEvent extends AddProduct {
     public final String ID;
+
+    private final EventType eventType;
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public AddEvent(Catalog catalog, EventType eventType, String id) {
         super(catalog);
@@ -61,7 +65,7 @@ public abstract class AddEvent extends AddProduct {
                         id,
                         new ProductName(args[0]),
                         Double.parseDouble(args[1]),
-                        LocalDateTime.parse(args[2]),
+                        LocalDateTime.parse(args[2], DATE_TIME_FORMATTER),
                         Integer.parseInt(args[3])
                 );
             }
@@ -72,7 +76,7 @@ public abstract class AddEvent extends AddProduct {
                         id,
                         new ProductName(args[1]),
                         Double.parseDouble(args[2]),
-                        LocalDateTime.parse(args[3]),
+                        LocalDateTime.parse(args[3], DATE_TIME_FORMATTER),
                         Integer.parseInt(args[4])
                 );
             }
@@ -99,6 +103,4 @@ public abstract class AddEvent extends AddProduct {
         EVENT_WITHOUT_ID,
         EVENT_WITH_ID
     }
-
-    private final EventType eventType;
 }

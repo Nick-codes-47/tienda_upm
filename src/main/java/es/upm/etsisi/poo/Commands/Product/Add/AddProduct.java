@@ -9,10 +9,12 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
+import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 
 /**
@@ -20,6 +22,10 @@ import java.time.format.DateTimeParseException;
  */
 public class AddProduct implements Command {
     public static final String ID = "add";
+
+    protected final Catalog catalog;
+
+    private static final DateTimeFormatter DATE_TIME_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
     public AddProduct(Catalog catalog) {
         this.catalog = catalog;
@@ -75,7 +81,7 @@ public class AddProduct implements Command {
             case SERVICE -> {
                 ServiceID id = catalog.getNewServiceID();
                 try {
-                    yield new ServiceProduct(id, LocalDateTime.parse(args[0]), args[1]);
+                    yield new ServiceProduct(id, LocalDateTime.parse(args[0], DATE_TIME_FORMATTER), args[1]);
                 } catch (DateTimeParseException e) {
                     throw new InvalidDateFormatException();
                 }
@@ -124,6 +130,4 @@ public class AddProduct implements Command {
     private enum ProductToAdd {
         SERVICE, PROD_WITHOUT_ID, PROD_WITH_ID, CUSTOM_WITHOUT_ID, CUSTOM_WITH_ID
     }
-
-    protected final Catalog catalog;
 }

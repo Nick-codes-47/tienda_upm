@@ -18,7 +18,6 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     private static final long serialVersionUID = 1L;
 
-
     private final TicketID ID;
     private TicketState ticketState;
     private final HashMap<ProductID, TicketEntry<ProductType>> entries;

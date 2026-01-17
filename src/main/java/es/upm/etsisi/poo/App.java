@@ -103,7 +103,7 @@ public class App {
             if (retVal == 0)
                 AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
         } catch (AppException e) {
-            AppLogger.error(e.getMessage());
+            AppLogger.info(e.getMessage());
         }
     }
 
