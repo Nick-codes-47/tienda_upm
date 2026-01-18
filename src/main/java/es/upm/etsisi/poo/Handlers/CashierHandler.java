@@ -11,9 +11,9 @@ public class CashierHandler extends RequestHandler {
 
     public CashierHandler(App app) {
         super(handler_id);
-        commands.put(AddCashier.ID, () -> new AddCashier(app.cashiers));
-        commands.put(RemoveCashier.ID, () -> new RemoveCashier(app.cashiers));
-        commands.put(ListUsers.ID, () -> new ListUsers<>(app.cashiers));
-        commands.put(ListTicketsFromCashier.ID, () -> new ListTicketsFromCashier(app.cashiers, app.ticketService));
+        commands.put(AddCashier.ID, () -> new AddCashier(App.cashiers));
+        commands.put(RemoveCashier.ID, () -> new RemoveCashier(App.cashiers));
+        commands.put(ListUsers.ID, () -> new ListUsers<>(App.cashiers));
+        commands.put(ListTicketsFromCashier.ID, () -> new ListTicketsFromCashier(App.cashiers, app.ticketService));
     }
 }

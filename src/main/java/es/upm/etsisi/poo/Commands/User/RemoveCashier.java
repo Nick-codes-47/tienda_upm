@@ -13,17 +13,6 @@ public class RemoveCashier extends RemoveUser<Cashier> {
     }
 
     @Override
-    public int execute(String[] args) throws WrongNumberOfArgsException, AppEntityNotFoundException {
-
-        if (args.length != 1) throw new WrongNumberOfArgsException(this);
-
-        String userId = args[0];
-
-        userRegister.removeUser(userId);
-        return 0;
-    }
-
-    @Override
     public String help() {
         return ID + " <id>";
     }

@@ -50,12 +50,11 @@ public class UserRegister<T extends User> implements Iterable<T>, Serializable {
         return users.get(userId);
     }
 
-    public int removeUser(String userId) throws AppEntityNotFoundException {
+    public void removeUser(String userId) throws AppEntityNotFoundException {
         if (!users.containsKey(userId))
             throw new AppEntityNotFoundException("User", userId);
 
         users.remove(userId);
-        return 0;
     }
 
     public List<T> getUsers() {

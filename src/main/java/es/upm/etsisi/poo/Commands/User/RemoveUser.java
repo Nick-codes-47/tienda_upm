@@ -14,10 +14,11 @@ public class RemoveUser<T extends User> extends UserCommand<T> {
     }
 
     @Override
-    public int execute(String[] args) throws WrongNumberOfArgsException, AppEntityNotFoundException {
+    public void execute(String[] args) throws WrongNumberOfArgsException, AppEntityNotFoundException {
         if (args.length != 1){ throw new WrongNumberOfArgsException(this); }
+
         String userId = args[0];
-        return userRegister.removeUser(userId);
+        userRegister.removeUser(userId);
     }
 
     @Override
