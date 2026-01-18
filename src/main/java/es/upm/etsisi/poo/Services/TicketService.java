@@ -72,16 +72,16 @@ public class TicketService {
         }
     }
 
-    private int totalTickets() {
-        int total = 10000;
+    private int nextIdVal() {
+        int id = 10000;
         for (Cashier cashier : cashiers)
-            total += cashier.tickets.size();
+            id += cashier.tickets.size();
 
-        return total;
+        return id;
     }
 
     public TicketID getNewTicketID() throws InvalidAppIDException {
-        int idVal = totalTickets();
+        int idVal = nextIdVal();
         TicketID ticketID = null;
 
         boolean is_new = false;
