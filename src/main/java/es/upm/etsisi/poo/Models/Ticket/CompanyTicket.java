@@ -42,4 +42,9 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosi
         if (!(hasService && hasProduct))
             throw new AppException("combined tickets must have at least one product and one service");
     }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = CombinedPrinter::new;
+    }
 }

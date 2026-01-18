@@ -1,17 +1,12 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
-import es.upm.etsisi.poo.Models.Product.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
-import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntryOrderConstraint;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.Map;
 
 public class CombinedPrinter extends CommonPrinter
         implements TicketEntryOrderConstraint, Serializable {
@@ -34,6 +29,11 @@ public class CombinedPrinter extends CommonPrinter
     @Override
     public String printEntry(TicketEntry<?, ?> entry) {
         StringBuilder str = new StringBuilder();
+
+        if (entry.getProduct() instanceof ServiceProduct service)
+            str.append(entry);
+        else
+            str.append(super.printEntry(entry));
 
         return str.toString();
     }

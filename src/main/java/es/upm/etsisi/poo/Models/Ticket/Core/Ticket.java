@@ -10,7 +10,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class Ticket<ProductType extends BaseProduct<?>>
@@ -25,7 +24,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    private transient final Supplier<PrinterStrategy> printStrat;
+    protected transient Supplier<PrinterStrategy> printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
@@ -155,6 +154,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         close();
 
+        reloadPrinterStrategy();
         PrinterStrategy printer = printStrat.get();
 
         printer.init(this);
@@ -170,6 +170,9 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         str.append(printer.printFooter());
         AppLogger.info(str.toString());
     }
+
+    // We need this because it is not possible to save the Suplier when saving the ticket
+    abstract protected void reloadPrinterStrategy();
 
     @Override
     public String toString() {

@@ -22,4 +22,9 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> implements Serializabl
     public CommonTicket copy() {
         return new CommonTicket(this);
     }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = CommonPrinter::new;
+    }
 };

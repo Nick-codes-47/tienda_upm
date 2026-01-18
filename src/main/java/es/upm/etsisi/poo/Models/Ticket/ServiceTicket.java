@@ -22,4 +22,9 @@ public class ServiceTicket extends Ticket<ServiceProduct> implements Serializabl
     public ServiceTicket copy() {
         return new ServiceTicket(this);
     }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = ServicePrinter::new;
+    }
 }
