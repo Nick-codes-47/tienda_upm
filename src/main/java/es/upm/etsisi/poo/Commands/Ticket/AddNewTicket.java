@@ -42,6 +42,12 @@ public class AddNewTicket implements Command {
             customerId = new UserNIF(args[1]);
             type = TicketType.getType(args[2].charAt(1));
             if (type == null) throw new WrongCommandArgumentsException("", this);
+        } else if (args.length == 4 && args[3].charAt(0) == '-' && args[3].length() == 2) {
+            ticketId = new TicketID(args[0]);
+            cashId = new CashID(args[1]);
+            customerId = new UserNIF(args[2]);
+            type = TicketType.getType(args[3].charAt(1));
+            if (type == null) throw new WrongCommandArgumentsException("", this);
         } else {
             throw new WrongNumberOfArgsException(this);
         }

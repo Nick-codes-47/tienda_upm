@@ -125,6 +125,10 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     }
 
     public void close() throws AppException {
+        if (this.ticketState == TicketState.VACIO) {
+            throw new AppException("an empty ticket can not be closed");
+        }
+
         if (this.ticketState != TicketState.CERRADO) {
             checkForClosingConstraints();
 
@@ -134,9 +138,13 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     }
 
     private void checkForClosingConstraints() throws AppException {
+        if (this instanceof TicketClosingConstraint constraintTicket) {
+            constraintTicket.checkValidity();
+        }
+
         for (TicketEntry<ProductType, ?> entry : entries.values()) {
-            if (entry instanceof TicketClosingConstraint)
-                ((TicketClosingConstraint) entry).checkValidity();
+            if (entry instanceof TicketClosingConstraint constraintEntry)
+                constraintEntry.checkValidity();
         }
     }
 
