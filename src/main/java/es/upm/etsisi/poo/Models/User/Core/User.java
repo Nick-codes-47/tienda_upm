@@ -30,9 +30,5 @@ public abstract class User implements Serializable {
         return id;
     }
 
-    protected String addVarToPrint() {
-        return "";
-    }
-
     abstract public String toString();
 }

@@ -31,11 +31,6 @@ public class Customer extends User {
         tickets.add(ticketID);
     }
 
-    @Override // TODO explain
-    protected String addVarToPrint() {
-        return ", cash='" + cashierId + "'";
-    }
-
     private final String cashierId;
 
     private final ArrayList<TicketID> tickets = new ArrayList<>();
@@ -45,6 +40,6 @@ public class Customer extends User {
         return String.format(
                 "%s{identifier='%s', name='%s', email:'%s'%s}",
                 isCompany()? "Compay":"Particular",
-                id, name, email, addVarToPrint());
+                id, name, email, ", cash='" + cashierId + "'");
     }
 }
