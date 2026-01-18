@@ -39,4 +39,12 @@ public class Customer extends User {
     private final String cashierId;
 
     private final ArrayList<TicketID> tickets = new ArrayList<>();
+
+    @Override
+    public String toString() {
+        return String.format(
+                "%s{identifier='%s', name='%s', email:'%s'%s}",
+                isCompany()? "Compay":"Particular",
+                id, name, email, addVarToPrint());
+    }
 }

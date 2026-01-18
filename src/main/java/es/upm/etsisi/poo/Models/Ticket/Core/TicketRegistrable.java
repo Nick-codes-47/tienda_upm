@@ -5,5 +5,5 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 
 public interface TicketRegistrable<ProductType extends BaseProduct<?>> {
 
-    TicketEntry<ProductType> toTicketEntry(String[] args) throws AppException;
+    TicketEntry<ProductType, ?> toTicketEntry(String[] args) throws AppException;
 }

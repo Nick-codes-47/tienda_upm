@@ -2,7 +2,7 @@ package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.Models.Ticket.Core.Printable;
+import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
@@ -18,7 +18,7 @@ public class PrintTicket implements Command {
 
     @Override
     public int execute(String[] args)
-            throws WrongNumberOfArgsException, AppEntityNotFoundException, InvalidAppIDException {
+            throws AppException {
         if (args.length != 2) throw new WrongNumberOfArgsException(this);
 
         String cashId = args[1];
@@ -26,7 +26,7 @@ public class PrintTicket implements Command {
         if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
 
         String ticketId = args[0];
-        Printable ticket = cashier.getTicket(new TicketID(ticketId));
+        Ticket<?> ticket = cashier.getTicket(new TicketID(ticketId));
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.print();
