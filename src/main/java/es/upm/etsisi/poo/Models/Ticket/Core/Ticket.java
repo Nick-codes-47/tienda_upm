@@ -7,7 +7,6 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 
 import java.io.Serializable;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -16,6 +15,8 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         implements Iterable<TicketEntry<ProductType, ?>>, Copyable<Ticket<ProductType>>, Serializable {
 
     private static final long serialVersionUID = 1L;
+
+    private final Class<ProductType> productType;
 
     private final TicketID ID;
     private TicketState ticketState;
@@ -26,15 +27,16 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
-    public Ticket(TicketID ID, Supplier<PrinterStrategy> printerStrat) {
+    public Ticket(TicketID ID, Supplier<PrinterStrategy> printerStrat, Class<ProductType> productType) {
         this.ID = ID;
+        this.productType = productType;
         this.entries = new HashMap<>();
         this.ticketState = TicketState.VACIO;
         this.printStrat = printerStrat;
     }
 
     public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
-        this(other.ID, other.printStrat);
+        this(other.ID, other.printStrat, other.productType);
         this.ticketState = other.ticketState;
         this.entries.putAll(other.entries);
         this.totalUnits = other.totalUnits;
@@ -69,7 +71,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         specificOld.accumulate(specificNew);
     }
 
-    private int add(TicketEntry<ProductType,?> entry)
+    protected int add(TicketEntry<ProductType, ?> entry)
             throws ClosedTicketException, FullContainerException, EntityAlreadyExistsException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
@@ -93,8 +95,11 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return 0;
     }
 
-    public int add(TicketRegistrable<ProductType> product, String[] args) throws AppException {
-        return add(product.toTicketEntry(args));
+    @SuppressWarnings("unchecked")
+    public <T extends BaseProduct<?>>
+    int add(T baseProd, String[] args) throws AppException, ClassCastException {
+        ProductType prod = productType.cast(baseProd);
+        return add((TicketEntry<ProductType, ?>) prod.toTicketEntry(args));
     }
 
     public void delete(ProductID ID)

@@ -14,6 +14,7 @@ import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.Arrays;
+import java.util.logging.Logger;
 
 public class AddProductToTicket implements Command {
     public static final String ID = "add";
@@ -41,19 +42,12 @@ public class AddProductToTicket implements Command {
 
         int result = 1;
         try {
-            result = addToTicket(ticket, product, args.args);
+            result = ticket.add(product, args.args);
         } catch (ClassCastException e) {
             AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
         }
 
         return result;
-    }
-
-    // If the product is not the correct type, we expect the ClassCastException to be thrown
-    @SuppressWarnings("unchecked")
-    private <T extends BaseProduct<?>> int addToTicket(Ticket<T> ticket, BaseProduct<?> baseProduct, String[] args)
-            throws AppException, ClassCastException {
-        return ticket.add((TicketRegistrable<T>) baseProduct, args);
     }
 
     private static class CommandArgs {
