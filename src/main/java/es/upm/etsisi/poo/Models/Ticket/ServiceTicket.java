@@ -4,7 +4,9 @@ import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class ServiceTicket extends Ticket<ServiceProduct> {
+import java.io.Serializable;
+
+public class ServiceTicket extends Ticket<ServiceProduct> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 

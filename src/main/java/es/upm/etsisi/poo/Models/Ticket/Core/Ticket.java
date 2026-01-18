@@ -25,7 +25,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    private final Supplier<PrinterStrategy> printStrat;
+    private transient final Supplier<PrinterStrategy> printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 

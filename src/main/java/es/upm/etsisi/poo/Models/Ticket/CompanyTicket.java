@@ -9,7 +9,9 @@ import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosingConstraint {
+import java.io.Serializable;
+
+public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosingConstraint, Serializable {
 
     private static final long serialVersionUID = 1L;
 
