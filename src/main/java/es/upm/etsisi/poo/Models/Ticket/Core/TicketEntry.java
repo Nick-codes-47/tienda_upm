@@ -1,8 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket.Core;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 
 import java.io.Serializable;
@@ -35,7 +33,7 @@ public abstract class TicketEntry<ProductType extends BaseProduct<?>, EntryType 
     public abstract double getPrice();
 
     public abstract void accumulate(EntryType more) throws EntityAlreadyExistsException;
-    public abstract void checkValidity() throws AppException;
+    public abstract void checkValidity() throws ExpiredException, InvalidPeopleInEventException;
 
     public abstract String toString();
 }

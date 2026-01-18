@@ -29,7 +29,7 @@ public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> {
     }
 
     @Override
-    public void checkValidity() throws AppException {
+    public void checkValidity() throws ExpiredServiceException {
         if (product.hasExpired())
             throw new ExpiredServiceException(product.getID().toString());
     }
@@ -39,6 +39,6 @@ public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> {
         throw new EntityAlreadyExistsException(
                 product.getCategory().toString() + "service",
                 product.getID().toString(),
-                "you can't add an event twice to the same ticket");
+                "you can't add a service twice to the same ticket");
     }
 }
