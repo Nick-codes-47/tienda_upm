@@ -1,9 +1,8 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
-import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Core.*;
 
 public class AddCustomer extends AddUser<Customer> {

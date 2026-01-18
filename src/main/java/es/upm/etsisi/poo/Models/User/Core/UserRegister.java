@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Models.User.Core;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
-import es.upm.etsisi.poo.AppExceptions.NullAppEntityException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.NullAppEntityException;
 
 import java.io.Serializable;
 import java.util.HashMap;
@@ -50,12 +50,11 @@ public class UserRegister<T extends User> implements Iterable<T>, Serializable {
         return users.get(userId);
     }
 
-    public int removeUser(String userId) throws AppEntityNotFoundException {
+    public void removeUser(String userId) throws AppEntityNotFoundException {
         if (!users.containsKey(userId))
             throw new AppEntityNotFoundException("User", userId);
 
         users.remove(userId);
-        return 0;
     }
 
     public List<T> getUsers() {

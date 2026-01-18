@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -9,12 +12,10 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 public class AddProductToTicket implements Command {
     public static final String ID = "add";
@@ -28,7 +29,7 @@ public class AddProductToTicket implements Command {
     }
 
     @Override
-    public int execute(String[] rawArgs) throws AppException {
+    public void execute(String[] rawArgs) throws AppException {
         CommandArgs args = new CommandArgs(rawArgs, this);
 
         BaseProduct<?> product = catalog.get(args.productID);
@@ -40,14 +41,11 @@ public class AddProductToTicket implements Command {
         Ticket<?> ticket = cashier.getTicket(args.ticketID);
         if (ticket == null) throw new TicketNotInCashException(args.ticketID.toString(), args.cashID);
 
-        int result = 1;
         try {
-            result = ticket.add(product, args.args);
+            ticket.add(product, args.args);
         } catch (ClassCastException e) {
             AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
         }
-
-        return result;
     }
 
     private static class CommandArgs {

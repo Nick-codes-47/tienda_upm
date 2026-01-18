@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.ExpiredExceptions.NotEnoughPlanningForEventException;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;

@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.EmptyContainerException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -21,16 +21,13 @@ public class ListProducts implements Command {
     /**
      * Method that lists the products in ascending order by id
      * @param args in this action there are no arguments required
-     * @return 0 if it was successful
-     *         3 if they were arguments
-     *         7 if the catalog is empty
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         HashMap<ProductID, BaseProduct<?>> products = catalog.getProducts();
-        if (products.isEmpty()) throw new EmptyDataException("products");
+        if (products.isEmpty()) throw new EmptyContainerException("products");
 
         // We list the products in ascending order by their id
         ArrayList<Map.Entry<ProductID, BaseProduct<?>>> entries = new ArrayList<>(products.entrySet());
@@ -42,7 +39,6 @@ public class ListProducts implements Command {
         }
 
         AppLogger.info(productsMessage.toString());
-        return 0;
     }
 
     /**

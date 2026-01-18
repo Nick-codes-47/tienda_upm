@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -22,21 +24,14 @@ public class UpdateProduct implements Command {
     /**
      * Method to update the fields of a product (NAME, CATEGORY, PRICE)
      * @param args the parameters to update the product
-     * @return 0 if it was successful
-     * 1 if one of the number arguments is invalid
-     * 3 if the number of arguments is wrong
-     * 4 if the product is not in the catalog
-     * 5 if the field is invalid
-     * 6 if the user doesn't have access to change the specified field
-     * 8 if the category introduced is invalid
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 3) {
             throw new WrongNumberOfArgsException(this);
         }
         // if the number of arguments are correct we try to update
-        ProductID ID = getProductID(args);
+        ProductID ID = new ProductID(Integer.parseInt(args[0]));
         BaseProduct<?> product = catalog.get(ID);
         if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
@@ -48,26 +43,13 @@ public class UpdateProduct implements Command {
         Field field = getFieldFromHierarchy(product.getClass(), fieldName);
         field.setAccessible(true);
 
-        Object converted = converNewtValue(field, newValue);
+        Object converted = convertNewtValue(field, newValue);
 
         setNewValue(field, product, converted);
 
         AppLogger.info(product.toString());
 
         ticketService.showModifiedTickets(product);
-
-        return 0;
-    }
-
-    private static ProductID getProductID(String[] args)
-            throws InvalidAppIDException, NonPositiveIntegerException {
-        ProductID ID;
-        try {
-            ID = new ProductID(Integer.parseInt(args[0]));
-        } catch (NumberFormatException e) {
-            throw new NonPositiveIntegerException("ID");
-        }
-        return ID;
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName)
@@ -86,7 +68,7 @@ public class UpdateProduct implements Command {
         throw new InvalidFieldException();
     }
 
-    private Object converNewtValue(Field field, String value)
+    private Object convertNewtValue(Field field, String value)
             throws InvalidNewValueException {
         // We get the class of the field to be modified
         Class<?> type = field.getType();
@@ -101,14 +83,21 @@ public class UpdateProduct implements Command {
             return price;
         }
         if (type.equals(Category.class)) {
-            return Category.valueOf(value);
+            Category category;
+            try {
+                 category = Category.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidNewValueException(field.getName());
+            }
+            return category;
         }
 
         // if we didn't manage to parse to one of the permitted classes it's an invalid new value.
         throw new InvalidNewValueException(field.getName());
     }
 
-    private static void setNewValue(Field field, BaseProduct<?> product, Object converted) throws InvalidFieldException {
+    private static void setNewValue(Field field, BaseProduct<?> product, Object converted)
+            throws InvalidFieldException {
         try {
             field.set(product, converted);
         } catch (IllegalAccessException e) {
@@ -129,6 +118,12 @@ public class UpdateProduct implements Command {
     private static class InvalidNewValueException extends AppException {
         private InvalidNewValueException(String field) {
             super("New value is not valid for " + field);
+        }
+    }
+
+    private static class InvalidFieldException extends AppException {
+        public InvalidFieldException() {
+            super("Field not valid for this product! (remember Events don't have category)");
         }
     }
 

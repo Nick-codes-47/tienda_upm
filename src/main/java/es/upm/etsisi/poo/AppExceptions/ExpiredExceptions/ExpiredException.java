@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo.AppExceptions;
+package es.upm.etsisi.poo.AppExceptions.ExpiredExceptions;
+
+import es.upm.etsisi.poo.AppExceptions.AppException;
 
 public class ExpiredException extends AppException {
     public ExpiredException(String productType, String id) {

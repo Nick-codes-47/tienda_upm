@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
@@ -17,7 +20,7 @@ public class PrintTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args)
+    public void execute(String[] args)
             throws AppException {
         if (args.length != 2) throw new WrongNumberOfArgsException(this);
 
@@ -30,7 +33,6 @@ public class PrintTicket implements Command {
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.print();
-        return 0;
     }
 
     @Override

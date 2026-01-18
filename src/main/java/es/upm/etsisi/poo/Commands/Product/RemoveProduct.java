@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Commands.Product;
 
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
@@ -20,12 +20,9 @@ public class RemoveProduct implements Command {
     /**
      * Method that executes the action to delete a product
      * @param args the id to remove the product
-     * @return 0 if all went fine
-     *         1 if the id is not valid
-     *         4 if the product couldn't be removed
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 1) throw new WrongNumberOfArgsException(this);
 
         ProductID ID = new ProductID(Integer.parseInt(args[0]));
@@ -34,9 +31,6 @@ public class RemoveProduct implements Command {
         AppLogger.info(prod.toString());
 
         ticketService.showModifiedTickets(prod);
-
-        return 0;
-
     }
 
     /**
