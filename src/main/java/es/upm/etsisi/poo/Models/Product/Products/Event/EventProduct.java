@@ -13,8 +13,6 @@ import es.upm.etsisi.poo.AppExceptions.DateExceptions.InvalidDateException;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Arrays;
 
 public class EventProduct extends GoodsProduct<EventProduct> implements Copyable<EventProduct>, ExpirableProduct {
 

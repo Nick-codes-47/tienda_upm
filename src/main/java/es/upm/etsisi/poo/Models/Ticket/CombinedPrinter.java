@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
@@ -65,9 +66,10 @@ public class CombinedPrinter extends CommonPrinter
     }
 
     private final Comparator<TicketEntry<?,?>> SORT_COMPARATOR = Comparator.comparing(
-            (e) -> e.getProduct(),
+            TicketEntry::getProduct,
             (p1, p2) -> {
                         if (p1 instanceof ServiceProduct) return -1;
-                        else return 1;
+                        else if (p2 instanceof ServiceProduct) return 1;
+                        else return 0;
                     });
 }

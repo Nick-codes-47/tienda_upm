@@ -1,7 +1,5 @@
 package es.upm.etsisi.poo.Models.User.Core;
 
-import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
-
 import java.io.Serializable;
 
 public abstract class User implements Serializable {

@@ -1,6 +1,5 @@
 package es.upm.etsisi.poo.Persistence;
 
-import es.upm.etsisi.poo.App;
 import es.upm.etsisi.poo.AppLogger;
 
 import java.io.*;
