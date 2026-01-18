@@ -76,7 +76,9 @@ public class UpdateProduct implements Command {
             return value;
         }
         if (type.equals(double.class) || type.equals(Double.class)) {
-            return Double.parseDouble(value);
+            double price = Double.parseDouble(value);
+            if (price <= 0) throw new InvalidNewValueException(field.getName());
+            return price;
         }
         if (type.equals(Category.class)) {
             return Category.valueOf(value);
@@ -87,10 +89,7 @@ public class UpdateProduct implements Command {
     }
 
     private static void setNewValue(Field field, BaseProduct<?> product, Object converted)
-            throws InvalidFieldException, InvalidNewValueException {
-        if (converted instanceof Double)
-            if ((Double) converted <= 0) throw new InvalidNewValueException(field.getName());
-
+            throws InvalidFieldException {
         try {
             field.set(product, converted);
         } catch (IllegalAccessException e) {
