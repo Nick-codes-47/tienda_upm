@@ -8,6 +8,7 @@ import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
+import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.Services.TicketService;
 
@@ -69,13 +70,13 @@ public class UpdateProduct implements Command {
     }
 
     private Object convertNewtValue(Field field, String value)
-            throws InvalidNewValueException {
+            throws InvalidNewValueException, ProductName.InvalidCatalogNameException {
         // We get the class of the field to be modified
         Class<?> type = field.getType();
 
         // We see which type is the field and return the value parsed
-        if (type.equals(String.class)) {
-            return value;
+        if (type.equals(ProductName.class)) {
+            return new ProductName(value);
         }
         if (type.equals(double.class) || type.equals(Double.class)) {
             double price = Double.parseDouble(value);
