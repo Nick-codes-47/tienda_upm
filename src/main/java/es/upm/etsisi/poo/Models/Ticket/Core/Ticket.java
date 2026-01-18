@@ -121,12 +121,17 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     public void close() throws AppException {
         if (this.ticketState != TicketState.CERRADO) {
-            for (TicketEntry<ProductType, ?> entry : entries.values()) {
-                entry.checkValidity();
-            }
+            checkForClosingConstraints();
 
             this.ticketState = TicketState.CERRADO;
             ID.close();
+        }
+    }
+
+    private void checkForClosingConstraints() throws AppException {
+        for (TicketEntry<ProductType, ?> entry : entries.values()) {
+            if (entry instanceof TicketClosingConstraint)
+                ((TicketClosingConstraint) entry).checkValidity();
         }
     }
 

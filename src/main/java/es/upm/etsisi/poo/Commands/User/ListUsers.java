@@ -27,8 +27,8 @@ public class ListUsers<T extends User> extends UserCommand<T> {
         StringBuilder sb = null;
         for (User user : users) {
             if (sb == null)
-                sb = new StringBuilder(user.getClass() + ":");
-            sb.append("  ").append(user);
+                sb = new StringBuilder(user.getClass().getSimpleName() + ":");
+            sb.append("\n").append("  ").append(user);
         }
 
         AppLogger.info(sb.toString());
