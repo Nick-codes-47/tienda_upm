@@ -4,6 +4,8 @@ import es.upm.etsisi.poo.AppExceptions.InvalidAppIDException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
+import es.upm.etsisi.poo.Models.Ticket.*;
+import es.upm.etsisi.poo.Models.Ticket.Core.PrinterStrategy;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
@@ -95,5 +97,16 @@ public class TicketService {
         }
 
         return ticketID;
+    }
+
+    public PrinterStrategy getPrinter(Ticket<?> ticket) throws AppException {
+        if (ticket instanceof CommonTicket) {
+            return new CommonPrinter();
+        } else if (ticket instanceof ServiceTicket) {
+            return new ServicePrinter();
+        } else if (ticket instanceof CompanyTicket) {
+            return new CombinedPrinter();
+        }
+        throw new AppException("Unknown ticket type: " + ticket.getClass().getName());
     }
 }

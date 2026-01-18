@@ -11,7 +11,7 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> implements Serializabl
     private static final long serialVersionUID = 1L;
 
     public CommonTicket(TicketID ID) {
-        super(ID, CommonPrinter::new, (Class) GoodsProduct.class);
+        super(ID, (Class) GoodsProduct.class);
     }
 
     public CommonTicket(CommonTicket other) {
@@ -21,10 +21,5 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> implements Serializabl
     @Override
     public CommonTicket copy() {
         return new CommonTicket(this);
-    }
-
-    @Override
-    protected void reloadPrinterStrategy() {
-        this.printStrat = CommonPrinter::new;
     }
 };

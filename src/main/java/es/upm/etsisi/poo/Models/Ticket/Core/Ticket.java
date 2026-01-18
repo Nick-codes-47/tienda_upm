@@ -5,7 +5,6 @@ import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.FullContainerExceptio
 import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.AppExceptions.TicketExceptions.ClosedTicketException;
-import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
@@ -14,7 +13,6 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
-import java.util.function.Supplier;
 
 public abstract class Ticket<ProductType extends BaseProduct<?>>
         implements Iterable<TicketEntry<ProductType, ?>>, Copyable<Ticket<ProductType>>, Serializable {
@@ -28,20 +26,17 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    protected transient Supplier<PrinterStrategy> printStrat;
-
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
-    public Ticket(TicketID ID, Supplier<PrinterStrategy> printerStrat, Class<ProductType> productType) {
+    public Ticket(TicketID ID, Class<ProductType> productType) {
         this.ID = ID;
         this.productType = productType;
         this.entries = new HashMap<>();
         this.ticketState = TicketState.VACIO;
-        this.printStrat = printerStrat;
     }
 
     public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
-        this(other.ID, other.printStrat, other.productType);
+        this(other.ID, other.productType);
         this.ticketState = other.ticketState;
         this.entries.putAll(other.entries);
         this.totalUnits = other.totalUnits;
@@ -95,8 +90,6 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
 
         totalUnits += entry.getProductCount();
-
-        AppLogger.info(this.toString());
         return 0;
     }
 
@@ -153,11 +146,8 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public String print() {
+    public String print(PrinterStrategy printer) {
         StringBuilder str = new StringBuilder();
-
-        reloadPrinterStrategy();
-        PrinterStrategy printer = printStrat.get();
 
         printer.init(this);
         str.append(printer.printHeader());
@@ -172,13 +162,5 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         str.append(printer.printFooter());
         return str.toString();
-    }
-
-    // We need this because it is not possible to save the Suplier when saving the ticket
-    abstract protected void reloadPrinterStrategy();
-
-    @Override
-    public String toString() {
-        return print();
     }
 }

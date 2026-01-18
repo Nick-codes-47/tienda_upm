@@ -11,7 +11,7 @@ public class ServiceTicket extends Ticket<ServiceProduct> implements Serializabl
     private static final long serialVersionUID = 1L;
 
     public ServiceTicket(TicketID ID) {
-        super(ID, ServicePrinter::new, ServiceProduct.class);
+        super(ID, ServiceProduct.class);
     }
 
     public ServiceTicket(ServiceTicket other) {
@@ -21,10 +21,5 @@ public class ServiceTicket extends Ticket<ServiceProduct> implements Serializabl
     @Override
     public ServiceTicket copy() {
         return new ServiceTicket(this);
-    }
-
-    @Override
-    protected void reloadPrinterStrategy() {
-        this.printStrat = ServicePrinter::new;
     }
 }

@@ -10,13 +10,16 @@ import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
+import es.upm.etsisi.poo.Services.TicketService;
 
 public class PrintTicket implements Command {
     public static final String ID = "print";
 
+    private final TicketService ticketService;
     private final UserRegister<Cashier> cashiers;
 
-    public PrintTicket(UserRegister<Cashier> cashiers) {
+    public PrintTicket(TicketService ticketService, UserRegister<Cashier> cashiers) {
+        this.ticketService = ticketService;
         this.cashiers = cashiers;
     }
 
@@ -34,7 +37,7 @@ public class PrintTicket implements Command {
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.close();
-        AppLogger.info(ticket.print());
+        AppLogger.info(ticket.print(ticketService.getPrinter(ticket)));
     }
 
     @Override

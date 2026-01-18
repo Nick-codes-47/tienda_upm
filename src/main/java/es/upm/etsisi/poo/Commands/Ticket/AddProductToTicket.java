@@ -14,6 +14,7 @@ import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
+import es.upm.etsisi.poo.Services.TicketService;
 
 import java.util.Arrays;
 
@@ -21,10 +22,12 @@ public class AddProductToTicket implements Command {
     public static final String ID = "add";
 
     private final Catalog catalog;
+    private final TicketService ticketService;
     private final UserRegister<Cashier> cashiers;
 
-    public AddProductToTicket(Catalog catalog, UserRegister<Cashier> cashiers) {
+    public AddProductToTicket(Catalog catalog, TicketService ticketService, UserRegister<Cashier> cashiers) {
         this.catalog = catalog;
+        this.ticketService = ticketService;
         this.cashiers = cashiers;
     }
 
@@ -43,6 +46,7 @@ public class AddProductToTicket implements Command {
 
         try {
             ticket.add(product, args.args);
+            AppLogger.info(ticket.print(ticketService.getPrinter(ticket)));
         } catch (ClassCastException e) {
             throw new AppException(String.format("Product type %s, can not be added to a %s",
                     product.getClass().getSimpleName(),

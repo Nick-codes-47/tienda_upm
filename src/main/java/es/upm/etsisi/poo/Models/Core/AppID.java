@@ -24,8 +24,8 @@ public abstract class AppID implements Comparable<AppID>, Serializable {
         }
 
         int numID = Integer.parseInt(id);
-        if (numID <= 0)
-            throw new InvalidAppIDException("can't be 0 or less than 0");
+        if (numID < 0)
+            throw new InvalidAppIDException("can't less than 0");
 
         this.baseID = numID;
     }

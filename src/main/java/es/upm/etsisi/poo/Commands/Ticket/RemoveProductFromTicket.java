@@ -11,13 +11,16 @@ import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
+import es.upm.etsisi.poo.Services.TicketService;
 
 public class RemoveProductFromTicket implements Command {
     public static final String ID = "remove";
 
+    private final TicketService ticketService;
     private final UserRegister<Cashier> cashiers;
 
-    public RemoveProductFromTicket(UserRegister<Cashier> cashiers) {
+    public RemoveProductFromTicket(TicketService ticketService, UserRegister<Cashier> cashiers) {
+        this.ticketService = ticketService;
         this.cashiers = cashiers;
     }
 
@@ -40,8 +43,7 @@ public class RemoveProductFromTicket implements Command {
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.delete(prodId);
-
-        AppLogger.info(ticket.toString());
+        ticket.print(ticketService.getPrinter(ticket));
     }
 
     @Override
