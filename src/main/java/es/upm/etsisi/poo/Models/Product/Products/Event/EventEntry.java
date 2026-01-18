@@ -56,7 +56,7 @@ public class EventEntry extends TicketEntry<EventProduct, EventEntry> {
     }
 
     @Override
-    public void checkValidity() throws AppException {
+    public void checkValidity() throws InvalidPeopleInEventException, NotEnoughPlanningForEventException {
         if (product.getMaxPeople() >= people)
             throw new InvalidPeopleInEventException();
 

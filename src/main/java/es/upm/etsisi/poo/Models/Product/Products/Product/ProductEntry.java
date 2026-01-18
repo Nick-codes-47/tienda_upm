@@ -55,17 +55,15 @@ public class ProductEntry extends TicketEntry<Product, ProductEntry> {
     }
 
     @Override
-    public void checkValidity() throws AppException {
-        return;
-    }
+    public void checkValidity() {}
 
     @Override
-    public void accumulate(ProductEntry more) throws EntityAlreadyExistsException {
+    public void accumulate(ProductEntry more) {
         if (more.product.getID() == this.product.getID())
             this.amount += more.amount;
     }
 
-    private class PersonalizationExceedsMaxException extends AppException {
+    public class PersonalizationExceedsMaxException extends AppException {
         public PersonalizationExceedsMaxException() {
             super("The product can't have more than: "+ product.getMaxPersonalization() + " personalizations.");
         }
