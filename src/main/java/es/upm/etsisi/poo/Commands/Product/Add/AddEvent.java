@@ -10,6 +10,7 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
@@ -65,7 +66,7 @@ public abstract class AddEvent extends AddProduct {
                         id,
                         new ProductName(args[0]),
                         Double.parseDouble(args[1]),
-                        LocalDateTime.parse(args[2], DATE_TIME_FORMATTER),
+                        LocalDate.parse(args[2], DATE_TIME_FORMATTER).atStartOfDay(),
                         Integer.parseInt(args[3])
                 );
             }
@@ -76,7 +77,7 @@ public abstract class AddEvent extends AddProduct {
                         id,
                         new ProductName(args[1]),
                         Double.parseDouble(args[2]),
-                        LocalDateTime.parse(args[3], DATE_TIME_FORMATTER),
+                        LocalDate.parse(args[3], DATE_TIME_FORMATTER).atStartOfDay(),
                         Integer.parseInt(args[4])
                 );
             }
