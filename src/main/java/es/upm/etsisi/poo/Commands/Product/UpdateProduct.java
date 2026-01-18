@@ -95,11 +95,10 @@ public class UpdateProduct implements Command {
         if (type.equals(String.class)) {
             return value;
         }
-        if (type.equals(int.class) || type.equals(Integer.class)) {
-            return Integer.parseInt(value);
-        }
         if (type.equals(double.class) || type.equals(Double.class)) {
-            return Double.parseDouble(value);
+            double price = Double.parseDouble(value);
+            if (price <= 0) throw new InvalidNewValueException(field.getName());
+            return price;
         }
         if (type.equals(Category.class)) {
             return Category.valueOf(value);
