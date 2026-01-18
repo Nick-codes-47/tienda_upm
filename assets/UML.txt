@@ -1,276 +1,259 @@
 @startuml
-class App {
-- {static} instance : App
-+ catalog : Catalog
-+ tickets : TicketBook
-+ cashiers : CashierRegister
-+ customers : CustomerRegister
-- handlers : RequestHandler[]
-- commands : HashMap<String, Consumer<Request>>
-- input : InputDriver
-- config : Config
-- App()
-+ {static} getInstance() : App
-+ init(inputFile : String)
-+ {static} main(String[])
-- handleRequest(request : Request)
-- execute(Action, Request)
-- echo(Request)
-- help()
-- exit()
-}
+skinparam linetype ortho
+skinparam packageStyle rectangle
+
+' --- CONFIGURACIÓN DE ESTILO ---
+skinparam PackageFontSize 30
+skinparam PackageFontStyle bold
+' ---------------------------------------
+
+hide empty members
 
 class InputDriver {
-- input : Scanner
-+ InputDriver()
-+ InputDriver(file : String)
-+ next() : Request
+    + next() : Request
+}
+
+class App {
+    --
+    + App()
+    + {static} main(args : String[])
+    + init(inputFile : String)
+}
+
+package AppExceptions #LightCoral {
+    class AppException
+}
+
+package Services #SkyBlue {
+    class TicketService {
+        --
+        + TicketService(cashiers : UserRegister<Cashier>)
+        + getTicketList(tickets : List<Ticket<?>>) : String
+        + getTickets() : List<Ticket<?>>
+        + getTicketsWith(product : BaseProduct<?>) : List<Ticket<?>>
+        + showModifiedTickets(product : BaseProduct<?>)
+        + getNewTicketID() : TicketID
+    }
+}
+
+package Persistence #Khaki {
+    class PersistenceService {
+        --
+        + saveAll(catalogData : HashMap<?, ?>, customerData : HashMap<?, ?>, cashierData : HashMap<?, ?>)
+        + loadAll() : Object[]
+    }
+
+    class "FileHelper<T>" as FileHelper << (S,#FF7700) static >> {
+        + save(filename : String, data : T)
+        + load(filename : String) : T
+    }
+
+    PersistenceService +-- FileHelper
+}
+
+package Commands #Plum {
+    interface Command {
+        + execute(args)
+        + help() : String
+    }
+    Command ..> AppExceptions.AppException : throws
+
+    package User as UserCmd {
+        class AddCashier
+        class RemoveCashier
+        class AddCustomer
+        class RemoveUser
+        class ListUsers
+    }
+    UserCmd ..|> Command
+
+    package Product as ProdCmd {
+        class AddProduct
+        class UpdateProduct
+        class RemoveProduct
+        class ListProducts
+    }
+    ProdCmd ..|> Command
+
+    package Ticket as TickCmd {
+        class AddNewTicket
+        class AddProductToTicket
+        class RemoveProductFromTicket
+        class PrintTicket
+        class ListTickets
+    }
+    TickCmd ..|> Command
+}
+
+package Handlers #Thistle {
+    class Request {
+        + handlerId : String
+        + commandId : String
+        + args : String[]
+    }
+    abstract class RequestHandler {
+        + HANDLER_ID : String
+        + getCommand(id)
+        + getCommands()
+    }
+    class CashierHandler
+    class CustomerHandler
+    class ProductHandler
+    class TicketHandler
+
+    RequestHandler <|-- CashierHandler
+    RequestHandler <|-- CustomerHandler
+    RequestHandler <|-- ProductHandler
+    RequestHandler <|-- TicketHandler
+}
+
+package Ticket #PaleGreen {
+    interface PrinterStrategy {
+        --
+        + init(Ticket<?> ticket) : void
+        + printEntry(TicketEntry<?, ?> entry) : String
+        + printFooter() : String
+        + printHeader() : String
+    }
+
+    interface TicketRegistrable {
+        --
+        + toTicketEntry(String[] args) : TicketEntry
+    }
+
+    abstract class Ticket<ProductType extends BaseProduct<?>> {
+        --
+        + Ticket(ID : TicketID, printerStrat : Supplier<PrinterStrategy>, productType : Class<ProductType>)
+        + Ticket(other : Ticket<ProductType>)
+        + getID() : TicketID
+        + getTicketState() : TicketState
+        + hasProduct(productId : ProductID) : boolean
+        + iterator() : Iterator<TicketEntry<ProductType, ?>>
+        + add(baseProd : T, args : String[]) : int
+        + delete(ID : ProductID)
+        + update(baseProduct : BaseProduct<?>)
+        + close()
+        + print()
+        + toString() : String
+    }
+
+    abstract class TicketEntry
+
+    class CommonTicket extends Ticket
+    class CompanyTicket extends Ticket
+    class ServiceTicket extends Ticket
+
+    class CommonPrinter implements PrinterStrategy
+    class CombinedPrinter implements PrinterStrategy
+    class ServicePrinter implements PrinterStrategy
+
+    Ticket *-- TicketEntry
+    TicketEntry --> TicketRegistrable : created by
+    Ticket *-- PrinterStrategy
+}
+
+package Product #PowderBlue {
+    abstract class BaseProduct {
+        - id : ProductID
+    }
+
+    class Catalog {
+        --
+        + Catalog()
+        + loadData(loadedProducts : HashMap<ProductID, BaseProduct<?>>)
+        + get(ID : ProductID) : BaseProduct<?>
+        + getProducts() : HashMap<ProductID, BaseProduct<?>>
+        + add(product : BaseProduct<?>) : int
+        + getNewProductID() : ProductID
+        + getNewServiceID() : ServiceID
+        + delete(ID : ProductID) : BaseProduct<?>
+    }
+
+    abstract class GoodsProduct extends BaseProduct {
+        - category : Category
+        - name : ProductName
+        - price : double
+    }
+
+    class EventProduct extends GoodsProduct {
+        - type : EvenType
+        - maxPeople : int
+        - expirationData : LocalDate
+    }
+    class ServiceProduct extends BaseProduct {
+        - type : ServiceCategory
+        - expirationDate : LocalDate
+    }
+    class Product extends GoodsProduct {
+        - maxPersonalizations : int
+    }
+
+    class EventEntry {
+        - actualPeople : int
+    }
+    class ServiceEntry
+    class ProductEntry {
+        - amount : int
+        - personalizations : ArrayList<String>
+    }
+
+    Catalog o-- BaseProduct
+}
+
+package User #Wheat {
+    class Email
+
+    class UserRegister<T extends User> {
+        + addUser(user)
+        + getUser(id)
+        + loadData(data)
+        + getRawMap()
+    }
+
+    abstract class User {
+        # name : String
+        # id : String
+        --
+        + User(id : String, name : String, email : Email)
+        + getName() : String
+        + getEmail() : Email
+        + getId() : String
+        + {abstract} toString() : String
+    }
+
+    class Cashier extends User
+    class Customer extends User {
+        - cashID : String
+        - tickets : ArrayList<TicketID>
+    }
+
+    UserRegister o-- User
+    User *-- Email
 }
 
 App *-- InputDriver
+App *-- PersistenceService
+App *-- TicketService
+App *-- Product.Catalog
+App *-- User.UserRegister
+App *-- Handlers.RequestHandler
 
-package Requests {
+InputDriver ..> Handlers.Request : creates
+Handlers.RequestHandler ..> Commands.Command : generates
 
-class Request {
-+ handlerId : String
-+ actionId : String
-+ args : String[]
-+ Request(line : String)
-- tokenize(line : String) : ArrayList<String>
-}
+TicketService --> User.Cashier : uses
+TicketService --> Ticket.Ticket : manages
 
-Request <-- InputDriver : Creates
+User.Cashier o-- Ticket.Ticket : owns
 
-abstract RequestHandler {
-+ HANDLER_ID : String
-- actions : HashMap<actionId : String, Action>
-+ RequestHandler(handlerId)
-+ getAction(Request) : Action
-+ getActions() : HashMap<actionId : String, Action>
-}
 
-RequestHandler <|-- CustomerHandler
-RequestHandler <|-- CashierHandler
-RequestHandler <|-- TicketHandler
-RequestHandler <|-- ProductHandler
+Ticket.TicketEntry o-- Product.BaseProduct
+Product.EventEntry --|> Ticket.TicketEntry
+Product.ServiceEntry --|> Ticket.TicketEntry
+Product.ProductEntry --|> Ticket.TicketEntry
+Product.BaseProduct --|> Ticket.TicketRegistrable
 
-}
-' Requests
-
-App *-- "0...n" RequestHandler
-
-Action <-- App : Executes
-RequestHandler *-- "0..n" Action
-Request <-- RequestHandler: Receives
-
-note left of Action : Several classes implement Action,\nthese are the ones with the code that\nexecutes the orders of the user
-interface Action {
-+ Action()
-+ {abstract} exec(String[]) : int
-+ {abstract} help()
-}
-
-package ProductContainer {
-
-class Catalog {
-- products : HashMap<productId : int, BaseProduct>
-- MAX_PRODUCTS : int
-+ Catalog()
-+ getProduct(id) : BaseProduct
-+ getProducts() : HashMap<productId : int, BaseProduct>
-+ add(BaseProduct) : int
-+ getNewId() : int
-+ deleteProduct(id) : BaseProduct
-+ existsId(id) : boolean
-}
-
-App *-- Catalog
-
-package ProductTypes {
-
-abstract class BaseProduct {
-- id : int
-- name : String
-- price : double
-+ BaseProduct(id, name, price)
-}
-
-Catalog o-- "0...n" BaseProduct
-
-class Product {
-- category : Category
-+ Product(category)
-}
-
-BaseProduct <|-- Product
-
-class CustomProduct {
-- maxPers : int
-- personalizations : ArrayList<String>
-+ CustomProduct(maxPers)
-}
-
-Product <|-- CustomProduct
-
-class Event {
-- expireDate : LocalDate
-- maxPeople : int
-- actualPeople : int
-- MAX_PEOPLE_ALLOWED : int
-- type : EventType
-+ Event(expireDate, maxPeople, eventType)
-}
-
-BaseProduct <|-- Event
-
-package ProductEnums {
-
-enum EventType {
-FOOD(72)
-MEETING(12)
-- planningTime : int
-+ EventType(planningTime : int)
-+ getPlanningTime() : int
-{static} + toSentenceCase() : String
-}
-
-enum Category {
-MERCH(0)
-STATIONERY(5)
-CLOTHES(7)
-BOOK(10)
-ELECTRONICS(3)
-- discount : double
-+ Category(discount : double)
-+ getDiscount() : double
-+ getCategories() : String
-+ getCategoriesWithDiscount() : String
-}
-
-}
-
-EventType <-- Event
-Category <-- Product
-
-}
-
-}
-
-package UserContainer {
-
-abstract UserRegister <T extends User> {
-+ USER_TYPE : String
-- users: HashMap<userId: String, T>
-+ UserRegister(userType)
-+ getUser(userId) : User
-+ add(User) : int
-+ removeUser(userId) : int
-+ getUsers() : User[]
-}
-
-UserRegister <|-- CashierRegister
-UserRegister <|-- CustomerRegister
-
-App *-- CustomerRegister
-App *-- CashierRegister
-
-abstract User {
-+ TYPE : String
-- id : String
-- name : String
-- email : Email
-+ User(name, email)
-}
-
-UserRegister o-- "0...n" User
-
-class Email {
-- username : String
-- domain : String
-+ Email(username, domain)
-}
-
-User *-- Email
-
-class Customer {
-- cashId : String
-+ Customer(cashierId)
-}
-
-User <|-- Customer
-User <|-- Cashier
-
-}
-
-package TicketContainer {
-
-class TicketBook {
-- tickets : Hashmap<ticketId : int, ticketEntry : TicketEntry>
-- userToTicket : Hashmap<userId : String, ticketIds : String[]>
-+ TicketBook()
-+ getTicket(ticketId) : Ticket
-+ addNewTicket(ticketId, cashId, customerId) : int
-+ getTickets() : Hashmap<ticketId : int, TicketEntry>
-+ getTicketsFromUser(userId) : Hashmap<ticketId : int, TicketEntry>
-+ getOpenedTicketsWithProd(prodId) : ArrayList<Ticket>
-+ listTicketsSortedByCashierId(cashId) : List<TicketEntry>
-+ getTicketIfCashierMatches(tickedId : String, cashId : String) : Ticket
-+ addProductToTicket(ticketId, cashId, BaseProduct, amount, personalizations : ArrayList<String>) : int
-+ removeProduct(ticketId, cashId, prodId) : int
-+ getTicketsFrom(userId) : List<TicketEntry>
-+ removeTicketsFrom(userId) : int
-}
-
-App *-- TicketBook
-
-struct TicketEntry {
-+ cashId : String
-+ customerId : String
-+ ticket : Ticket
-}
-
-TicketBook *-- "0...n" TicketEntry
-
-enum TicketState {
-    VACIO,
-    ACTIVO,
-    CERRADO
-}
-
-class Ticket {
-- {static} MAX_PRODUCTS_PER_TICKET : int
-- ticketState : TicketState
-- entries: HashMap<productId : int, ProductEntry>
-- categories : HashMap<Category, amount: int>
-- creationDate : LocalDateTime
-- closingDate : LocalDateTime
-- ticketId : String
-- printedOutput : String
-+ Ticket()
-+ Ticket(ticketId)
-+ addProduct(BaseProduct, amount) : int
-+ addProduct(CustomProduct, amount, edits ArrayList<String>) : int
-+ deleteProduct(prodId) : int
-+ updateProduct(prodId) : int
-+ printTicket() : void
-+ 
-+ hasProduct(prodId) : boolean
-+ isClosed() : boolean
-}
-
-TicketState <-- Ticket
-TicketEntry *-- Ticket
-
-struct ProductEntry {
-+ product : BaseProduct
-+ amount : int;
-+ unitPriceSnapshot : double;
-+ categorySnapshot : Category;
-}
-
-Ticket o-- ProductEntry
-ProductEntry o-- BaseProduct
-
-}
+Command --> TicketService : attacks
+Command --> UserRegister : attacks;
 
 @enduml
