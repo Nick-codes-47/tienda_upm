@@ -106,9 +106,8 @@ public class App {
             return;
 
         try {
-            int retVal = command.execute(request.args);
-            if (retVal == 0)
-                AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
+            command.execute(request.args);
+            AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
         } catch (AppException e) {
             AppLogger.error(e.getMessage());
         }
