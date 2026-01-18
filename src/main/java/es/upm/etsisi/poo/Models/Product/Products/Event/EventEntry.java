@@ -41,7 +41,7 @@ public class EventEntry extends TicketEntry<EventProduct, EventEntry> implements
         return "{class:" + product.getEventType()
                 + ", id:" + product.getID()
                 + ", name:'" + product.getName()
-                + "', price/person:" + product.getPrice()
+                + "', price:" + this.people * product.getPrice()
                 + ", expiration date:" + product.getExpireDate().toLocalDate().toString()
                 + ", max people allowed:" + product.getMaxPeople()
                 + ", actual People in Event:" + people

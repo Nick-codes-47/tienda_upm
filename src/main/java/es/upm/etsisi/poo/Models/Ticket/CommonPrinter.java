@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
+import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
 import es.upm.etsisi.poo.Models.Ticket.Core.PrinterStrategy;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
@@ -55,6 +56,11 @@ public class CommonPrinter implements PrinterStrategy, Serializable {
                 }
                 totalPrice += product.getPrice();
             }
+        }
+
+        if (entry.getProduct() instanceof EventProduct event) {
+            str.append(entry).append("\n");
+            totalPrice += entry.getPrice();
         }
 
         return str.toString();
