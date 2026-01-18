@@ -23,7 +23,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    private final Supplier<PrinterStrategy> printStrat;
+    private transient final Supplier<PrinterStrategy> printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
@@ -153,14 +153,17 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         close();
 
-        PrinterStrategy printer = printStrat.get();
-        printer.init(this);
-        for (TicketEntry<ProductType, ?> entry : entries.values()) {
-            str.append(printer.printEntry(entry));
+        if (printStrat != null) {
+            PrinterStrategy printer = printStrat.get();
+            printer.init(this);
+            for (TicketEntry<ProductType, ?> entry : entries.values()) {
+                str.append(printer.printEntry(entry));
+            }
+            str.append(printer.printFooter());
+            AppLogger.info(str.toString());
+        } else {
+            AppLogger.info(this.toString() + "\n(Strategy not loaded)");
         }
-
-        str.append(printer.printFooter());
-        AppLogger.info(str.toString());
     }
 
     @Override
