@@ -11,7 +11,6 @@ import java.util.HashMap;
 
 public class CommonPrinter implements PrinterStrategy, Serializable {
 
-    private static final long serialVersionUID = 1L;
 
     private static int MIN_AMOUNT_FOR_DISCOUNT = 2;
 

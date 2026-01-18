@@ -7,8 +7,10 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.function.Supplier;
 
 public abstract class Ticket<ProductType extends BaseProduct<?>>
@@ -154,8 +156,14 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         close();
 
         PrinterStrategy printer = printStrat.get();
+
         printer.init(this);
-        for (TicketEntry<ProductType, ?> entry : entries.values()) {
+
+        ArrayList<TicketEntry<ProductType, ?>> orderedEntries = new ArrayList<>(entries.values());
+        if (printer instanceof TicketEntryOrderConstraint oPrinter)
+            orderedEntries.sort(oPrinter.getSortFunction());
+
+        for (TicketEntry<ProductType, ?> entry : orderedEntries) {
             str.append(printer.printEntry(entry));
         }
 

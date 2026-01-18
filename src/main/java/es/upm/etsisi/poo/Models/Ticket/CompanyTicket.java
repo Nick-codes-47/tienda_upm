@@ -14,7 +14,7 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosi
     private static final long serialVersionUID = 1L;
 
     public CompanyTicket(TicketID ID) {
-        super(ID, CommonPrinter::new, (Class) BaseProduct.class);
+        super(ID, CombinedPrinter::new, (Class) BaseProduct.class);
     }
 
     public CompanyTicket(CompanyTicket other) {
