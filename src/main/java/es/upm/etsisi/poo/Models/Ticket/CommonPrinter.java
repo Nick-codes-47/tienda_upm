@@ -32,6 +32,11 @@ public class CommonPrinter implements PrinterStrategy, Serializable {
     }
 
     @Override
+    public String printHeader() {
+        return "";
+    }
+
+    @Override
     public String printEntry(TicketEntry<?, ?> entry) {
         StringBuilder str = new StringBuilder();
 

@@ -15,6 +15,11 @@ public class ServicePrinter implements PrinterStrategy, Serializable {
     }
 
     @Override
+    public String printHeader() {
+        return "";
+    }
+
+    @Override
     public String printEntry(TicketEntry<?, ?> entry) {
         return entry.toString();
     }

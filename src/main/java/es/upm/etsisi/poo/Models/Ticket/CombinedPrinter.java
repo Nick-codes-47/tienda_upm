@@ -28,15 +28,22 @@ public class CombinedPrinter extends CommonPrinter
         }
     }
 
+
+    @Override
+    public String printHeader() {
+        return "Services Included\n";
+    }
+
     @Override
     public String printEntry(TicketEntry<?, ?> entry) {
         StringBuilder str = new StringBuilder();
 
         if (entry.getProduct() instanceof ServiceProduct service)
             str.append(entry).append("\n");
-        else
+        else {
+            if (totalPrice == 0) str.append("Product Included\n");
             str.append(super.printEntry(entry));
-
+        }
         return str.toString();
     }
 
