@@ -72,8 +72,15 @@ public class AddProductToTicket implements Command {
             this.ticketID = new TicketID(ticketId);
             this.cashID = cashId;
 
-            if (args.length > 3)
+            if (args.length > 3) {
                 this.args = Arrays.copyOfRange(args, 3, args.length);
+
+                for (int i = 0; i < this.args.length; i++) {
+                    if (this.args[i].startsWith("--p")) {
+                        this.args[i] = this.args[i].substring(3);
+                    }
+                }
+            }
         }
     }
 
