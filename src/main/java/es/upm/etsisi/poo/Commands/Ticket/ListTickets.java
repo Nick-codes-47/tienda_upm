@@ -25,7 +25,6 @@ public class ListTickets implements Command {
 
         // if cashierId is null, get all the tickets
         List<Ticket<?>> tickets = ticketService.getTickets();
-        if (tickets.isEmpty()) throw new EmptyContainerException("tickets");
 
         AppLogger.info(ticketService.getTicketList(tickets));
     }

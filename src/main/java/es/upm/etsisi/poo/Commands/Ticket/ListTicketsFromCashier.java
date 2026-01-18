@@ -31,8 +31,6 @@ public class ListTicketsFromCashier implements Command {
         Cashier cashier = cashiers.getUser(cashId);
         if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
 
-        if (cashier.tickets.isEmpty()) throw new EmptyContainerException("tickets");
-
         AppLogger.info("Tickets:\n" +
                 ticketService.getTicketList(cashier.tickets.values().stream().toList()));
     }
