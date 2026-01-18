@@ -13,14 +13,12 @@ public abstract class AddUser<T extends User> extends UserCommand<T> {
         super(userRegister);
     }
 
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         T user = createUser(args);
         
         userRegister.addUser(user);
 
         AppLogger.info(user.toString());
-
-        return 0;
     }
 
     protected abstract T createUser(String[] args) throws AppException;

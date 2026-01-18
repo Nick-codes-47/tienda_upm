@@ -31,12 +31,11 @@ public class AddCashier extends AddUser<Cashier> {
             id = new CashID(args[0]);
             nombre = args[1];
             email = parseEmail(args[2]);
-            if (userRegister.getUser(id.toString()) != null) throw new EntityAlreadyExistsException("Cashier", id.toString());
+            if (userRegister.getUser(id.toString()) != null)
+                throw new EntityAlreadyExistsException("Cashier", id.toString());
         } else {
             throw new WrongNumberOfArgsException(this);
         }
-
-        if (email == null) throw new InvalidEmailException();
 
         return new Cashier(id, nombre, email);
     }
