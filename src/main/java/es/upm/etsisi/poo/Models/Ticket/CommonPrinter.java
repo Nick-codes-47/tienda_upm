@@ -38,7 +38,7 @@ public class CommonPrinter implements PrinterStrategy, Serializable {
 
         if (entry.getProduct() instanceof Product product) {
             Category category = product.getCategory();
-            double discountRate = category.getDiscount();
+            double discountRate = category.getDiscount() / 100;
 
             for (int i = 0; i < entry.getProductCount(); i++) {
                 str.append(entry);
