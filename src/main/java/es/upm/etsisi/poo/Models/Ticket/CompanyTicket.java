@@ -9,7 +9,7 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> {
     private static final long serialVersionUID = 1L;
 
     public CompanyTicket(TicketID ID) {
-        super(ID);
+        super(ID, CommonPrinter::new);
     }
 
     public CompanyTicket(CompanyTicket other) {

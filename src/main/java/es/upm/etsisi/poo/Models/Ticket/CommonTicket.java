@@ -4,12 +4,14 @@ import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
+import java.util.HashMap;
+
 public class CommonTicket extends Ticket<GoodsProduct<?>> {
 
     private static final long serialVersionUID = 1L;
 
     public CommonTicket(TicketID ID) {
-        super(ID);
+        super(ID, CommonPrinter::new);
     }
 
     public CommonTicket(CommonTicket other) {
@@ -20,5 +22,4 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> {
     public CommonTicket copy() {
         return new CommonTicket(this);
     }
-    };
-}
+};

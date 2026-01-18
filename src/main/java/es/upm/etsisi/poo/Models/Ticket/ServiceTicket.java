@@ -9,7 +9,7 @@ public class ServiceTicket extends Ticket<ServiceProduct> {
     private static final long serialVersionUID = 1L;
 
     public ServiceTicket(TicketID ID) {
-        super(ID);
+        super(ID, CommonPrinter::new);
     }
 
     public ServiceTicket(ServiceTicket other) {

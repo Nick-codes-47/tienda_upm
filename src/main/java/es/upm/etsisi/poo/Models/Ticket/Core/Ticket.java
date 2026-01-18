@@ -10,6 +10,7 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.function.Supplier;
 
 public abstract class Ticket<ProductType extends BaseProduct<?>>
         implements Iterable<TicketEntry<ProductType, ?>>, Copyable<Ticket<ProductType>>, Serializable {
@@ -21,11 +22,11 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    private final PrinterStrategy printStrat;
+    private final Supplier<PrinterStrategy> printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
-    public Ticket(TicketID ID, PrinterStrategy printerStrat) {
+    public Ticket(TicketID ID, Supplier<PrinterStrategy> printerStrat) {
         this.ID = ID;
         this.entries = new HashMap<>();
         this.ticketState = TicketState.VACIO;
@@ -120,39 +121,38 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     public void close() throws AppException {
         if (this.ticketState != TicketState.CERRADO) {
-            checkForClosingConstraints();
+            for (TicketEntry<ProductType, ?> entry : entries.values()) {
+                entry.checkValidity();
+            }
 
             this.ticketState = TicketState.CERRADO;
             ID.close();
         }
     }
 
-    private void checkForClosingConstraints() throws AppException {
+    public void print() throws AppException {
+        StringBuilder str = new StringBuilder();
+
+        close();
+
+        PrinterStrategy printer = printStrat.get();
+        printer.init(this);
         for (TicketEntry<ProductType, ?> entry : entries.values()) {
-            if (entry instanceof TicketClosingConstraint)
-                ((TicketClosingConstraint) entry).checkValidity();
-        }
-    }
-
-    public void print() throws ExpiredException {
-//        close();
-//
-//        for (TicketEntry<ProductType> entry : entries.values()) {
-//
-//        }
-    }
-
-    private <T extends BaseProduct<?>> ArrayList<T> getProductsOfTypeFromTicket(Class<T> productType) {
-        ArrayList<T> products = new ArrayList<>();
-
-        for (TicketEntry<ProductType,?> entry : entries.values()) {
-            BaseProduct<?> product = entry.getProduct();
-
-            if (productType.isInstance(product)) {
-                products.add(productType.cast(product));
-            }
+            str.append(printer.printEntry(entry));
         }
 
-        return products;
+        str.append(printer.printFooter());
+        AppLogger.info(str.toString());
+    }
+
+    @Override
+    public String toString() {
+        StringBuilder str = new StringBuilder();
+
+        for (TicketEntry<ProductType, ?> entry : this) {
+            str.append(entry);
+        }
+
+        return str.toString();
     }
 }

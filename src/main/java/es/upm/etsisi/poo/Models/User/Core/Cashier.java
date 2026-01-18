@@ -3,6 +3,7 @@ package es.upm.etsisi.poo.Models.User.Core;
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
+import es.upm.etsisi.poo.Models.User.UserEnums.UserType;
 
 import java.util.HashMap;
 
@@ -25,5 +26,11 @@ public class Cashier extends User {
 
     public Ticket<?> getTicket(TicketID ticketID) {
         return tickets.get(ticketID);
+    }
+
+    @Override
+    public String toString() {
+        return String.format(
+                "Cashier{identifier='%s', name='%s', email:'%s'%s}", id, name, email, addVarToPrint());
     }
 }
