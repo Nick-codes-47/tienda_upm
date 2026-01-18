@@ -39,7 +39,7 @@ public class Customer extends User {
     public String toString() {
         return String.format(
                 "%s{identifier='%s', name='%s', email:'%s'%s}",
-                isCompany()? "Compay":"Particular",
+                isCompany()? "Company":"Particular",
                 id, name, email, ", cash='" + cashierId + "'");
     }
 }

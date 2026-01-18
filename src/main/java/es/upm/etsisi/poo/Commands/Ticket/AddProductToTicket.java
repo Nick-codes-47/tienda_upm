@@ -44,7 +44,9 @@ public class AddProductToTicket implements Command {
         try {
             ticket.add(product, args.args);
         } catch (ClassCastException e) {
-            AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
+            throw new AppException(String.format("Product type %s, can not be added to a %s",
+                    product.getClass().getSimpleName(),
+                    ticket.getClass().getSimpleName()));
         }
     }
 
