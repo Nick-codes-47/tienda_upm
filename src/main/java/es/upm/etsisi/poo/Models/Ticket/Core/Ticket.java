@@ -179,7 +179,8 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         StringBuilder str = new StringBuilder();
 
         for (TicketEntry<ProductType, ?> entry : this) {
-            str.append(entry);
+            for (int i = 0; i < entry.getProductCount(); i++)
+                str.append(entry);
         }
 
         return str.toString();

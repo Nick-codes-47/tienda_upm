@@ -14,11 +14,6 @@ public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> impl
     }
 
     @Override
-    public String toString() {
-        return "";
-    }
-
-    @Override
     public int getProductCount() {
         return 1;
     }
@@ -40,5 +35,10 @@ public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> impl
                 product.getCategory().toString() + "service",
                 product.getID().toString(),
                 "you can't add a service twice to the same ticket");
+    }
+
+    @Override
+    public String toString() {
+        return this.product.toString();
     }
 }
