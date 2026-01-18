@@ -28,7 +28,7 @@ public class AddProductToTicket implements Command {
     }
 
     @Override
-    public int execute(String[] rawArgs) throws AppException {
+    public void execute(String[] rawArgs) throws AppException {
         CommandArgs args = new CommandArgs(rawArgs, this);
 
         BaseProduct<?> product = catalog.get(args.productID);
@@ -40,14 +40,11 @@ public class AddProductToTicket implements Command {
         Ticket<?> ticket = cashier.getTicket(args.ticketID);
         if (ticket == null) throw new TicketNotInCashException(args.ticketID.toString(), args.cashID);
 
-        int result = 1;
         try {
-            result = ticket.add(product, args.args);
+            ticket.add(product, args.args);
         } catch (ClassCastException e) {
             AppLogger.warn(String.format("Product type %s, can not be added to a %s", product.getClass(), ticket.getClass()));
         }
-
-        return result;
     }
 
     private static class CommandArgs {

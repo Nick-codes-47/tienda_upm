@@ -20,7 +20,7 @@ public class ListTickets implements Command {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         // if cashierId is null, get all the tickets
@@ -28,7 +28,6 @@ public class ListTickets implements Command {
         if (tickets.isEmpty()) throw new EmptyDataException("tickets");
 
         AppLogger.info(ticketService.getTicketList(tickets));
-        return 0;
     }
 
     @Override

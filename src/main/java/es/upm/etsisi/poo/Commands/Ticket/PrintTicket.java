@@ -17,7 +17,7 @@ public class PrintTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args)
+    public void execute(String[] args)
             throws AppException {
         if (args.length != 2) throw new WrongNumberOfArgsException(this);
 
@@ -30,7 +30,6 @@ public class PrintTicket implements Command {
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
         ticket.print();
-        return 0;
     }
 
     @Override

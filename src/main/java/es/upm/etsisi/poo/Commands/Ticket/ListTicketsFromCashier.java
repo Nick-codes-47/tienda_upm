@@ -22,7 +22,7 @@ public class ListTicketsFromCashier implements Command {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 1) {
             throw new WrongNumberOfArgsException(this);
         }
@@ -33,9 +33,8 @@ public class ListTicketsFromCashier implements Command {
 
         if (cashier.tickets.isEmpty()) throw new EmptyDataException("tickets");
 
-        AppLogger.info("Tickets:\n" + ticketService.getTicketList(cashier.tickets.values().stream().toList()));
-
-        return 0;
+        AppLogger.info("Tickets:\n" +
+                ticketService.getTicketList(cashier.tickets.values().stream().toList()));
     }
 
     @Override

@@ -24,7 +24,7 @@ public class AddNewTicket implements Command {
     }
 
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         TicketID ticketId = null;
         CashID cashId;
         UserNIF customerId;
@@ -67,8 +67,6 @@ public class AddNewTicket implements Command {
 
         cashier.addTicket(ticket);
         customer.addTicket(ticketId);
-
-        return 0;
     }
 
     private Ticket<?> ticketFactory(TicketType type, TicketID id) {
@@ -84,10 +82,10 @@ public class AddNewTicket implements Command {
 
         static TicketType getType(char c) {
             return switch (c) {
-                case 'p': yield PRODUCT;
-                case 's': yield SERVICE;
-                case 'c': yield COMBINED;
-                default: yield null;
+                case 'p' -> PRODUCT;
+                case 's' -> SERVICE;
+                case 'c' -> COMBINED;
+                default -> null;
             };
         }
     }
