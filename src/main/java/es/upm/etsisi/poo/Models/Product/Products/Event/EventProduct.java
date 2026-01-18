@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveIntegerException;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
@@ -90,8 +91,11 @@ public class EventProduct extends GoodsProduct<EventProduct> implements Copyable
 
         public int people;
 
-        public EntryArgs(String[] rawArgs) {
+        public EntryArgs(String[] args) throws WrongNumberOfArgsException {
+            if (args == null || args.length < 1)
+                throw new WrongNumberOfArgsException(null);
 
+            this.people = Integer.parseInt(args[0]);
         }
     }
 }

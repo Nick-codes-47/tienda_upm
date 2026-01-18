@@ -30,6 +30,6 @@ public class Cashier extends User {
     @Override
     public String toString() {
         return String.format(
-                "Cashier{identifier='%s', name='%s', email:'%s'%s}", id, name, email, addVarToPrint());
+                "Cashier{identifier='%s', name='%s', email:'%s'}", id, name, email);
     }
 }

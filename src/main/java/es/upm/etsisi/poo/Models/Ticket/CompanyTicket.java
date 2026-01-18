@@ -2,7 +2,6 @@ package es.upm.etsisi.poo.Models.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Product.Product;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
@@ -35,7 +34,7 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosi
         for (TicketEntry<BaseProduct<?>, ?> entry : this) {
             if (entry.getProduct() instanceof ServiceProduct)
                 hasService = true;
-            else if (entry.getProduct() instanceof Product)
+            else
                 hasProduct = true;
         }
 

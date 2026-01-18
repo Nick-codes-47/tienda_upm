@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
+import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
@@ -13,7 +14,8 @@ public class CombinedPrinter extends CommonPrinter
 
     private static final long serialVersionUID = 1L;
 
-    private int serviceCount = 0;
+    private static double DISCOUNT_PER_SERVICE = 0.15f;
+
     private double discountFromServices = 0;
 
     @Override
@@ -22,8 +24,15 @@ public class CombinedPrinter extends CommonPrinter
 
         for (TicketEntry<?, ?> entry : ticket) {
             if (entry.getProduct() instanceof ServiceProduct)
-                serviceCount++;
+                if (discountFromServices < 1.f)
+                    discountFromServices += DISCOUNT_PER_SERVICE;
         }
+    }
+
+
+    @Override
+    public String printHeader() {
+        return "Services Included\n";
     }
 
     @Override
@@ -31,20 +40,24 @@ public class CombinedPrinter extends CommonPrinter
         StringBuilder str = new StringBuilder();
 
         if (entry.getProduct() instanceof ServiceProduct service)
-            str.append(entry);
-        else
+            str.append(entry).append("\n");
+        else {
+            if (totalPrice == 0) str.append("Product Included\n");
             str.append(super.printEntry(entry));
-
+        }
         return str.toString();
     }
 
     @Override
     public String printFooter() {
+        double serviceDiscount = this.totalPrice * discountFromServices;
+        double finalPrice = this.totalPrice - serviceDiscount;
+        this.totalDiscount += serviceDiscount;
 
         return "Total price: " + String.format("%.1f", totalPrice) +
-                "\nExtra Discount from services:" + String.format("%.1f", discountFromServices) +
-                "\nTotal discount: " + String.format("%.1f **discount -%.1f", discountFromServices, discountFromServices) +
-                "\nFinal price: " + String.format("%.1f", totalPrice - totalDiscount - discountFromServices);
+                "\nExtra Discount from services:" + String.format("%.1f  **discount -%.1f", serviceDiscount, serviceDiscount) +
+                "\nTotal discount: " + String.format("%.1f", totalDiscount) +
+                "\nFinal price: " + String.format("%.1f", finalPrice);
     }
 
     @Override
@@ -53,9 +66,10 @@ public class CombinedPrinter extends CommonPrinter
     }
 
     private final Comparator<TicketEntry<?,?>> SORT_COMPARATOR = Comparator.comparing(
-            (e) -> e.getProduct(),
+            TicketEntry::getProduct,
             (p1, p2) -> {
-                        if (p1 instanceof ServiceProduct) return 1;
-                        else return -1;
+                        if (p1 instanceof ServiceProduct) return -1;
+                        else if (p2 instanceof ServiceProduct) return 1;
+                        else return 0;
                     });
 }

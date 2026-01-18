@@ -75,7 +75,7 @@ public class Catalog implements Serializable {
                 .filter(id -> id.getClass() == ProductID.class)
                 .collect(Collectors.toSet());
 
-        int countID = 1;
+        int countID = 0;
         ProductID newID = new ProductID(countID);
         while (usedIDs.contains(newID)) {
             newID = new ProductID(++countID);

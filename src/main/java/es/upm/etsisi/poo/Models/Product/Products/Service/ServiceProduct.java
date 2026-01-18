@@ -61,13 +61,10 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
 
     @Override
     public String toString() {
-        StringBuilder sb = new StringBuilder();
 
-        sb.append("{class:ServiceProduct")
-                .append(", id:").append(getID())
-                .append(", expiration:").append(expirationDate)
-                .append("}");
-
-        return sb.toString();
+        return "{class:ServiceProduct" +
+                ", id:" + getID() +
+                ", expiration:" + expirationDate +
+                "}";
     }
 }

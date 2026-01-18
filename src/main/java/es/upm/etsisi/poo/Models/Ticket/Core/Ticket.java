@@ -153,15 +153,14 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public void print() throws AppException {
+    public String print() {
         StringBuilder str = new StringBuilder();
-
-        close();
 
         reloadPrinterStrategy();
         PrinterStrategy printer = printStrat.get();
 
         printer.init(this);
+        str.append(printer.printHeader());
 
         ArrayList<TicketEntry<ProductType, ?>> orderedEntries = new ArrayList<>(entries.values());
         if (printer instanceof TicketEntryOrderConstraint oPrinter)
@@ -172,7 +171,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
 
         str.append(printer.printFooter());
-        AppLogger.info(str.toString());
+        return str.toString();
     }
 
     // We need this because it is not possible to save the Suplier when saving the ticket
@@ -180,12 +179,6 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
     @Override
     public String toString() {
-        StringBuilder str = new StringBuilder();
-
-        for (TicketEntry<ProductType, ?> entry : this) {
-            str.append(entry);
-        }
-
-        return str.toString();
+        return print();
     }
 }

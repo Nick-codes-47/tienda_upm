@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.EmptyContainerException;
 import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
@@ -25,7 +24,6 @@ public class ListTickets implements Command {
 
         // if cashierId is null, get all the tickets
         List<Ticket<?>> tickets = ticketService.getTickets();
-        if (tickets.isEmpty()) throw new EmptyContainerException("tickets");
 
         AppLogger.info(ticketService.getTicketList(tickets));
     }

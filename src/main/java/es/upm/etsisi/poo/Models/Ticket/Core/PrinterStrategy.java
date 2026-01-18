@@ -1,7 +1,8 @@
 package es.upm.etsisi.poo.Models.Ticket.Core;
 
 public interface PrinterStrategy {
-    abstract public void init(Ticket<?> ticket);
-    abstract public String printEntry(TicketEntry<?, ?> entry);
-    abstract public String printFooter();
+    void init(Ticket<?> ticket);
+    String printEntry(TicketEntry<?, ?> entry);
+    String printFooter();
+    String printHeader();
 }

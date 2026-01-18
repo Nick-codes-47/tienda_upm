@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.ProductEnums;
 
 public enum ServiceCategory {
-    LOGISTICS("Logistics"),
+    TRANSPORT("Transport"),
     SPECTACLE("Spectacle"),
     INSURANCE("Insurance")
     ;

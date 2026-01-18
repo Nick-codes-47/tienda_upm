@@ -41,7 +41,7 @@ public class EventEntry extends TicketEntry<EventProduct, EventEntry> implements
         return "{class:" + product.getEventType()
                 + ", id:" + product.getID()
                 + ", name:'" + product.getName()
-                + "', price/person:" + product.getPrice()
+                + "', price:" + this.people * product.getPrice()
                 + ", expiration date:" + product.getExpireDate().toLocalDate().toString()
                 + ", max people allowed:" + product.getMaxPeople()
                 + ", actual People in Event:" + people
@@ -60,7 +60,7 @@ public class EventEntry extends TicketEntry<EventProduct, EventEntry> implements
 
     @Override
     public void checkValidity() throws InvalidPeopleInEventException, NotEnoughPlanningForEventException {
-        if (product.getMaxPeople() >= people)
+        if (people > product.getMaxPeople())
             throw new InvalidPeopleInEventException();
 
         if (product.hasExpired())
