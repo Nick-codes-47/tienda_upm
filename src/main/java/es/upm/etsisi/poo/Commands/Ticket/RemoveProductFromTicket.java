@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.ClosedTicketException;
 import es.upm.etsisi.poo.AppExceptions.TicketExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
@@ -42,7 +43,7 @@ public class RemoveProductFromTicket implements Command {
         ticket = cashier.getTicket(new TicketID(ticketId));
         if (ticket == null) throw new TicketNotInCashException(ticketId, cashId);
 
-        ticket.delete(prodId);
+        if (ticket.delete(prodId) != 0) throw new ClosedTicketException(ticketId);
         ticket.print(ticketService.getPrinter(ticket));
     }
 

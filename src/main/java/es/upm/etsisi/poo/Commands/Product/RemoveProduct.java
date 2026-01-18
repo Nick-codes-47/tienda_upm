@@ -30,7 +30,7 @@ public class RemoveProduct implements Command {
 
         AppLogger.info(prod.toString());
 
-        ticketService.showModifiedTickets(prod);
+        ticketService.showModifiedTickets(prod, 'd');
     }
 
     /**

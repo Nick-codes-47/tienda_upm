@@ -100,19 +100,20 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         return add((TicketEntry<ProductType, ?>) prod.toTicketEntry(args));
     }
 
-    public void delete(ProductID ID)
-            throws AppEntityNotFoundException, ClosedTicketException {
-        if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
+    public int delete(ProductID ID)
+            throws AppEntityNotFoundException {
+        if (this.ticketState == TicketState.CERRADO) return -1;
 
         TicketEntry<?,?> entry = entries.get(ID);
         if (entry == null) throw new AppEntityNotFoundException("product", ID.toString());
 
         entries.remove(ID);
+        return 0;
     }
 
     @SuppressWarnings("unchecked") // We checked the cast by comparing IDs
-    public void update(BaseProduct<?> baseProduct) throws AppException {
-        if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
+    public int update(BaseProduct<?> baseProduct) throws AppException {
+        if (this.ticketState == TicketState.CERRADO) return -1;
 
         TicketEntry<ProductType,?> entry = this.entries.get(baseProduct.getID());
 
@@ -120,11 +121,12 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
             ProductType product = (ProductType) baseProduct;
             entry.update(product);
         }
+        return 0;
     }
 
     public void close() throws AppException {
         if (this.ticketState == TicketState.VACIO) {
-            throw new AppException("an empty ticket can not be closed");
+            throw new AppException("An empty ticket can not be closed");
         }
 
         if (this.ticketState != TicketState.CERRADO) {

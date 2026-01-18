@@ -56,15 +56,17 @@ public class TicketService {
         return tickets;
     }
 
-    public void showModifiedTickets(BaseProduct<?> product) throws AppException {
+    public void showModifiedTickets(BaseProduct<?> product, Character operation) throws AppException {
         List<Ticket<?>> tickets = this.getTicketsWith(product);
         if (!tickets.isEmpty()) {
             StringBuilder sb =
                     new StringBuilder("The tickets with the following ids had the product and it was updated:");
             for (Ticket<?> ticket : tickets) {
-                ticket.update(product);
+                int operationResult = -1;
+                if (operation.compareTo('u') == 0) operationResult = ticket.update(product);
+                if (operation.compareTo('d') == 0) operationResult = ticket.delete(product.getID());
                 // We show the ticket that had the product and changed
-                sb.append("- ").append(ticket.getID());
+                if (operationResult == 0) sb.append("- ").append(ticket.getID());
             }
             AppLogger.info(sb.toString());
         }

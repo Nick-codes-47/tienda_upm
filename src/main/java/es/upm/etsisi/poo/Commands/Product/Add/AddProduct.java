@@ -124,7 +124,7 @@ public class AddProduct implements Command {
      */
     @Override
     public String help() {
-        return ID + " [id] \"<name>\" <category> <price> [<maxPers>]";
+        return ID + " ([<id>] \"<name>\" <category> <price> [<maxPers>]) || (\"<expiration_date>\" <category> )";
     }
 
     private enum ProductToAdd {

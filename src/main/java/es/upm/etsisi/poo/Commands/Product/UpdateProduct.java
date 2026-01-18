@@ -50,7 +50,7 @@ public class UpdateProduct implements Command {
 
         AppLogger.info(product.toString());
 
-        ticketService.showModifiedTickets(product);
+        ticketService.showModifiedTickets(product, 'u');
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName)
