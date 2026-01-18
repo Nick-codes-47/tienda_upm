@@ -13,7 +13,8 @@ public class CombinedPrinter extends CommonPrinter
 
     private static final long serialVersionUID = 1L;
 
-    private int serviceCount = 0;
+    private static double DISCOUNT_PER_SERVICE = 0.15f;
+
     private double discountFromServices = 0;
 
     @Override
@@ -22,7 +23,8 @@ public class CombinedPrinter extends CommonPrinter
 
         for (TicketEntry<?, ?> entry : ticket) {
             if (entry.getProduct() instanceof ServiceProduct)
-                serviceCount++;
+                if (discountFromServices < 1.f)
+                    discountFromServices += DISCOUNT_PER_SERVICE;
         }
     }
 
@@ -31,7 +33,7 @@ public class CombinedPrinter extends CommonPrinter
         StringBuilder str = new StringBuilder();
 
         if (entry.getProduct() instanceof ServiceProduct service)
-            str.append(entry);
+            str.append(entry).append("\n");
         else
             str.append(super.printEntry(entry));
 
@@ -40,11 +42,14 @@ public class CombinedPrinter extends CommonPrinter
 
     @Override
     public String printFooter() {
+        double serviceDiscount = this.totalPrice * discountFromServices;
+        double finalPrice = this.totalPrice - serviceDiscount;
+        this.totalDiscount += serviceDiscount;
 
         return "Total price: " + String.format("%.1f", totalPrice) +
-                "\nExtra Discount from services:" + String.format("%.1f", discountFromServices) +
-                "\nTotal discount: " + String.format("%.1f **discount -%.1f", discountFromServices, discountFromServices) +
-                "\nFinal price: " + String.format("%.1f", totalPrice - totalDiscount - discountFromServices);
+                "\nExtra Discount from services:" + String.format("%.1f  **discount -%.1f", serviceDiscount, serviceDiscount) +
+                "\nTotal discount: " + String.format("%.1f", totalDiscount) +
+                "\nFinal price: " + String.format("%.1f", finalPrice);
     }
 
     @Override
@@ -55,7 +60,7 @@ public class CombinedPrinter extends CommonPrinter
     private final Comparator<TicketEntry<?,?>> SORT_COMPARATOR = Comparator.comparing(
             (e) -> e.getProduct(),
             (p1, p2) -> {
-                        if (p1 instanceof ServiceProduct) return 1;
-                        else return -1;
+                        if (p1 instanceof ServiceProduct) return -1;
+                        else return 1;
                     });
 }
