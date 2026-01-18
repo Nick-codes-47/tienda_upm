@@ -15,7 +15,7 @@ import es.upm.etsisi.poo.Handlers.ProductHandler;
 import es.upm.etsisi.poo.Handlers.TicketHandler;
 import es.upm.etsisi.poo.Handlers.Request;
 import es.upm.etsisi.poo.Handlers.RequestHandler;
-import es.upm.etsisi.poo.Persistence.PersistenceService; // <--- IMPORTANTE
+import es.upm.etsisi.poo.Persistence.PersistenceService;
 import es.upm.etsisi.poo.Services.TicketService;
 
 import java.util.HashMap;
@@ -38,19 +38,16 @@ public class App {
 
     public App() {}
 
-    @SuppressWarnings("unchecked")
     public void init(String inputFile) {
         AppLogger.info("Loading data...");
-        Object[] data = persistence.loadAll();
-
-        if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct<?>>) data[0]);
-        if (data[1] != null) customers.loadData((HashMap<String, Customer>) data[1]);
-        if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
 
         initBuiltinCommandsMap();
         initHandlersMap();
 
         initInput(inputFile);
+
+        load();
+
         printWelcome();
 
         while (true) {
@@ -89,6 +86,24 @@ public class App {
         } else {
             input = new InputDriver();
         }
+    }
+
+    @SuppressWarnings("unchecked")
+    private void load() {
+        Object[] data = persistence.loadAll();
+
+        if (data[0] != null) catalog.loadData((HashMap<ProductID, BaseProduct<?>>) data[0]);
+        if (data[1] != null) customers.loadData((HashMap<String, Customer>) data[1]);
+        if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
+    }
+
+    private void safe() {
+        AppLogger.info("Saving data...");
+        persistence.saveAll(
+                catalog.getProducts(),
+                customers.getRawMap(),
+                cashiers.getRawMap()
+        );
     }
 
     private void handleRequest(Request request) {
@@ -140,16 +155,8 @@ public class App {
                 .append(Category.getCategoriesAndDiscount()).append("\n\n");
     }
 
-    /**
-     * Method to exit the program's execution
-     */
     private void exit() {
-        AppLogger.info("Saving data...");
-        persistence.saveAll(
-                catalog.getProducts(),
-                customers.getRawMap(),
-                cashiers.getRawMap()
-        );
+        safe();
 
         AppLogger.info("Closing Application.\nGoodbye!");
         System.exit(0);
@@ -175,6 +182,6 @@ public class App {
     private void initBuiltinCommandsMap() {
         builtinCommands.put("help", (request) -> help());
         builtinCommands.put("echo", this::echo);
-        builtinCommands.put("exit", (request) -> exit());
+        builtinCommands.put("exit", (request) -> this.exit());
     }
 }

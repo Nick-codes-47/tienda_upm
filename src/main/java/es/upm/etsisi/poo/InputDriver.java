@@ -15,7 +15,7 @@ public class InputDriver {
     public InputDriver(String inputFile)
             throws RuntimeException
     {
-//        AppLogger.info(String.format("LOG::InputDriver Received input file: %s\n", inputFile));
+        AppLogger.info(String.format("LOG::InputDriver Received input file: %s\n", inputFile));
         this.inputFile = inputFile;
 
         try
