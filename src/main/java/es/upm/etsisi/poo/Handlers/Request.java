@@ -22,8 +22,6 @@ public class Request {
                 }
             }
         }
-
-//        System.err.printf("LOG::Command> command line received: %s %s %s\n", family, command, args);
     }
 
     private static ArrayList<String> tokenize(String line)

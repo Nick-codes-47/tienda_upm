@@ -36,6 +36,8 @@ public class App {
     private final HashMap<String, Consumer<Request>> builtinCommands = new HashMap<>();
     private InputDriver input;
 
+    private boolean exitRequested = false;
+
     public App() {}
 
     public void init(String inputFile) {
@@ -50,7 +52,7 @@ public class App {
 
         printWelcome();
 
-        while (true) {
+        while (!exitRequested) {
             Request request = input.next();
             if (!request.handlerId.isEmpty()) {
                 handleRequest(request);
@@ -159,7 +161,7 @@ public class App {
         safe();
 
         AppLogger.info("Closing Application.\nGoodbye!");
-        System.exit(0);
+        exitRequested = true;
     }
 
     private void echo(Request request) {

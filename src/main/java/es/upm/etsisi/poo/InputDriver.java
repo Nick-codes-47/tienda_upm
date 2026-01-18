@@ -4,9 +4,17 @@ import es.upm.etsisi.poo.Handlers.Request;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.util.NoSuchElementException;
 import java.util.Scanner;
 
 public class InputDriver {
+
+    private final Scanner input;
+    private String inputFile = null;
+    private static final String PROMPT = "tUPM> ";
+
+    private static final String EXIT_LINE = "exit";
+
     public InputDriver()
     {
         input = new Scanner(System.in);
@@ -31,15 +39,14 @@ public class InputDriver {
     public Request next()
     {
         System.out.print(PROMPT); // can't use logger here because we don't want a line break
-        String line = input.nextLine();
+        String line;
+        try {
+            line = input.nextLine();
+        } catch (NoSuchElementException e) { line = EXIT_LINE; }
         if (inputFile != null)
         {
             AppLogger.info(line);
         }
         return new Request(line);
     }
-
-    private final Scanner input;
-    private String inputFile = null;
-    private static final String PROMPT = "tUPM> ";
 }
