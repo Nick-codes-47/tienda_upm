@@ -1,11 +1,11 @@
 package es.upm.etsisi.poo.Models.Product.Products.Service;
 
-import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.AppExceptions.ExpiredServiceException;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
-public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> {
+public class ServiceEntry extends TicketEntry<ServiceProduct, ServiceEntry> implements TicketClosingConstraint {
 
     private static final long serialVersionUID = 1L;
 

@@ -2,9 +2,10 @@ package es.upm.etsisi.poo.Models.Product.Products.Event;
 
 import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
+import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
-public class EventEntry extends TicketEntry<EventProduct, EventEntry> {
+public class EventEntry extends TicketEntry<EventProduct, EventEntry> implements TicketClosingConstraint {
 
     private static final long serialVersionUID = 1L;
 
