@@ -21,6 +21,13 @@ import es.upm.etsisi.poo.Services.TicketService;
 import java.util.HashMap;
 import java.util.function.Consumer;
 
+/**
+ * Clase principal de la aplicación.
+ * <p>
+ * Actúa como el controlador central del sistema, gestionando el ciclo de vida de la aplicación,
+ * la inicialización de los registros (Catálogo, Cajeros, Clientes), la carga/guardado de datos
+ * y el bucle principal de procesamiento de comandos.
+ */
 public class App {
 
     public final Catalog catalog = new Catalog();
@@ -38,8 +45,20 @@ public class App {
 
     private boolean exitRequested = false;
 
+    /**
+     * Constructor por defecto de la aplicación.
+     */
     public App() {}
 
+    /**
+     * Inicializa la aplicación y comienza el bucle principal de ejecución.
+     * <p>
+     * Carga los datos, configura los manejadores de comandos y procesa las entradas
+     * del usuario hasta que se solicita la salida.
+     *
+     * @param inputFile Ruta al archivo de entrada para ejecución por lotes (batch),
+     * o {@code null} para ejecución interactiva por consola.
+     */
     public void init(String inputFile) {
         AppLogger.info("Loading data...");
 
@@ -61,6 +80,12 @@ public class App {
         }
     }
 
+    /**
+     * Punto de entrada principal del programa (Main entry point).
+     *
+     * @param args Argumentos de línea de comandos. El primer argumento puede ser
+     * la ruta a un archivo de script para ejecutar comandos automáticamente.
+     */
     public static void main(String[] args) {
         App app = new App();
 
@@ -71,16 +96,24 @@ public class App {
                 app.init(null);
             }
         } catch (RuntimeException exception) {
-            app.save();
+            app.save(); // guardado de emergencia en caso de error crítico
             AppLogger.error(exception.getMessage());
         }
     }
 
+    /**
+     * Imprime el mensaje de bienvenida al iniciar la aplicación.
+     */
     private void printWelcome() {
         AppLogger.info("Welcome to the ticket module App.\n" +
                 "Ticket module. Type 'help' to see commands.");
     }
 
+    /**
+     * Inicializa el controlador de entrada (InputDriver).
+     *
+     * @param inputFile Ruta del archivo de entrada o null para entrada estándar.
+     */
     private void initInput(String inputFile) {
         if (inputFile != null) {
             input = new InputDriver(inputFile);
@@ -89,6 +122,10 @@ public class App {
         }
     }
 
+    /**
+     * Carga los datos persistidos (Productos, Clientes, Cajeros) desde el almacenamiento.
+     * Utiliza {@code @SuppressWarnings("unchecked")} debido a los casteos de tipos genéricos deserializados.
+     */
     @SuppressWarnings("unchecked")
     private void load() {
         Object[] data = persistence.loadAll();
@@ -98,6 +135,9 @@ public class App {
         if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
     }
 
+    /**
+     * Guarda el estado actual de la aplicación de forma segura en el sistema de persistencia.
+     */
     public void save() {
         AppLogger.info("Saving data...");
         persistence.saveAll(
@@ -106,7 +146,14 @@ public class App {
                 cashiers.getRawMap()
         );
     }
-
+    /**
+     * Enruta y maneja una petición (Request) entrante.
+     * <p>
+     * Determina si la petición corresponde a un comando interno (built-in) o a un
+     * manejador específico (Handler) y delega la ejecución.
+     *
+     * @param request La petición parseada que contiene el ID del manejador y del comando.
+     */
     private void handleRequest(Request request) {
         if (handlerIds.containsKey(request.handlerId)) {
             execute(handlers[handlerIds.get(request.handlerId)].getCommand(request.commandId), request);
@@ -117,6 +164,12 @@ public class App {
         }
     }
 
+    /**
+     * Ejecuta un comando específico de forma segura, capturando excepciones de la aplicación.
+     *
+     * @param command El comando a ejecutar.
+     * @param request La petición que contiene los argumentos para el comando.
+     */
     private void execute(Command command, Request request) {
         if (command == null)
             return;
@@ -131,6 +184,10 @@ public class App {
         }
     }
 
+    /**
+     * Muestra la ayuda general de la aplicación, listando todos los comandos disponibles
+     * y las categorías de productos.
+     */
     private void help() {
         StringBuilder output = new StringBuilder();
 
@@ -141,6 +198,9 @@ public class App {
         AppLogger.info(output.toString());
     }
 
+    /**
+     * Añade la lista de comandos disponibles al StringBuilder proporcionado.
+     */
     private void includeCommands(StringBuilder output) {
         output.append("Commands:\n");
         for (RequestHandler requestHandler : handlers) {
@@ -150,12 +210,20 @@ public class App {
         }
     }
 
+    /**
+     * Añade la información de categorías y descuentos al StringBuilder.
+     */
     private static void includeCategories(StringBuilder output) {
         output.append("Categories: ").append(Category.getCategories()).append("\n");
         output.append("Discounts if there are ≥2 units in the category: ")
                 .append(Category.getCategoriesAndDiscount()).append("\n\n");
     }
 
+    /**
+     * Finaliza la ejecución de la aplicación.
+     * <p>
+     * Guarda los datos antes de salir y establece la bandera de salida para terminar el bucle principal.
+     */
     private void exit() {
         save();
 
@@ -163,10 +231,17 @@ public class App {
         exitRequested = true;
     }
 
+    /**
+     * Comando simple para hacer eco del ID del comando (útil para pruebas o logs).
+     */
     private void echo(Request request) {
         AppLogger.info(request.commandId);
     }
 
+    /**
+     * Inicializa los manejadores (Handlers) específicos de la aplicación
+     * (Clientes, Cajeros, Tickets, Productos).
+     */
     private void initHandlersMap() {
         handlers = new RequestHandler[] {
                 new CustomerHandler(this),
@@ -180,6 +255,9 @@ public class App {
         }
     }
 
+    /**
+     * Inicializa los comandos internos básicos (help, echo, exit).
+     */
     private void initBuiltinCommandsMap() {
         builtinCommands.put("help", (request) -> help());
         builtinCommands.put("echo", this::echo);
