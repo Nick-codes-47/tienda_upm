@@ -76,8 +76,6 @@ public class UpdateProduct implements Command {
             return value;
         }
         if (type.equals(double.class) || type.equals(Double.class)) {
-            //double price =
-            // if (price <= 0) throw new InvalidNewValueException(field.getName());
             return Double.parseDouble(value);
         }
         if (type.equals(Category.class)) {
