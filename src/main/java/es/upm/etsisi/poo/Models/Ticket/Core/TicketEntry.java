@@ -33,7 +33,6 @@ public abstract class TicketEntry<ProductType extends BaseProduct<?>, EntryType 
     public abstract double getPrice();
 
     public abstract void accumulate(EntryType more) throws EntityAlreadyExistsException;
-    public abstract void checkValidity() throws ExpiredException, InvalidPeopleInEventException;
 
     public abstract String toString();
 }

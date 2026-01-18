@@ -55,9 +55,6 @@ public class ProductEntry extends TicketEntry<Product, ProductEntry> {
     }
 
     @Override
-    public void checkValidity() {}
-
-    @Override
     public void accumulate(ProductEntry more) {
         if (more.product.getID() == this.product.getID())
             this.amount += more.amount;
