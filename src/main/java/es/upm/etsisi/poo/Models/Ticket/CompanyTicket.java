@@ -35,7 +35,7 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosi
         for (TicketEntry<BaseProduct<?>, ?> entry : this) {
             if (entry.getProduct() instanceof ServiceProduct)
                 hasService = true;
-            else if (entry.getProduct() instanceof Product)
+            else
                 hasProduct = true;
         }
 
