@@ -8,7 +8,7 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
+import es.upm.etsisi.poo.AppExceptions.DateExceptions.InvalidDateException;
 import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 
 import java.time.LocalDateTime;

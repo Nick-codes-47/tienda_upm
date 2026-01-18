@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongCommandArgumentsException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Ticket.CommonTicket;
 import es.upm.etsisi.poo.Models.Ticket.CompanyTicket;

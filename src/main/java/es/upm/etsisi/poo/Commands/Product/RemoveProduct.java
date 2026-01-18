@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;

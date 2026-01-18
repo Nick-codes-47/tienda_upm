@@ -1,9 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.EmptyContainerException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
@@ -31,7 +31,7 @@ public class ListTicketsFromCashier implements Command {
         Cashier cashier = cashiers.getUser(cashId);
         if (cashier == null) throw new AppEntityNotFoundException("cashier", cashId);
 
-        if (cashier.tickets.isEmpty()) throw new EmptyDataException("tickets");
+        if (cashier.tickets.isEmpty()) throw new EmptyContainerException("tickets");
 
         AppLogger.info("Tickets:\n" +
                 ticketService.getTicketList(cashier.tickets.values().stream().toList()));

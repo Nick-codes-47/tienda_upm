@@ -1,6 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -110,6 +112,12 @@ public class UpdateProduct implements Command {
     private static class InvalidNewValueException extends AppException {
         private InvalidNewValueException(String field) {
             super("New value is not valid for " + field);
+        }
+    }
+
+    private static class InvalidFieldException extends AppException {
+        public InvalidFieldException() {
+            super("Field not valid for this product! (remember Events don't have category)");
         }
     }
 

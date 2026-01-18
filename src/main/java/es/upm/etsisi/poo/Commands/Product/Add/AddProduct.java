@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
-import es.upm.etsisi.poo.AppExceptions.InvalidDateFormatException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.DateExceptions.InvalidDateFormatException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Models.Product.Catalog;

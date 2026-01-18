@@ -6,7 +6,7 @@ import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.ServiceCategory;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
-import es.upm.etsisi.poo.AppExceptions.InvalidDateException;
+import es.upm.etsisi.poo.AppExceptions.DateExceptions.InvalidDateException;
 
 import java.time.LocalDate;
 

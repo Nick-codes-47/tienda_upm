@@ -1,5 +1,6 @@
-package es.upm.etsisi.poo.AppExceptions;
+package es.upm.etsisi.poo.AppExceptions.ArgumentExceptions;
 
+import es.upm.etsisi.poo.AppExceptions.AppException;
 import es.upm.etsisi.poo.Commands.Command;
 
 public class WrongNumberOfArgsException extends AppException {

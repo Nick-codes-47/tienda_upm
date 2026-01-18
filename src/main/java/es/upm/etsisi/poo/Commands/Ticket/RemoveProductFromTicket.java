@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.TicketNotInCashException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.TicketNotInCashException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;

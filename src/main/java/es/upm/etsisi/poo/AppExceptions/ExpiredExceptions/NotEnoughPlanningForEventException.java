@@ -1,4 +1,4 @@
-package es.upm.etsisi.poo.AppExceptions;
+package es.upm.etsisi.poo.AppExceptions.ExpiredExceptions;
 
 import java.time.LocalDateTime;
 

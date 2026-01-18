@@ -1,7 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Service;
 
-import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
-import es.upm.etsisi.poo.AppExceptions.ExpiredServiceException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.ExpiredExceptions.ExpiredServiceException;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 

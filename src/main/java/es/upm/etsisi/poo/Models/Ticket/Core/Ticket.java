@@ -1,6 +1,10 @@
 package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.FullContainerException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.ClosedTicketException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;

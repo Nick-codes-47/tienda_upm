@@ -1,6 +1,9 @@
 package es.upm.etsisi.poo.Commands.Ticket;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.TicketExceptions.TicketNotInCashException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -9,12 +12,10 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
-import es.upm.etsisi.poo.Models.Ticket.Core.TicketRegistrable;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 
 import java.util.Arrays;
-import java.util.logging.Logger;
 
 public class AddProductToTicket implements Command {
     public static final String ID = "add";

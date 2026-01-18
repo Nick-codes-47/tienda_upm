@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.InvalidEmailException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.User.Core.Email;
 import es.upm.etsisi.poo.Models.User.Core.User;
@@ -30,5 +29,11 @@ public abstract class AddUser<T extends User> extends UserCommand<T> {
         if (parts.length != 2) throw new InvalidEmailException();
 
         return new Email(parts[0], parts[1]);
+    }
+
+    protected static class InvalidEmailException extends AppException {
+        InvalidEmailException() {
+            super("Invalid email address");
+        }
     }
 }

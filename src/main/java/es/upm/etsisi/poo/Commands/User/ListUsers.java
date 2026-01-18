@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.User;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.EmptyContainerException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.User.Core.User;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
@@ -22,7 +22,7 @@ public class ListUsers<T extends User> extends UserCommand<T> {
 
         List<T> users = userRegister.getUsers();
 
-        if (users.isEmpty()) throw new EmptyDataException("users");
+        if (users.isEmpty()) throw new EmptyContainerException("users");
 
         StringBuilder sb = null;
         for (User user : users) {

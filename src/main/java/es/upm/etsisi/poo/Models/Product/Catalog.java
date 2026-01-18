@@ -1,6 +1,10 @@
 package es.upm.etsisi.poo.Models.Product;
 
 import es.upm.etsisi.poo.AppExceptions.*;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.FullContainerException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.NullAppEntityException;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ServiceID;

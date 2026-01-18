@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Models.User.Core;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
-import es.upm.etsisi.poo.AppExceptions.NullAppEntityException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.NullAppEntityException;
 
 import java.io.Serializable;
 import java.util.HashMap;

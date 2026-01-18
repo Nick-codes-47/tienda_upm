@@ -1,6 +1,6 @@
 package es.upm.etsisi.poo.Models.User.Core;
 
-import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
 import java.util.ArrayList;

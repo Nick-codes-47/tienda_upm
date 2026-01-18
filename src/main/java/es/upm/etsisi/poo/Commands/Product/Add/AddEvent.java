@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.InvalidDateFormatException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.DateExceptions.InvalidDateFormatException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.Product.Catalog;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
@@ -11,7 +11,6 @@ import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.format.DateTimeParseException;
 

@@ -1,7 +1,5 @@
 package es.upm.etsisi.poo.Commands.User;
 
-import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.User.Core.Cashier;
 import es.upm.etsisi.poo.Models.User.Core.UserRegister;
 

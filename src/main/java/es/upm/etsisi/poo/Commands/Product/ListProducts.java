@@ -1,8 +1,8 @@
 package es.upm.etsisi.poo.Commands.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.EmptyDataException;
-import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
+import es.upm.etsisi.poo.AppExceptions.ContainerExceptions.EmptyContainerException;
+import es.upm.etsisi.poo.AppExceptions.ArgumentExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.Models.Product.Catalog;
@@ -27,7 +27,7 @@ public class ListProducts implements Command {
         if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         HashMap<ProductID, BaseProduct<?>> products = catalog.getProducts();
-        if (products.isEmpty()) throw new EmptyDataException("products");
+        if (products.isEmpty()) throw new EmptyContainerException("products");
 
         // We list the products in ascending order by their id
         ArrayList<Map.Entry<ProductID, BaseProduct<?>>> entries = new ArrayList<>(products.entrySet());

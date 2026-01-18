@@ -1,4 +1,6 @@
-package es.upm.etsisi.poo.AppExceptions;
+package es.upm.etsisi.poo.AppExceptions.TicketExceptions;
+
+import es.upm.etsisi.poo.AppExceptions.EntityExceptions.AppEntityNotFoundException;
 
 public class TicketNotInCashException extends AppEntityNotFoundException {
     private final String cashId;
