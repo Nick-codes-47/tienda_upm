@@ -83,7 +83,13 @@ public class UpdateProduct implements Command {
             return price;
         }
         if (type.equals(Category.class)) {
-            return Category.valueOf(value);
+            Category category;
+            try {
+                 category = Category.valueOf(value);
+            } catch (IllegalArgumentException e) {
+                throw new InvalidNewValueException(field.getName());
+            }
+            return category;
         }
 
         // if we didn't manage to parse to one of the permitted classes it's an invalid new value.
