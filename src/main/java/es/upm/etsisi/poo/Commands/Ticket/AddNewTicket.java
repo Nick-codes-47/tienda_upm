@@ -53,7 +53,7 @@ public class AddNewTicket implements Command {
         if (customer == null) throw new AppEntityNotFoundException("customer", customerId.toString());
 
         if (!customer.isCompany() && (type == TicketType.SERVICE || type == TicketType.COMBINED))
-            throw new AppException("Only Companies can open Servicer or Combined tickets.");
+            throw new AppException("Only Companies can open Service or Combined tickets.");
 
         if (ticketId == null)
             ticketId = ticketService.getNewTicketID();

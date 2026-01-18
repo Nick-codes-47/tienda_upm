@@ -25,7 +25,7 @@ public class ProductEntry extends TicketEntry<Product, ProductEntry> {
                 + ", name:'" + product.getName() + "'"
                 + ", category:" + product.getCategory()
                 + ", price:" + product.getPrice();
-        if (!personalizations.isEmpty())
+        if (personalizations != null && !personalizations.isEmpty())
             print += (", personalizations:") + this.personalizations;
 
         print += "}";

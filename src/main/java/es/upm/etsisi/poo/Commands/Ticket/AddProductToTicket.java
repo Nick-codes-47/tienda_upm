@@ -85,6 +85,6 @@ public class AddProductToTicket implements Command {
 
     @Override
     public String help() {
-        return ID + " <ticketId><cashId> <prodId> <amount> [--p<txt> --p<txt>]";
+        return ID + " <ticketId> <cashId> <prodId> <amount> [--p<txt> --p<txt>]";
     }
 }

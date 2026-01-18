@@ -6,9 +6,12 @@ import es.upm.etsisi.poo.Models.Ticket.Core.PrinterStrategy;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
+import java.io.Serializable;
 import java.util.HashMap;
 
-public class CommonPrinter implements PrinterStrategy {
+public class CommonPrinter implements PrinterStrategy, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     private static int MIN_AMOUNT_FOR_DISCOUNT = 2;
 

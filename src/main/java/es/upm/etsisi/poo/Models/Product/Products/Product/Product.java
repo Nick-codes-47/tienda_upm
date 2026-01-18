@@ -1,6 +1,7 @@
 package es.upm.etsisi.poo.Models.Product.Products.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
@@ -10,6 +11,7 @@ import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
 import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class Product extends GoodsProduct<Product> implements Copyable<Product> {
 
@@ -92,8 +94,15 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
         public int amount;
         public ArrayList<String> personalizations = null;
 
-        public EntryArgs(String[] args) {
+        public EntryArgs(String[] args) throws WrongNumberOfArgsException {
+            if (args == null || args.length < 1)
+                throw new WrongNumberOfArgsException(null);
 
+            this.amount = Integer.parseInt(args[0]);
+
+            if (args.length > 1) {
+                this.personalizations = new ArrayList<>(Arrays.asList(args).subList(1, args.length));
+            }
         }
     }
 }
