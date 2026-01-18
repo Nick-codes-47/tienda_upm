@@ -23,11 +23,11 @@ import java.util.function.Consumer;
 
 public class App {
 
-    public static final Catalog catalog = new Catalog();
-    public static final UserRegister<Cashier> cashiers = new UserRegister<>();
-    public static final UserRegister<Customer> customers = new UserRegister<>();
+    public final Catalog catalog = new Catalog();
+    public final UserRegister<Cashier> cashiers = new UserRegister<>();
+    public final UserRegister<Customer> customers = new UserRegister<>();
 
-    private static final PersistenceService persistence = new PersistenceService();
+    private final PersistenceService persistence = new PersistenceService();
 
     public final TicketService ticketService = new TicketService(cashiers);
 
@@ -62,17 +62,16 @@ public class App {
     }
 
     public static void main(String[] args) {
+        App app = new App();
+
         try {
-            App app = new App();
             if (args.length > 0) {
                 app.init(args[0]);
             } else {
                 app.init(null);
             }
         } catch (RuntimeException exception) {
-            persistence.saveAll(catalog.getProducts(),
-                    customers.getRawMap(),
-                    cashiers.getRawMap());
+            app.save();
             AppLogger.error(exception.getMessage());
         }
     }
@@ -99,7 +98,7 @@ public class App {
         if (data[2] != null) cashiers.loadData((HashMap<String, Cashier>) data[2]);
     }
 
-    private void safe() {
+    public void save() {
         AppLogger.info("Saving data...");
         persistence.saveAll(
                 catalog.getProducts(),
@@ -158,7 +157,7 @@ public class App {
     }
 
     private void exit() {
-        safe();
+        save();
 
         AppLogger.info("Closing Application.\nGoodbye!");
         exitRequested = true;
