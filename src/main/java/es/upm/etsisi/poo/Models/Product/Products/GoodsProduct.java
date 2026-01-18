@@ -3,7 +3,7 @@ package es.upm.etsisi.poo.Models.Product.Products;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 import es.upm.etsisi.poo.Models.Product.Core.ProductName;
-import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
+import es.upm.etsisi.poo.AppExceptions.NonPositiveIntegerException;
 
 /**
  * This class is used to create objects with the characteristics we need for our products
@@ -17,12 +17,12 @@ public abstract class GoodsProduct<T extends GoodsProduct<T>> extends BaseProduc
     private final double price;
 
     public GoodsProduct(ProductID ID, ProductName name, double price)
-            throws NonPositiveNumberException {
+            throws NonPositiveIntegerException {
 
         this.ID = ID;
         this.name = name;
 
-        if (price <= 0) throw new NonPositiveNumberException("Price");
+        if (price <= 0) throw new NonPositiveIntegerException("Price");
 
         this.price = price;
     }

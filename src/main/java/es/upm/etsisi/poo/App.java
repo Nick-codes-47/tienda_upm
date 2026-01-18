@@ -23,11 +23,11 @@ import java.util.function.Consumer;
 
 public class App {
 
-    public final Catalog catalog = new Catalog();
-    public final UserRegister<Cashier> cashiers = new UserRegister<>();
-    public final UserRegister<Customer> customers = new UserRegister<>();
+    public static final Catalog catalog = new Catalog();
+    public static final UserRegister<Cashier> cashiers = new UserRegister<>();
+    public static final UserRegister<Customer> customers = new UserRegister<>();
 
-    private final PersistenceService persistence = new PersistenceService();
+    private static final PersistenceService persistence = new PersistenceService();
 
     public final TicketService ticketService = new TicketService(cashiers);
 
@@ -71,6 +71,9 @@ public class App {
                 app.init(null);
             }
         } catch (RuntimeException exception) {
+            persistence.saveAll(catalog.getProducts(),
+                    customers.getRawMap(),
+                    cashiers.getRawMap());
             AppLogger.error(exception.getMessage());
         }
     }
@@ -107,7 +110,7 @@ public class App {
             if (retVal == 0)
                 AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
         } catch (AppException e) {
-            AppLogger.info(e.getMessage());
+            AppLogger.error(e.getMessage());
         }
     }
 

@@ -60,18 +60,18 @@ public class UpdateProduct implements Command {
     }
 
     private static ProductID getProductID(String[] args)
-            throws InvalidAppIDException, NonPositiveNumberException {
+            throws InvalidAppIDException, NonPositiveIntegerException {
         ProductID ID;
         try {
             ID = new ProductID(Integer.parseInt(args[0]));
         } catch (NumberFormatException e) {
-            throw new NonPositiveNumberException("ID");
+            throw new NonPositiveIntegerException("ID");
         }
         return ID;
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName)
-            throws FieldNotValidException {
+            throws InvalidFieldException {
         // We get the current class of the object
         Class<?> current = clazz;
         while (current != null) {
@@ -83,7 +83,7 @@ public class UpdateProduct implements Command {
             }
         }
         // If we didn't find the field we let it know with a new FieldNotValidException
-        throw new FieldNotValidException();
+        throw new InvalidFieldException();
     }
 
     private Object converNewtValue(Field field, String value)
@@ -109,11 +109,11 @@ public class UpdateProduct implements Command {
         throw new InvalidNewValueException(field.getName());
     }
 
-    private static void setNewValue(Field field, BaseProduct<?> product, Object converted) throws FieldNotValidException {
+    private static void setNewValue(Field field, BaseProduct<?> product, Object converted) throws InvalidFieldException {
         try {
             field.set(product, converted);
         } catch (IllegalAccessException e) {
-            throw new FieldNotValidException();
+            throw new InvalidFieldException();
         }
     }
 

@@ -1,5 +1,6 @@
 package es.upm.etsisi.poo.Handlers;
 
+import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Commands.Command;
 
 import java.util.ArrayList;
@@ -29,7 +30,7 @@ public abstract class RequestHandler {
         // We look if we have that action in the map
         Supplier<Command> command = this.commands.get(commandID);
         if (command == null) {
-            System.err.println("ERROR: No such action: " + commandID);
+            AppLogger.error("No such action: " + commandID);
             return null;
         }
         return command.get();

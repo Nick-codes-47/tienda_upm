@@ -8,7 +8,7 @@ import es.upm.etsisi.poo.Models.Product.Core.ProductName;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.Category;
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.AppExceptions.InvalidCategoryException;
-import es.upm.etsisi.poo.AppExceptions.NonPositiveNumberException;
+import es.upm.etsisi.poo.AppExceptions.NonPositiveIntegerException;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -21,7 +21,7 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
     private final int maxPersonalization;
 
     public Product(ProductID ID, ProductName name, String category, double price)
-            throws NonPositiveNumberException, InvalidCategoryException {
+            throws NonPositiveIntegerException, InvalidCategoryException {
         super(ID, name, price);
 
         initializeCategory(category);
@@ -30,12 +30,12 @@ public class Product extends GoodsProduct<Product> implements Copyable<Product> 
     }
 
     public Product(ProductID ID, ProductName name, String category, double price, int numPersonalizations)
-            throws InvalidCategoryException, NonPositiveNumberException {
+            throws InvalidCategoryException, NonPositiveIntegerException {
         super(ID, name, price);
 
         initializeCategory(category);
 
-        if  (numPersonalizations <= 0) throw new NonPositiveNumberException("Personalizations");
+        if  (numPersonalizations <= 0) throw new NonPositiveIntegerException("Personalizations");
 
         this.maxPersonalization = numPersonalizations;
     }
