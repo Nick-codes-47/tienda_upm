@@ -4,12 +4,14 @@ import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class ServiceTicket extends Ticket<ServiceProduct> {
+import java.io.Serializable;
+
+public class ServiceTicket extends Ticket<ServiceProduct> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
     public ServiceTicket(TicketID ID) {
-        super(ID, CommonPrinter::new, ServiceProduct.class);
+        super(ID, ServicePrinter::new, ServiceProduct.class);
     }
 
     public ServiceTicket(ServiceTicket other) {
@@ -19,5 +21,10 @@ public class ServiceTicket extends Ticket<ServiceProduct> {
     @Override
     public ServiceTicket copy() {
         return new ServiceTicket(this);
+    }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = ServicePrinter::new;
     }
 }

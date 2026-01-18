@@ -11,6 +11,7 @@ import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.function.Supplier;
@@ -27,7 +28,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
 
-    private final Supplier<PrinterStrategy> printStrat;
+    protected transient Supplier<PrinterStrategy> printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
@@ -157,15 +158,25 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         close();
 
+        reloadPrinterStrategy();
         PrinterStrategy printer = printStrat.get();
+
         printer.init(this);
-        for (TicketEntry<ProductType, ?> entry : entries.values()) {
+
+        ArrayList<TicketEntry<ProductType, ?>> orderedEntries = new ArrayList<>(entries.values());
+        if (printer instanceof TicketEntryOrderConstraint oPrinter)
+            orderedEntries.sort(oPrinter.getSortFunction());
+
+        for (TicketEntry<ProductType, ?> entry : orderedEntries) {
             str.append(printer.printEntry(entry));
         }
 
         str.append(printer.printFooter());
         AppLogger.info(str.toString());
     }
+
+    // We need this because it is not possible to save the Suplier when saving the ticket
+    abstract protected void reloadPrinterStrategy();
 
     @Override
     public String toString() {

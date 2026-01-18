@@ -4,7 +4,9 @@ import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class CommonTicket extends Ticket<GoodsProduct<?>> {
+import java.io.Serializable;
+
+public class CommonTicket extends Ticket<GoodsProduct<?>> implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -19,5 +21,10 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> {
     @Override
     public CommonTicket copy() {
         return new CommonTicket(this);
+    }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = CommonPrinter::new;
     }
 };

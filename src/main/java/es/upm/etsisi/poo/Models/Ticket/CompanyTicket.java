@@ -9,12 +9,14 @@ import es.upm.etsisi.poo.Models.Ticket.Core.TicketClosingConstraint;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosingConstraint {
+import java.io.Serializable;
+
+public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosingConstraint, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     public CompanyTicket(TicketID ID) {
-        super(ID, CommonPrinter::new, (Class) BaseProduct.class);
+        super(ID, CombinedPrinter::new, (Class) BaseProduct.class);
     }
 
     public CompanyTicket(CompanyTicket other) {
@@ -39,5 +41,10 @@ public class CompanyTicket extends Ticket<BaseProduct<?>> implements TicketClosi
 
         if (!(hasService && hasProduct))
             throw new AppException("combined tickets must have at least one product and one service");
+    }
+
+    @Override
+    protected void reloadPrinterStrategy() {
+        this.printStrat = CombinedPrinter::new;
     }
 }
