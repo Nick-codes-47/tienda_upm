@@ -1,12 +1,13 @@
 package es.upm.etsisi.poo.Models.Product.Products.Product;
 
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ProductEntry extends TicketEntry<Product> {
+public class ProductEntry extends TicketEntry<Product, ProductEntry> {
 
     private static final long serialVersionUID = 1L;
 
@@ -54,8 +55,14 @@ public class ProductEntry extends TicketEntry<Product> {
     }
 
     @Override
-    public boolean checkValidity() {
-        return true;
+    public void checkValidity() throws AppException {
+        return;
+    }
+
+    @Override
+    public void accumulate(ProductEntry more) throws EntityAlreadyExistsException {
+        if (more.product.getID() == this.product.getID())
+            this.amount += more.amount;
     }
 
     private class PersonalizationExceedsMaxException extends AppException {

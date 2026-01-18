@@ -1,14 +1,10 @@
 package es.upm.etsisi.poo.Models.Product.Products.Event;
 
-import es.upm.etsisi.poo.AppExceptions.AppException;
-import es.upm.etsisi.poo.AppExceptions.NotEnoughPlanningForEventException;
+import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.Models.Product.ProductEnums.EventType;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketEntry;
-import es.upm.etsisi.poo.AppExceptions.InvalidPeopleInEventException;
 
-import java.time.LocalDateTime;
-
-public class EventEntry extends TicketEntry<EventProduct> {
+public class EventEntry extends TicketEntry<EventProduct, EventEntry> {
 
     private static final long serialVersionUID = 1L;
 
@@ -60,7 +56,23 @@ public class EventEntry extends TicketEntry<EventProduct> {
     }
 
     @Override
-    public boolean checkValidity() {
-        return product.getMaxPeople() >= people;
+    public void checkValidity() throws AppException {
+        if (product.getMaxPeople() >= people)
+            throw new InvalidPeopleInEventException();
+
+        if (product.hasExpired())
+            throw new NotEnoughPlanningForEventException(
+                    product.getID().toString(),
+                    product.getEventType().getPlanningTime(),
+                    product.getExpireDate()
+            );
+    }
+
+    @Override
+    public void accumulate(EventEntry more) throws EntityAlreadyExistsException {
+        throw new EntityAlreadyExistsException(
+                product.getEventType().toString(),
+                product.getID().toString(),
+                "you can't add an event twice to the same ticket");
     }
 }

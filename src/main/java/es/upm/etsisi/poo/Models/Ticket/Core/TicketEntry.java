@@ -2,11 +2,13 @@ package es.upm.etsisi.poo.Models.Ticket.Core;
 
 import es.upm.etsisi.poo.AppExceptions.AppEntityNotFoundException;
 import es.upm.etsisi.poo.AppExceptions.AppException;
+import es.upm.etsisi.poo.AppExceptions.EntityAlreadyExistsException;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
 
 import java.io.Serializable;
 
-public abstract class TicketEntry<ProductType extends BaseProduct<?>> implements Serializable {
+public abstract class TicketEntry<ProductType extends BaseProduct<?>, EntryType extends TicketEntry<ProductType, EntryType>>
+        implements Serializable {
 
     private static final long serialVersionUID = 1L;
 
@@ -32,7 +34,8 @@ public abstract class TicketEntry<ProductType extends BaseProduct<?>> implements
     public abstract int getProductCount();
     public abstract double getPrice();
 
-    public abstract boolean checkValidity();
+    public abstract void accumulate(EntryType more) throws EntityAlreadyExistsException;
+    public abstract void checkValidity() throws AppException;
 
     public abstract String toString();
 }

@@ -1,11 +1,10 @@
 package es.upm.etsisi.poo.Models.Ticket;
 
 import es.upm.etsisi.poo.Models.Product.Products.GoodsProduct;
-import es.upm.etsisi.poo.Models.Ticket.Core.Printable;
 import es.upm.etsisi.poo.Models.Ticket.Core.Ticket;
 import es.upm.etsisi.poo.Models.Ticket.Core.TicketID;
 
-public class CommonTicket extends Ticket<GoodsProduct<?>> implements Printable {
+public class CommonTicket extends Ticket<GoodsProduct<?>> {
 
     private static final long serialVersionUID = 1L;
 
@@ -21,9 +20,5 @@ public class CommonTicket extends Ticket<GoodsProduct<?>> implements Printable {
     public CommonTicket copy() {
         return new CommonTicket(this);
     }
-
-    @Override
-    public void print() {
-
     };
 }

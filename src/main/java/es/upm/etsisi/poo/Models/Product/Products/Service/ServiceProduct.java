@@ -47,6 +47,7 @@ public class ServiceProduct extends BaseProduct<ServiceProduct> implements Copya
     public ServiceID getID() {
         return ID;
     }
+    public ServiceCategory getCategory() { return category; }
 
     @Override
     public ServiceEntry toTicketEntry(String[] args) {

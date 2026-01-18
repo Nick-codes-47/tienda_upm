@@ -4,11 +4,7 @@ import es.upm.etsisi.poo.AppExceptions.*;
 import es.upm.etsisi.poo.AppLogger;
 import es.upm.etsisi.poo.Models.Core.Copyable;
 import es.upm.etsisi.poo.Models.Product.Core.BaseProduct;
-import es.upm.etsisi.poo.Models.Product.Core.ExpirableProduct;
 import es.upm.etsisi.poo.Models.Product.Core.ProductID;
-import es.upm.etsisi.poo.Models.Product.Products.Event.EventEntry;
-import es.upm.etsisi.poo.Models.Product.Products.Event.EventProduct;
-import es.upm.etsisi.poo.Models.Product.Products.Service.ServiceProduct;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,25 +12,28 @@ import java.util.HashMap;
 import java.util.Iterator;
 
 public abstract class Ticket<ProductType extends BaseProduct<?>>
-        implements Printable, Iterable<TicketEntry<ProductType>>, Copyable<Ticket<ProductType>>, Serializable {
+        implements Iterable<TicketEntry<ProductType, ?>>, Copyable<Ticket<ProductType>>, Serializable {
 
     private static final long serialVersionUID = 1L;
 
     private final TicketID ID;
     private TicketState ticketState;
-    private final HashMap<ProductID, TicketEntry<ProductType>> entries;
+    private final HashMap<ProductID, TicketEntry<ProductType,?>> entries;
     private int totalUnits = 0;
+
+    private final PrinterStrategy printStrat;
 
     private static final int MAX_PRODUCTS_PER_TICKET = 100;
 
-    public Ticket(TicketID ID) {
+    public Ticket(TicketID ID, PrinterStrategy printerStrat) {
         this.ID = ID;
         this.entries = new HashMap<>();
         this.ticketState = TicketState.VACIO;
+        this.printStrat = printerStrat;
     }
 
     public Ticket(Ticket<ProductType> other) { // TODO shallow copies instead of deep copy
-        this(other.ID);
+        this(other.ID, other.printStrat);
         this.ticketState = other.ticketState;
         this.entries.putAll(other.entries);
         this.totalUnits = other.totalUnits;
@@ -48,7 +47,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     }
 
     @Override
-    public Iterator<TicketEntry<ProductType>> iterator() {
+    public Iterator<TicketEntry<ProductType,?>> iterator() {
         return entries.values().iterator();
     }
 
@@ -56,7 +55,20 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         if ((totalUnits + added) > MAX_PRODUCTS_PER_TICKET) throw new FullContainerException();
     }
 
-    private int add(TicketEntry<ProductType> entry)
+    @SuppressWarnings("unchecked")
+    private <Entry extends TicketEntry<ProductType, Entry>>
+    void accumulateSafe(
+            TicketEntry<ProductType, ?> oldEntry,
+            TicketEntry<ProductType, ?> newEntry) throws EntityAlreadyExistsException {
+
+        // We cast both to 'E'. We know this is safe because their ProductIDs matched.
+        Entry specificOld = (Entry) oldEntry;
+        Entry specificNew = (Entry) newEntry;
+
+        specificOld.accumulate(specificNew);
+    }
+
+    private int add(TicketEntry<ProductType,?> entry)
             throws ClosedTicketException, FullContainerException, EntityAlreadyExistsException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
@@ -67,22 +79,17 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         checkCapacity(entry.getProductCount());
 
         ProductID entryID = entry.getProduct().getID();
+        TicketEntry<ProductType, ?> oldEntry = entries.get(entryID);
+        if (oldEntry != null) {
+            accumulateSafe(oldEntry, entry);
+        } else {
+            entries.put(entryID, entry);
+        }
 
-        checkForNonRepeatedEvent(entry, entryID);
-
-        entries.put(entryID, entry);
         totalUnits += entry.getProductCount();
 
         AppLogger.info(this.toString());
         return 0;
-    }
-
-    private void checkForNonRepeatedEvent(TicketEntry<ProductType> entry, ProductID entryID) throws EntityAlreadyExistsException {
-        if (entry instanceof EventEntry) {
-            if (entries.containsKey(entryID))
-                throw new EntityAlreadyExistsException("Event", entryID.toString(),
-                        "you can't add an event twice to the same ticket");
-        }
     }
 
     public int add(TicketRegistrable<ProductType> product, String[] args) throws AppException {
@@ -93,7 +100,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
             throws AppEntityNotFoundException, ClosedTicketException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
-        TicketEntry<?> entry = entries.get(ID);
+        TicketEntry<?,?> entry = entries.get(ID);
         if (entry == null) throw new AppEntityNotFoundException("product", ID.toString());
 
         entries.remove(ID);
@@ -103,7 +110,7 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
     public void update(BaseProduct<?> baseProduct) throws AppException {
         if (this.ticketState == TicketState.CERRADO) throw new ClosedTicketException(this.ID.toString());
 
-        TicketEntry<ProductType> entry = this.entries.get(baseProduct.getID());
+        TicketEntry<ProductType,?> entry = this.entries.get(baseProduct.getID());
 
         if (entry != null) {
             ProductType product = (ProductType) baseProduct;
@@ -111,23 +118,29 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
         }
     }
 
-    public void close() throws ExpiredException {
-        ArrayList<EventProduct> eventsInTicket = getProductsOfTypeFromTicket(EventProduct.class);
-        checkForExpiredProducts(eventsInTicket);
-
-        ArrayList<ServiceProduct> servicesInTicket = getProductsOfTypeFromTicket(ServiceProduct.class);
-        checkForExpiredProducts(servicesInTicket);
-
+    public void close() throws AppException {
         if (this.ticketState != TicketState.CERRADO) {
+            for (TicketEntry<ProductType, ?> entry : entries.values()) {
+                entry.checkValidity();
+            }
+
             this.ticketState = TicketState.CERRADO;
             ID.close();
         }
     }
 
+    public void print() throws ExpiredException {
+//        close();
+//
+//        for (TicketEntry<ProductType> entry : entries.values()) {
+//
+//        }
+    }
+
     private <T extends BaseProduct<?>> ArrayList<T> getProductsOfTypeFromTicket(Class<T> productType) {
         ArrayList<T> products = new ArrayList<>();
 
-        for (TicketEntry<ProductType> entry : entries.values()) {
+        for (TicketEntry<ProductType,?> entry : entries.values()) {
             BaseProduct<?> product = entry.getProduct();
 
             if (productType.isInstance(product)) {
@@ -137,21 +150,4 @@ public abstract class Ticket<ProductType extends BaseProduct<?>>
 
         return products;
     }
-
-    private <T extends ExpirableProduct> void checkForExpiredProducts(ArrayList<T> expirables)
-            throws ExpiredException {
-        for (ExpirableProduct expirableProduct : expirables) {
-            if (expirableProduct.hasExpired()) throwExpiredException(expirableProduct);
-        }
-    }
-
-    private void throwExpiredException(ExpirableProduct expirableProduct) throws ExpiredException {
-        if (expirableProduct instanceof ServiceProduct)
-            throw new ExpiredServiceException(expirableProduct.getID().toString());
-        else if (expirableProduct instanceof EventProduct event) {
-            throw new NotEnoughPlanningForEventException(event.getID().toString(),
-                    event.getEventType().getPlanningTime(), event.getExpireDate());
-        }
-    }
-
 }
