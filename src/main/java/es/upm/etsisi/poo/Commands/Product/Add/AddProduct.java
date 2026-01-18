@@ -1,7 +1,6 @@
 package es.upm.etsisi.poo.Commands.Product.Add;
 
 import es.upm.etsisi.poo.AppExceptions.InvalidDateFormatException;
-import es.upm.etsisi.poo.AppExceptions.InvalidNumberFormatException;
 import es.upm.etsisi.poo.AppExceptions.WrongNumberOfArgsException;
 import es.upm.etsisi.poo.Commands.Command;
 import es.upm.etsisi.poo.AppExceptions.AppException;
@@ -37,13 +36,11 @@ public class AddProduct implements Command {
      * @return 0 if all went well
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length < 2) throw new WrongNumberOfArgsException(this);
 
         BaseProduct<?> product = createProduct(args);
         catalog.add(product);
-
-        return 0;
     }
 
     protected BaseProduct<?> createProduct(String[] args) throws AppException {
@@ -55,11 +52,7 @@ public class AddProduct implements Command {
         ProductToAdd type = resolveProductToAdd(args, rawID);
 
         BaseProduct<?> product;
-        try {
-             product = getProduct(args, type, rawID);
-        } catch (NumberFormatException e) {
-            throw new InvalidNumberFormatException(e.getMessage());
-        }
+        product = getProduct(args, type, rawID);
 
         return product;
     }

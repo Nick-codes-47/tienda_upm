@@ -22,21 +22,14 @@ public class UpdateProduct implements Command {
     /**
      * Method to update the fields of a product (NAME, CATEGORY, PRICE)
      * @param args the parameters to update the product
-     * @return 0 if it was successful
-     * 1 if one of the number arguments is invalid
-     * 3 if the number of arguments is wrong
-     * 4 if the product is not in the catalog
-     * 5 if the field is invalid
-     * 6 if the user doesn't have access to change the specified field
-     * 8 if the category introduced is invalid
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 3) {
             throw new WrongNumberOfArgsException(this);
         }
         // if the number of arguments are correct we try to update
-        ProductID ID = getProductID(args);
+        ProductID ID = new ProductID(Integer.parseInt(args[0]));
         BaseProduct<?> product = catalog.get(ID);
         if (product == null) throw new AppEntityNotFoundException("product", ID.toString());
 
@@ -48,26 +41,13 @@ public class UpdateProduct implements Command {
         Field field = getFieldFromHierarchy(product.getClass(), fieldName);
         field.setAccessible(true);
 
-        Object converted = converNewtValue(field, newValue);
+        Object converted = convertNewtValue(field, newValue);
 
         setNewValue(field, product, converted);
 
         AppLogger.info(product.toString());
 
         ticketService.showModifiedTickets(product);
-
-        return 0;
-    }
-
-    private static ProductID getProductID(String[] args)
-            throws InvalidAppIDException, NonPositiveIntegerException {
-        ProductID ID;
-        try {
-            ID = new ProductID(Integer.parseInt(args[0]));
-        } catch (NumberFormatException e) {
-            throw new NonPositiveIntegerException("ID");
-        }
-        return ID;
     }
 
     private Field getFieldFromHierarchy(Class<?> clazz, String fieldName)
@@ -86,7 +66,7 @@ public class UpdateProduct implements Command {
         throw new InvalidFieldException();
     }
 
-    private Object converNewtValue(Field field, String value)
+    private Object convertNewtValue(Field field, String value)
             throws InvalidNewValueException {
         // We get the class of the field to be modified
         Class<?> type = field.getType();
@@ -96,9 +76,9 @@ public class UpdateProduct implements Command {
             return value;
         }
         if (type.equals(double.class) || type.equals(Double.class)) {
-            double price = Double.parseDouble(value);
-            if (price <= 0) throw new InvalidNewValueException(field.getName());
-            return price;
+            //double price =
+            // if (price <= 0) throw new InvalidNewValueException(field.getName());
+            return Double.parseDouble(value);
         }
         if (type.equals(Category.class)) {
             return Category.valueOf(value);
@@ -108,7 +88,11 @@ public class UpdateProduct implements Command {
         throw new InvalidNewValueException(field.getName());
     }
 
-    private static void setNewValue(Field field, BaseProduct<?> product, Object converted) throws InvalidFieldException {
+    private static void setNewValue(Field field, BaseProduct<?> product, Object converted)
+            throws InvalidFieldException, InvalidNewValueException {
+        if (converted instanceof Double)
+            if ((Double) converted <= 0) throw new InvalidNewValueException(field.getName());
+
         try {
             field.set(product, converted);
         } catch (IllegalAccessException e) {

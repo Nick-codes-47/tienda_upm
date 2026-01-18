@@ -21,12 +21,9 @@ public class ListProducts implements Command {
     /**
      * Method that lists the products in ascending order by id
      * @param args in this action there are no arguments required
-     * @return 0 if it was successful
-     *         3 if they were arguments
-     *         7 if the catalog is empty
      */
     @Override
-    public int execute(String[] args) throws AppException {
+    public void execute(String[] args) throws AppException {
         if (args.length != 0) throw new WrongNumberOfArgsException(this);
 
         HashMap<ProductID, BaseProduct<?>> products = catalog.getProducts();
@@ -42,7 +39,6 @@ public class ListProducts implements Command {
         }
 
         AppLogger.info(productsMessage.toString());
-        return 0;
     }
 
     /**

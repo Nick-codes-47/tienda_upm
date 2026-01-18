@@ -110,6 +110,8 @@ public class App {
             AppLogger.info(String.format("%s %s: ok\n", request.handlerId, request.commandId));
         } catch (AppException e) {
             AppLogger.error(e.getMessage());
+        } catch (NumberFormatException e) {
+            AppLogger.error("Error in the number format: " + e.getMessage());
         }
     }
 

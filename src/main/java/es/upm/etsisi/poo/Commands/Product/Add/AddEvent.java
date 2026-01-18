@@ -56,6 +56,14 @@ public abstract class AddEvent extends AddProduct {
         };
     }
 
+    private BaseProduct<?> getEvent(String[] args, EventToAdd type, int rawID) throws AppException {
+        try {
+            return getEventProduct(args, type, rawID);
+        } catch (DateTimeParseException e) {
+            throw new InvalidDateFormatException();
+        }
+    }
+
     private BaseProduct<?> getEventProduct(String[] args, EventToAdd type, int rawID)
             throws AppException {
         return switch (type) {
@@ -82,14 +90,6 @@ public abstract class AddEvent extends AddProduct {
                 );
             }
         };
-    }
-
-    private BaseProduct<?> getEvent(String[] args, EventToAdd type, int rawID) throws AppException {
-        try {
-            return getEventProduct(args, type, rawID);
-        } catch (DateTimeParseException e) {
-            throw new InvalidDateFormatException();
-        }
     }
 
     /**
