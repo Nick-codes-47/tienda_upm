@@ -215,7 +215,7 @@ public class App {
      */
     private static void includeCategories(StringBuilder output) {
         output.append("Categories: ").append(Category.getCategories()).append("\n");
-        output.append("Discounts if there are ≥2 units in the category: ")
+        output.append("Discounts if there are >=2 units in the category: ")
                 .append(Category.getCategoriesAndDiscount()).append("\n\n");
     }
 
