@@ -4,4 +4,4 @@ cabo en la propia app o se manda la petición a una de las dos clases Catalog o 
 y poder realizar operaciones con ellos. Una vez gestionado el Request, la clase correspondiente devuelve un resultado a la App, principalmente para determinar si la ejecución fue correcta o no.
 
 
-![Alt text](https://raw.githubusercontent.com/Nick-codes-47/tienda_upm/master/assets/UML.png)
+![Alt text](https://raw.githubusercontent.com/Nick-codes-47/tienda_upm/master/assets/UML_Tercera_Entrega.svg)
